@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>写给未来的信</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #6d5b97;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #888;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        
+        input:focus, textarea:focus {
+            border-color: #9a7eb8;
+            outline: none;
+            box-shadow: 0 0 10px rgba(154, 126, 184, 0.3);
+        }
+        
+        textarea {
+            height: 200px;
+            resize: vertical;
+        }
+        
+        .date-input {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .date-input input {
+            flex: 1;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #9a7eb8, #6d5b97);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(109, 91, 151, 0.3);
+            margin-top: 20px;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(109, 91, 151, 0.4);
+        }
+        
+        .letter-preview {
+            display: none;
+            margin-top: 30px;
+            padding: 30px;
+            background: #fff9f9;
+            border-radius: 15px;
+            border: 1px solid #e8c4c4;
+            text-align: left;
+            position: relative;
+        }
+        
+        .letter-preview:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: linear-gradient(90deg, #ff9a9e 0%, #fad0c4 100%);
+            border-radius: 15px 15px 0 0;
+        }
+        
+        .letter-content {
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+        
+        .letter-meta {
+            margin-top: 20px;
+            font-style: italic;
+            color: #888;
+            border-top: 1px dashed #ddd;
+            padding-top: 10px;
+        }
+        
+        .success-message {
+            display: none;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #6d5b97;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .heart {
+            color: #e75480;
+            font-size: 1.5em;
+            margin: 0 5px;
+        }
+        
+        .stamp {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 80px;
+            background: #f0d8d8;
+            border: 2px dashed #e8c4c4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: #e75480;
+            transform: rotate(15deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>写给未来的信 <span class="heart">❤</span></h1>
+        <p class="subtitle">写下对未来的期许，设置解锁日期，到时自动发送给TA</p>
+        
+        <form id="letterForm">
+            <div class="form-group">
+                <label for="recipientName">收件人姓名</label>
+                <input type="text" id="recipientName" required placeholder="输入TA的名字">
+            </div>
+            
+            <div class="form-group">
+                <label for="recipientEmail">收件人邮箱</label>
+                <input type="email" id="recipientEmail" required placeholder="输入TA的邮箱地址">
+            </div>
+            
+            <div class="form-group">
+                <label for="unlockDate">解锁日期</label>
+                <div class="date-input">
+                    <input type="date" id="unlockDate" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="letterContent">信的内容</label>
+                <textarea id="letterContent" required placeholder="写下你对未来的期许、想对TA说的话..."></textarea>
+            </div>
+            
+            <button type="submit">保存这封信</button>
+        </form>
+        
+        <div class="letter-preview" id="letterPreview">
+            <div class="stamp">未来</div>
+            <div class="letter-content" id="previewContent"></div>
+            <div class="letter-meta">
+                <p>这封信将在 <span id="previewDate"></span> 发送给 <span id="previewRecipient"></span></p>
+            </div>
+        </div>
+        
+        <div class="success-message" id="successMessage">
+            <p>你的信已成功保存！我们会在指定日期发送给TA。</p>
+            <p>你可以随时回来查看或修改你的信。</p>
+        </div>
+        
+        <a href="index.html" class="back-link">← 返回浪漫代码收藏馆</a>
+    </div>
+
+    <script>
+        const letterForm = document.getElementById('letterForm');
+        const letterPreview = document.getElementById('letterPreview');
+        const previewContent = document.getElementById('previewContent');
+        const previewDate = document.getElementById('previewDate');
+        const previewRecipient = document.getElementById('previewRecipient');
+        const successMessage = document.getElementById('successMessage');
+        
+        // 预览信件内容
+        letterForm.addEventListener('input', function() {
+            const recipientName = document.getElementById('recipientName').value;
+            const recipientEmail = document.getElementById('recipientEmail').value;
+            const unlockDate = document.getElementById('unlockDate').value;
+            const letterContent = document.getElementById('letterContent').value;
+            
+            if (recipientName && unlockDate && letterContent) {
+                previewContent.textContent = letterContent;
+                previewRecipient.textContent = recipientName;
+                
+                const dateObj = new Date(unlockDate);
+                const formattedDate = dateObj.toLocaleDateString('zh-CN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                previewDate.textContent = formattedDate;
+                letterPreview.style.display = 'block';
+            } else {
+                letterPreview.style.display = 'none';
+            }
+        });
+        
+        // 提交表单
+        letterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const recipientName = document.getElementById('recipientName').value;
+            const recipientEmail = document.getElementById('recipientEmail').value;
+            const unlockDate = document.getElementById('unlockDate').value;
+            const letterContent = document.getElementById('letterContent').value;
+            
+            // 保存信件数据到localStorage
+            const letter = {
+                recipientName,
+                recipientEmail,
+                unlockDate,
+                letterContent,
+                createdAt: new Date().toISOString()
+            };
+            
+            // 使用收件人邮箱作为键的一部分确保唯一性
+            const storageKey = `futureLetter_${recipientEmail}_${unlockDate}`;
+            localStorage.setItem(storageKey, JSON.stringify(letter));
+            
+            // 保存所有信件的引用
+            const lettersList = JSON.parse(localStorage.getItem('futureLetters') || '[]');
+            lettersList.push(storageKey);
+            localStorage.setItem('futureLetters', JSON.stringify(lettersList));
+            
+            // 显示成功消息
+            letterForm.style.display = 'none';
+            letterPreview.style.display = 'none';
+            successMessage.style.display = 'block';
+            
+            // 设置定时检查（实际应用中应该使用服务器端定时任务）
+            scheduleLetterCheck();
+        });
+        
+        // 定时检查信件是否该发送了
+        function scheduleLetterCheck() {
+            const now = new Date();
+            const lettersList = JSON.parse(localStorage.getItem('futureLetters') || '[]');
+            
+            lettersList.forEach(storageKey => {
+                const letterData = localStorage.getItem(storageKey);
+                if (letterData) {
+                    const letter = JSON.parse(letterData);
+                    const unlockDate = new Date(letter.unlockDate);
+                    
+                    if (now >= unlockDate) {
+                        // 这里应该是发送邮件的逻辑
+                        // 实际应用中需要服务器支持或使用邮件服务API
+                        console.log('该发送信件给:', letter.recipientEmail);
+                        alert(`该发送信件给: ${letter.recipientEmail}\n内容: ${letter.letterContent}`);
+                        
+                        // 从列表中移除已发送的信件
+                        const updatedList = lettersList.filter(key => key !== storageKey);
+                        localStorage.setItem('futureLetters', JSON.stringify(updatedList));
+                    }
+                }
+            });
+        }
+        
+        // 页面加载时检查是否有信件该发送了
+        window.addEventListener('load', scheduleLetterCheck);
+        
+        // 每天检查一次（模拟）
+        setInterval(scheduleLetterCheck, 24 * 60 * 60 * 1000);
+    </script>
+</body>
+</html>

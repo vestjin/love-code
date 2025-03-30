@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>专属八音盒</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', 'Marker Felt', 'Segoe Print', sans-serif;
+            background: #fef6e9;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        
+        .music-box {
+            width: 90%;
+            max-width: 500px;
+            background: #fff9f0;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            border: 8px solid #e8c4c4;
+            z-index: 10;
+        }
+        
+        h1 {
+            color: #e75480;
+            margin-bottom: 20px;
+            font-size: 2.2em;
+            text-shadow: 2px 2px 0 #f8d7d7;
+        }
+        
+        .music-note {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(231, 84, 128, 0.7);
+            animation: floatNote 3s linear forwards;
+            pointer-events: none;
+            z-index: 5;
+        }
+        
+        @keyframes floatNote {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .scene {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .hand-drawn {
+            position: absolute;
+            background-repeat: no-repeat;
+            background-size: contain;
+            opacity: 0.8;
+        }
+        
+        .cloud {
+            width: 150px;
+            height: 80px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50"><path d="M20,25 Q30,5 50,10 Q70,5 80,25 Q95,20 90,40 Q95,45 70,40 Q60,50 50,40 Q40,50 20,40 Q5,45 10,30 Q5,20 20,25" fill="%23f8d7d7" stroke="%23e8c4c4" stroke-width="1.5"/></svg>');
+            animation: floatCloud 30s linear infinite;
+        }
+        
+        .bird {
+            width: 60px;
+            height: 40px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 40"><path d="M10,20 Q20,10 30,20 Q40,10 50,20 L40,25 L50,30 L40,25 L30,20" fill="none" stroke="%23e75480" stroke-width="2" stroke-linecap="round"/></svg>');
+            animation: floatBird 15s linear infinite;
+        }
+        
+        .heart {
+            width: 30px;
+            height: 30px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="%23e75480"/></svg>');
+            animation: floatHeart 8s linear infinite;
+        }
+        
+        @keyframes floatCloud {
+            0% { transform: translateX(-150px); }
+            100% { transform: translateX(calc(100vw + 150px)); }
+        }
+        
+        @keyframes floatBird {
+            0% { transform: translateX(-60px) scaleX(1); }
+            50% { transform: translateX(calc(50vw - 30px)) scaleX(1); }
+            51% { transform: translateX(calc(50vw - 30px)) scaleX(-1); }
+            100% { transform: translateX(calc(100vw + 60px)) scaleX(-1); }
+        }
+        
+        @keyframes floatHeart {
+            0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg) scale(1.2); opacity: 0; }
+        }
+        
+        .controls {
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        button {
+            background: #e75480;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            box-shadow: 0 4px 8px rgba(231, 84, 128, 0.3);
+        }
+        
+        button:hover {
+            background: #d23369;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(231, 84, 128, 0.4);
+        }
+        
+        .song-selector {
+            margin: 20px 0;
+        }
+        
+        select {
+            padding: 10px 15px;
+            border-radius: 50px;
+            border: 2px solid #e8c4c4;
+            background: white;
+            font-family: inherit;
+            font-size: 1em;
+            width: 80%;
+            max-width: 300px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #e75480;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .music-box-top {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 40px;
+            background: #f0d8d8;
+            border-radius: 10px 10px 0 0;
+            border: 3px solid #e8c4c4;
+            border-bottom: none;
+        }
+        
+        .music-box-stand {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 20px;
+            background: #d8b0b0;
+            border-radius: 0 0 5px 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="scene" id="scene"></div>
+    
+    <div class="music-box">
+        <div class="music-box-top"></div>
+        <h1>专属八音盒</h1>
+        <p>播放属于你们的旋律</p>
+        
+        <div class="song-selector">
+            <select id="songSelect">
+                <option value="furElise">致爱丽丝</option>
+                <option value="canon">卡农</option>
+                <option value="moonlight">月光奏鸣曲</option>
+                <option value="loveStory">爱情故事</option>
+                <option value="custom">自定义旋律</option>
+            </select>
+        </div>
+        
+        <div class="controls">
+            <button id="playBtn">播放</button>
+            <button id="stopBtn">停止</button>
+        </div>
+        
+        <div id="customMelody" style="display: none;">
+            <textarea id="melodyInput" placeholder="输入你的旋律代码，例如: C4 D4 E4 F4 G4" style="width: 80%; height: 60px; margin: 10px 0; padding: 10px; border-radius: 10px; border: 2px solid #e8c4c4;"></textarea>
+            <button id="saveMelodyBtn">保存旋律</button>
+        </div>
+        
+        <a href="index.html" class="back-link">← 返回浪漫代码收藏馆</a>
+        <div class="music-box-stand"></div>
+    </div>
+
+    <script>
+        // 创建手绘场景元素
+        function createScene() {
+            const scene = document.getElementById('scene');
+            
+            // 创建云朵
+            for (let i = 0; i < 5; i++) {
+                const cloud = document.createElement('div');
+                cloud.className = 'hand-drawn cloud';
+                cloud.style.top = `${Math.random() * 30 + 10}%`;
+                cloud.style.left = `${Math.random() * 100}%`;
+                cloud.style.animationDuration = `${Math.random() * 20 + 20}s`;
+                cloud.style.animationDelay = `${Math.random() * 10}s`;
+                scene.appendChild(cloud);
+            }
+            
+            // 创建小鸟
+            for (let i = 0; i < 3; i++) {
+                const bird = document.createElement('div');
+                bird.className = 'hand-drawn bird';
+                bird.style.top = `${Math.random() * 30 + 20}%`;
+                bird.style.left = `${Math.random() * 100}%`;
+                bird.style.animationDuration = `${Math.random() * 10 + 15}s`;
+                bird.style.animationDelay = `${Math.random() * 5}s`;
+                scene.appendChild(bird);
+            }
+            
+            // 创建漂浮的心
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.className = 'hand-drawn heart';
+                heart.style.left = `${Math.random() * 100}%`;
+                heart.style.bottom = '0';
+                heart.style.animationDuration = `${Math.random() * 5 + 5}s`;
+                scene.appendChild(heart);
+                
+                // 动画结束后移除
+                setTimeout(() => {
+                    heart.remove();
+                }, 8000);
+            }, 1000);
+        }
+        
+        // 音频上下文和设置
+        let audioContext;
+        let currentOscillator;
+        let currentNotes = [];
+        
+        // 音符频率映射
+        const noteFrequencies = {
+            'C4': 261.63, 'C#4': 277.18, 'D4': 293.66, 'D#4': 311.13,
+            'E4': 329.63, 'F4': 349.23, 'F#4': 369.99, 'G4': 392.00,
+            'G#4': 415.30, 'A4': 440.00, 'A#4': 466.16, 'B4': 493.88,
+            'C5': 523.25, 'C#5': 554.37, 'D5': 587.33, 'D#5': 622.25,
+            'E5': 659.25, 'F5': 698.46, 'F#5': 739.99, 'G5': 783.99,
+            'G#5': 830.61, 'A5': 880.00, 'A#5': 932.33, 'B5': 987.77
+        };
+        
+        // 预设旋律
+        const melodies = {
+            furElise: ['E5', 'D#5', 'E5', 'D#5', 'E5', 'B4', 'D5', 'C5', 'A4', 
+                      'C4', 'E4', 'A4', 'B4', 'E4', 'G#4', 'B4', 'C5'],
+            canon: ['D4', 'A4', 'B4', 'F#4', 'G4', 'D4', 'G4', 'A4', 
+                  'D4', 'A4', 'B4', 'F#4', 'G4', 'D4', 'G4', 'A4'],
+            moonlight: ['C#4', 'G#4', 'A#4', 'G#4', 'F#4', 'G#4', 'A#4', 'G#4',
+                       'C#4', 'G#4', 'A#4', 'G#4', 'F#4', 'G#4', 'A#4', 'G#4'],
+            loveStory: ['C5', 'B4', 'A4', 'G4', 'F4', 'G4', 'A4', 'G4',
+                       'F4', 'E4', 'F4', 'G4', 'A4', 'G4', 'F4', 'E4']
+        };
+        
+        // 初始化音频上下文
+        function initAudio() {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        
+        // 播放音符
+        function playNote(frequency, duration, time) {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.value = frequency;
+            
+            gainNode.gain.setValueAtTime(0, time);
+            gainNode.gain.linearRampToValueAtTime(0.3, time + 0.01);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, time + duration);
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.start(time);
+            oscillator.stop(time + duration);
+            
+            // 创建漂浮的音符视觉效果
+            createMusicNote();
+            
+            return oscillator;
+        }
+        
+        // 创建漂浮的音符
+        function createMusicNote() {
+            const notes = ['♪', '♫', '♩', '♬'];
+            const note = document.createElement('div');
+            note.className = 'music-note';
+            note.textContent = notes[Math.floor(Math.random() * notes.length)];
+            note.style.left = `${Math.random() * 100}%`;
+            note.style.top = `${Math.random() * 30 + 60}%`;
+            note.style.animationDuration = `${Math.random() * 2 + 2}s`;
+            document.body.appendChild(note);
+            
+            // 动画结束后移除
+            setTimeout(() => {
+                note.remove();
+            }, 3000);
+        }
+        
+        // 播放旋律
+        function playMelody(notes) {
+            stopMelody();
+            currentNotes = notes;
+            
+            if (!audioContext) {
+                initAudio();
+            }
+            
+            const now = audioContext.currentTime;
+            let time = now;
+            
+            for (let i = 0; i < notes.length; i++) {
+                const note = notes[i];
+                const frequency = noteFrequencies[note] || 440;
+                const duration = 0.5;
+                
+                playNote(frequency, duration, time);
+                time += duration * 0.8; // 稍微重叠音符
+            }
+            
+            // 循环播放
+            const melodyDuration = notes.length * 0.5 * 0.8;
+            currentOscillator = setTimeout(() => {
+                playMelody(notes);
+            }, melodyDuration * 1000);
+        }
+        
+        // 停止播放
+        function stopMelody() {
+            if (currentOscillator) {
+                clearTimeout(currentOscillator);
+                currentOscillator = null;
+            }
+        }
+        
+        // 初始化
+        window.addEventListener('load', function() {
+            createScene();
+            
+            // 按钮事件
+            document.getElementById('playBtn').addEventListener('click', function() {
+                const selectedSong = document.getElementById('songSelect').value;
+                
+                if (selectedSong === 'custom') {
+                    const customMelody = localStorage.getItem('customMelody');
+                    if (customMelody) {
+                        playMelody(customMelody.split(' '));
+                    } else {
+                        alert('请先保存自定义旋律');
+                    }
+                } else {
+                    playMelody(melodies[selectedSong]);
+                }
+            });
+            
+            document.getElementById('stopBtn').addEventListener('click', stopMelody);
+            
+            // 歌曲选择变化
+            document.getElementById('songSelect').addEventListener('change', function() {
+                const selectedSong = this.value;
+                const customDiv = document.getElementById('customMelody');
+                
+                if (selectedSong === 'custom') {
+                    customDiv.style.display = 'block';
+                } else {
+                    customDiv.style.display = 'none';
+                }
+            });
+            
+            // 保存自定义旋律
+            document.getElementById('saveMelodyBtn').addEventListener('click', function() {
+                const melodyInput = document.getElementById('melodyInput').value.trim();
+                if (melodyInput) {
+                    localStorage.setItem('customMelody', melodyInput);
+                    alert('自定义旋律已保存！');
+                } else {
+                    alert('请输入有效的旋律代码');
+                }
+            });
+            
+            // 加载保存的自定义旋律
+            const savedMelody = localStorage.getItem('customMelody');
+            if (savedMelody) {
+                document.getElementById('melodyInput').value = savedMelody;
+            }
+        });
+    </script>
+</body>
+</html>

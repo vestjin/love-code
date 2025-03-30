@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>共享日记本</title>
+    <style>
+        :root {
+            --primary-color: #6a5acd;
+            --secondary-color: #9370db;
+            --accent-color: #e6e6fa;
+            --text-color: #333;
+            --light-text: #777;
+            --border-color: #ddd;
+            --user1-color: #ff9a9e;
+            --user2-color: #a18cd1;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f9f9f9;
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: var(--light-text);
+            font-style: italic;
+        }
+        
+        .auth-section {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .auth-form {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            width: 300px;
+        }
+        
+        .auth-form h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 1.3em;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-family: inherit;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+        
+        .diary-app {
+            display: none;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .diary-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .logout-btn {
+            background: white;
+            color: var(--primary-color);
+        }
+        
+        .logout-btn:hover {
+            background: var(--accent-color);
+        }
+        
+        .diary-container {
+            display: flex;
+            min-height: 500px;
+        }
+        
+        .calendar-sidebar {
+            width: 300px;
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            background: #fcfcff;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .month-nav {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .month-nav button {
+            padding: 5px 10px;
+            background: var(--accent-color);
+            color: var(--primary-color);
+        }
+        
+        .current-month {
+            font-weight: bold;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        
+        .calendar-day-header {
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.8em;
+            color: var(--light-text);
+            padding: 5px;
+        }
+        
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .calendar-day:hover {
+            background: var(--accent-color);
+        }
+        
+        .calendar-day.today {
+            background: var(--primary-color);
+            color: white;
+            font-weight: bold;
+        }
+        
+        .calendar-day.selected {
+            background: var(--secondary-color);
+            color: white;
+            font-weight: bold;
+        }
+        
+        .calendar-day.has-entry {
+            position: relative;
+        }
+        
+        .calendar-day.has-entry::after {
+            content: '';
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--primary-color);
+        }
+        
+        .calendar-day.today.has-entry::after,
+        .calendar-day.selected.has-entry::after {
+            background: white;
+        }
+        
+        .diary-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .diary-date-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: bold;
+            background: #fcfcff;
+        }
+        
+        .diary-entries {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        .entry-section {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .entry-section.user1 {
+            border-right: 1px solid var(--border-color);
+            background: rgba(255, 154, 158, 0.05);
+        }
+        
+        .entry-section.user2 {
+            background: rgba(161, 140, 209, 0.05);
+        }
+        
+        .entry-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .user-badge {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .user1-badge {
+            background: var(--user1-color);
+        }
+        
+        .user2-badge {
+            background: var(--user2-color);
+        }
+        
+        .entry-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .entry-text {
+            flex: 1;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            overflow-y: auto;
+        }
+        
+        .no-entry {
+            color: var(--light-text);
+            font-style: italic;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .entry-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .sync-status {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.9em;
+            color: var(--light-text);
+            border-top: 1px solid var(--border-color);
+            background: #fcfcff;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .auth-section {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .diary-container {
+                flex-direction: column;
+            }
+            
+            .calendar-sidebar {
+                width: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+            
+            .diary-entries {
+                flex-direction: column;
+            }
+            
+            .entry-section.user1 {
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>共享日记本 <span style="color:#6a5acd;">✍️</span></h1>
+            <p class="subtitle">记录各自视角下的同一天</p>
+        </header>
+        
+        <div id="authSection" class="auth-section">
+            <div class="auth-form">
+                <h2>用户1登录</h2>
+                <div class="form-group">
+                    <label for="user1Email">邮箱</label>
+                    <input type="email" id="user1Email" placeholder="user1@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="user1Password">密码</label>
+                    <input type="password" id="user1Password" placeholder="输入密码">
+                </div>
+                <button id="user1LoginBtn">登录</button>
+            </div>
+            
+            <div class="auth-form">
+                <h2>用户2登录</h2>
+                <div class="form-group">
+                    <label for="user2Email">邮箱</label>
+                    <input type="email" id="user2Email" placeholder="user2@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="user2Password">密码</label>
+                    <input type="password" id="user2Password" placeholder="输入密码">
+                </div>
+                <button id="user2LoginBtn">登录</button>
+            </div>
+        </div>
+        
+        <div id="diaryApp" class="diary-app">
+            <div class="diary-header">
+                <div class="user-info">
+                    <div class="user-avatar" id="currentUserAvatar">U</div>
+                    <span id="currentUserName">用户</span>
+                </div>
+                <button class="logout-btn" id="logoutBtn">退出登录</button>
+            </div>
+            
+            <div class="diary-container">
+                <div class="calendar-sidebar">
+                    <div class="calendar-header">
+                        <div class="month-nav">
+                            <button id="prevMonthBtn">&lt;</button>
+                            <span class="current-month" id="currentMonth">2023年11月</span>
+                            <button id="nextMonthBtn">&gt;</button>
+                        </div>
+                    </div>
+                    
+                    <div class="calendar-grid" id="calendarDayHeaders">
+                        <div class="calendar-day-header">日</div>
+                        <div class="calendar-day-header">一</div>
+                        <div class="calendar-day-header">二</div>
+                        <div class="calendar-day-header">三</div>
+                        <div class="calendar-day-header">四</div>
+                        <div class="calendar-day-header">五</div>
+                        <div class="calendar-day-header">六</div>
+                    </div>
+                    
+                    <div class="calendar-grid" id="calendarDays"></div>
+                </div>
+                
+                <div class="diary-main">
+                    <div class="diary-date-header" id="diaryDateHeader">
+                        2023年11月15日 星期三
+                    </div>
+                    
+                    <div class="diary-entries">
+                        <div class="entry-section user1">
+                            <div class="entry-user">
+                                <div class="user-badge user1-badge">A</div>
+                                <span id="user1Name">用户1</span>
+                            </div>
+                            
+                            <div class="entry-content">
+                                <div class="entry-text" id="user1Entry">
+                                    <p class="no-entry">这一天还没有记录</p>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="user1EntryInput">写下你的记录</label>
+                                    <textarea id="user1EntryInput" placeholder="今天发生了什么特别的事情吗？"></textarea>
+                                </div>
+                                
+                                <div class="entry-actions">
+                                    <button id="user1SaveBtn">保存</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="entry-section user2">
+                            <div class="entry-user">
+                                <div class="user-badge user2-badge">B</div>
+                                <span id="user2Name">用户2</span>
+                            </div>
+                            
+                            <div class="entry-content">
+                                <div class="entry-text" id="user2Entry">
+                                    <p class="no-entry">这一天还没有记录</p>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="user2EntryInput">写下你的记录</label>
+                                    <textarea id="user2EntryInput" placeholder="今天你有什么感受？"></textarea>
+                                </div>
+                                
+                                <div class="entry-actions">
+                                    <button id="user2SaveBtn">保存</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sync-status" id="syncStatus">
+                        最后同步时间: 刚刚
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <a href="index.html" class="back-link">← 返回浪漫代码收藏馆</a>
+    </div>
+
+    <script>
+        // 模拟数据库
+        let diaryDB = {
+            // 用户数据
+            users: {
+                "user1@example.com": {
+                    id: "user1",
+                    name: "小明",
+                    password: "password1",
+                    avatar: "A"
+                },
+                "user2@example.com": {
+                    id: "user2",
+                    name: "小红",
+                    password: "password2",
+                    avatar: "B"
+                }
+            },
+            
+            // 日记条目
+            entries: {
+                "2023-11-15": {
+                    user1: {
+                        text: "今天和小红一起去了公园，秋天的落叶很美。",
+                        timestamp: "2023-11-15T18:30:00"
+                    },
+                    user2: {
+                        text: "和小明在公园野餐，他准备了我最喜欢的三明治！",
+                        timestamp: "2023-11-15T19:15:00"
+                    }
+                },
+                "2023-11-18": {
+                    user1: {
+                        text: "加班到很晚，但小红给我发了鼓励的消息，感觉很温暖。",
+                        timestamp: "2023-11-18T22:45:00"
+                    },
+                    user2: {
+                        text: "今天小明加班，给他点了外卖送到公司，希望他不要太累。",
+                        timestamp: "2023-11-18T20:30:00"
+                    }
+                }
+            }
+        };
+        
+        // 当前应用状态
+        let appState = {
+            currentUser: null,
+            currentDate: new Date(),
+            viewingDate: new Date(),
+            viewingMonth: new Date().getMonth(),
+            viewingYear: new Date().getFullYear()
+        };
+        
+        // DOM元素
+        const authSection = document.getElementById('authSection');
+        const diaryApp = document.getElementById('diaryApp');
+        
+        // 登录相关
+        const user1Email = document.getElementById('user1Email');
+        const user1Password = document.getElementById('user1Password');
+        const user1LoginBtn = document.getElementById('user1LoginBtn');
+        
+        const user2Email = document.getElementById('user2Email');
+        const user2Password = document.getElementById('user2Password');
+        const user2LoginBtn = document.getElementById('user2LoginBtn');
+        
+        // 日记应用相关
+        const currentUserAvatar = document.getElementById('currentUserAvatar');
+        const currentUserName = document.getElementById('currentUserName');
+        const logoutBtn = document.getElementById('logoutBtn');
+        
+        // 日历相关
+        const prevMonthBtn = document.getElementById('prevMonthBtn');
+        const nextMonthBtn = document.getElementById('nextMonthBtn');
+        const currentMonth = document.getElementById('currentMonth');
+        const calendarDays = document.getElementById('calendarDays');
+        
+        // 日记内容相关
+        const diaryDateHeader = document.getElementById('diaryDateHeader');
+        const user1Name = document.getElementById('user1Name');
+        const user2Name = document.getElementById('user2Name');
+        const user1Entry = document.getElementById('user1Entry');
+        const user2Entry = document.getElementById('user2Entry');
+        const user1EntryInput = document.getElementById('user1EntryInput');
+        const user2EntryInput = document.getElementById('user2EntryInput');
+        const user1SaveBtn = document.getElementById('user1SaveBtn');
+        const user2SaveBtn = document.getElementById('user2SaveBtn');
+        const syncStatus = document.getElementById('syncStatus');
+        
+        // 登录功能
+        user1LoginBtn.addEventListener('click', () => login('user1'));
+        user2LoginBtn.addEventListener('click', () => login('user2'));
+        
+        function login(userType) {
+            const emailField = userType === 'user1' ? user1Email : user2Email;
+            const passwordField = userType === 'user1' ? user1Password : user2Password;
+            
+            const email = emailField.value;
+            const password = passwordField.value;
+            
+            // 验证用户
+            if (diaryDB.users[email] && diaryDB.users[email].password === password) {
+                appState.currentUser = diaryDB.users[email];
+                initApp();
+            } else {
+                alert('邮箱或密码不正确');
+            }
+        }
+        
+        // 退出登录
+        logoutBtn.addEventListener('click', () => {
+            appState.currentUser = null;
+            authSection.style.display = 'flex';
+            diaryApp.style.display = 'none';
+            
+            // 清空输入
+            user1Email.value = '';
+            user1Password.value = '';
+            user2Email.value = '';
+            user2Password.value = '';
+        });
+        
+        // 初始化应用
+        function initApp() {
+            authSection.style.display = 'none';
+            diaryApp.style.display = 'block';
+            
+            // 设置当前用户信息
+            currentUserAvatar.textContent = appState.currentUser.avatar;
+            currentUserName.textContent = appState.currentUser.name;
+            
+            // 设置用户名称
+            user1Name.textContent = diaryDB.users['user1@example.com'].name;
+            user2Name.textContent = diaryDB.users['user2@example.com'].name;
+            
+            // 初始化日历
+            updateCalendar();
+            
+            // 加载今天的日记
+            loadDiaryEntries(formatDate(appState.currentDate));
+            
+            // 设置按钮事件
+            prevMonthBtn.addEventListener('click', goToPrevMonth);
+            nextMonthBtn.addEventListener('click', goToNextMonth);
+            user1SaveBtn.addEventListener('click', () => saveEntry('user1'));
+            user2SaveBtn.addEventListener('click', () => saveEntry('user2'));
+        }
+        
+        // 更新日历显示
+        function updateCalendar() {
+            // 设置月份标题
+            currentMonth.textContent = `${appState.viewingYear}年${appState.viewingMonth + 1}月`;
+            
+            // 清空日历
+            calendarDays.innerHTML = '';
+            
+            // 获取当月第一天和最后一天
+            const firstDay = new Date(appState.viewingYear, appState.viewingMonth, 1);
+            const lastDay = new Date(appState.viewingYear, appState.viewingMonth + 1, 0);
+            
+            // 获取第一天是星期几 (0-6, 0是星期日)
+            const firstDayOfWeek = firstDay.getDay();
+            
+            // 添加上个月的日期
+            for (let i = 0; i < firstDayOfWeek; i++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                calendarDays.appendChild(dayElement);
+            }
+            
+            // 添加当月的日期
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+                
+                const currentDate = new Date(appState.viewingYear, appState.viewingMonth, day);
+                const dateStr = formatDate(currentDate);
+                
+                // 检查是否有日记条目
+                if (diaryDB.entries[dateStr] && 
+                    (diaryDB.entries[dateStr].user1 || diaryDB.entries[dateStr].user2)) {
+                    dayElement.classList.add('has-entry');
+                }
+                
+                // 标记今天
+                if (isSameDay(currentDate, new Date())) {
+                    dayElement.classList.add('today');
+                }
+                
+                // 标记选中的日期
+                if (isSameDay(currentDate, appState.viewingDate)) {
+                    dayElement.classList.add('selected');
+                }
+                
+                // 点击事件
+                dayElement.addEventListener('click', () => {
+                    appState.viewingDate = currentDate;
+                    loadDiaryEntries(dateStr);
+                    updateCalendar();
+                });
+                
+                calendarDays.appendChild(dayElement);
+            }
+        }
+        
+        // 导航到上个月
+        function goToPrevMonth() {
+            appState.viewingMonth--;
+            if (appState.viewingMonth < 0) {
+                appState.viewingMonth = 11;
+                appState.viewingYear--;
+            }
+            updateCalendar();
+        }
+        
+        // 导航到下个月
+        function goToNextMonth() {
+            appState.viewingMonth++;
+            if (appState.viewingMonth > 11) {
+                appState.viewingMonth = 0;
+                appState.viewingYear++;
+            }
+            updateCalendar();
+        }
+        
+        // 加载日记条目
+        function loadDiaryEntries(dateStr) {
+            // 更新日期标题
+            const date = new Date(dateStr);
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            diaryDateHeader.textContent = date.toLocaleDateString('zh-CN', options);
+            
+            // 加载用户1的条目
+            if (diaryDB.entries[dateStr] && diaryDB.entries[dateStr].user1) {
+                user1Entry.innerHTML = `<p>${diaryDB.entries[dateStr].user1.text}</p>`;
+                user1EntryInput.value = diaryDB.entries[dateStr].user1.text;
+            } else {
+                user1Entry.innerHTML = '<p class="no-entry">这一天还没有记录</p>';
+                user1EntryInput.value = '';
+            }
+            
+            // 加载用户2的条目
+            if (diaryDB.entries[dateStr] && diaryDB.entries[dateStr].user2) {
+                user2Entry.innerHTML = `<p>${diaryDB.entries[dateStr].user2.text}</p>`;
+                user2EntryInput.value = diaryDB.entries[dateStr].user2.text;
+            } else {
+                user2Entry.innerHTML = '<p class="no-entry">这一天还没有记录</p>';
+                user2EntryInput.value = '';
+            }
+            
+            // 更新同步状态
+            updateSyncStatus();
+        }
+        
+        // 保存日记条目
+        function saveEntry(userType) {
+            const dateStr = formatDate(appState.viewingDate);
+            const entryInput = userType === 'user1' ? user1EntryInput : user2EntryInput;
+            const entryText = entryInput.value.trim();
+            
+            if (!entryText) {
+                alert('请输入日记内容');
+                return;
+            }
+            
+            // 确保该日期的条目存在
+            if (!diaryDB.entries[dateStr]) {
+                diaryDB.entries[dateStr] = {};
+            }
+            
+            // 保存条目
+            diaryDB.entries[dateStr][userType] = {
+                text: entryText,
+                timestamp: new Date().toISOString()
+            };
+            
+            // 更新显示
+            loadDiaryEntries(dateStr);
+            updateCalendar();
+            
+            // 模拟同步
+            simulateSync();
+        }
+        
+        // 更新同步状态
+        function updateSyncStatus() {
+            const dateStr = formatDate(appState.viewingDate);
+            let latestSync = null;
+            
+            if (diaryDB.entries[dateStr]) {
+                if (diaryDB.entries[dateStr].user1 && diaryDB.entries[dateStr].user2) {
+                    latestSync = new Date(Math.max(
+                        new Date(diaryDB.entries[dateStr].user1.timestamp),
+                        new Date(diaryDB.entries[dateStr].user2.timestamp)
+                    ));
+                } else if (diaryDB.entries[dateStr].user1) {
+                    latestSync = new Date(diaryDB.entries[dateStr].user1.timestamp);
+                } else if (diaryDB.entries[dateStr].user2) {
+                    latestSync = new Date(diaryDB.entries[dateStr].user2.timestamp);
+                }
+            }
+            
+            if (latestSync) {
+                syncStatus.textContent = `最后同步时间: ${formatTime(latestSync)}`;
+            } else {
+                syncStatus.textContent = '还未同步';
+            }
+        }
+        
+        // 模拟同步
+        function simulateSync() {
+            syncStatus.textContent = "同步中...";
+            
+            setTimeout(() => {
+                updateSyncStatus();
+            }, 1000);
+        }
+        
+        // 辅助函数: 格式化日期为YYYY-MM-DD
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        // 辅助函数: 格式化时间
+        function formatTime(date) {
+            return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+        }
+        
+        // 辅助函数: 检查是否是同一天
+        function isSameDay(date1, date2) {
+            return date1.getFullYear() === date2.getFullYear() &&
+                   date1.getMonth() === date2.getMonth() &&
+                   date1.getDate() === date2.getDate();
+        }
+        
+        // 模拟实时更新 (在实际应用中应该是WebSocket或轮询)
+        setInterval(() => {
+            if (appState.currentUser) {
+                // 这里应该是从服务器获取更新
+                // 现在只是随机更新同步状态
+                if (Math.random() > 0.8) {
+                    updateSyncStatus();
+                }
+            }
+        }, 10000);
+    </script>
+</body>
+</html>

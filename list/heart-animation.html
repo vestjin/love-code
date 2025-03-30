@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>跳动的心 - 3D爱心动画</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+        
+        .container {
+            text-align: center;
+            z-index: 10;
+        }
+        
+        h1 {
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+        
+        .heart-container {
+            perspective: 1000px;
+            margin: 0 auto;
+            width: 200px;
+            height: 200px;
+        }
+        
+        .heart {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+        
+        .heart:before, .heart:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            width: 100px;
+            height: 160px;
+            background: #ff4d6d;
+            border-radius: 50px 50px 0 0;
+            box-shadow: 0 0 50px rgba(255, 77, 109, 0.6);
+        }
+        
+        .heart:before {
+            left: 100px;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+        
+        .heart:after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+        
+        .heart-inner {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: #ff758f;
+            border-radius: 50%;
+            top: 60px;
+            left: 60px;
+            box-shadow: 0 0 30px rgba(255, 117, 143, 0.8);
+            animation: innerBeat 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes heartbeat {
+            0% {
+                transform: scale(1) rotateY(0deg);
+            }
+            14% {
+                transform: scale(1.1) rotateY(10deg);
+            }
+            28% {
+                transform: scale(1) rotateY(0deg);
+            }
+            42% {
+                transform: scale(1.1) rotateY(-10deg);
+            }
+            70% {
+                transform: scale(1) rotateY(0deg);
+            }
+        }
+        
+        @keyframes innerBeat {
+            0%, 100% {
+                transform: scale(1);
+                background: #ff758f;
+            }
+            50% {
+                transform: scale(1.2);
+                background: #ff8fa3;
+            }
+        }
+        
+        .message {
+            color: white;
+            margin-top: 30px;
+            font-size: 1.2em;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            animation: fadeIn 2s ease-in-out forwards;
+            animation-delay: 1s;
+        }
+        
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .floating-hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .floating-heart {
+            position: absolute;
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            animation: float 10s linear infinite;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-20vh) scale(1);
+                opacity: 0;
+            }
+        }
+        
+        .back-link {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-50%) translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>为你跳动的心</h1>
+        
+        <div class="heart-container">
+            <div class="heart">
+                <div class="heart-inner"></div>
+            </div>
+        </div>
+        
+        <div class="message">
+            我的心跳节奏<br>
+            只为你而存在
+        </div>
+    </div>
+    
+    <div class="floating-hearts" id="floatingHearts"></div>
+    
+    <a href="index.html" class="back-link">← 返回浪漫代码收藏馆</a>
+    
+    <script>
+        // 创建漂浮的心形
+        function createFloatingHearts() {
+            const container = document.getElementById('floatingHearts');
+            const heartCount = 15;
+            
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.innerHTML = '❤';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = 5 + Math.random() * 10 + 's';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                heart.style.fontSize = 10 + Math.random() * 20 + 'px';
+                container.appendChild(heart);
+            }
+        }
+        
+        // 页面加载后创建漂浮的心
+        window.addEventListener('load', createFloatingHearts);
+        
+        // 点击心形时放大效果
+        document.querySelector('.heart-container').addEventListener('click', function() {
+            const heart = document.querySelector('.heart');
+            heart.style.animation = 'none';
+            void heart.offsetWidth; // 触发重绘
+            heart.style.animation = 'heartbeat 0.5s ease-in-out';
+            
+            // 创建点击心形特效
+            createClickHeart(event.clientX, event.clientY);
+        });
+        
+        // 创建点击心形特效
+        function createClickHeart(x, y) {
+            const heart = document.createElement('div');
+            heart.style.position = 'absolute';
+            heart.style.left = (x - 15) + 'px';
+            heart.style.top = (y - 15) + 'px';
+            heart.style.fontSize = '30px';
+            heart.style.color = '#ff4d6d';
+            heart.style.zIndex = '100';
+            heart.innerHTML = '❤';
+            heart.style.animation = 'clickHeart 1s ease-out forwards';
+            
+            document.body.appendChild(heart);
+            
+            // 定义点击动画
+            const keyframes = `
+                @keyframes clickHeart {
+                    0% {
+                        transform: scale(1);
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: scale(3);
+                        opacity: 0;
+                    }
+                }
+            `;
+            
+            // 添加动画样式
+            const style = document.createElement('style');
+            style.innerHTML = keyframes;
+            document.head.appendChild(style);
+            
+            // 动画结束后移除元素
+            setTimeout(() => {
+                heart.remove();
+                style.remove();
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

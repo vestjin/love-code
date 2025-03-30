@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>永不凋谢的玫瑰</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        canvas {
+            display: block;
+            cursor: pointer;
+        }
+        
+        .title {
+            color: #fff;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 0, 100, 0.8);
+            z-index: 10;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #ff0064;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            color: #ff8fab;
+            font-style: italic;
+        }
+        
+        .back-link {
+            position: fixed;
+            bottom: 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s;
+            z-index: 100;
+        }
+        
+        .back-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+        }
+        
+        .heart {
+            color: #ff0064;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="title">
+        <h1>永不凋谢的玫瑰 <span class="heart">❤</span></h1>
+        <p class="subtitle">点击旋转玫瑰，我们的爱情如这玫瑰般永恒</p>
+    </div>
+    
+    <canvas id="roseCanvas"></canvas>
+    
+    <a href="index.html" class="back-link">← 返回浪漫代码收藏馆</a>
+
+    <script>
+        const canvas = document.getElementById('roseCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 设置画布大小为窗口大小
+        function resizeCanvas() {
+            const size = Math.min(window.innerWidth, window.innerHeight) * 0.9;
+            canvas.width = size;
+            canvas.height = size;
+        }
+        
+        window.addEventListener('load', resizeCanvas);
+        window.addEventListener('resize', resizeCanvas);
+        
+        // 3D玫瑰参数
+        let time = 0;
+        let rotationX = 0;
+        let rotationY = 0;
+        let isDragging = false;
+        let lastX, lastY;
+        
+        // 鼠标交互
+        canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            lastX = e.clientX;
+            lastY = e.clientY;
+        });
+        
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            
+            const deltaX = e.clientX - lastX;
+            const deltaY = e.clientY - lastY;
+            
+            rotationY += deltaX * 0.01;
+            rotationX += deltaY * 0.01;
+            
+            lastX = e.clientX;
+            lastY = e.clientY;
+        });
+        
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+        
+        // 触摸屏支持
+        canvas.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            lastX = e.touches[0].clientX;
+            lastY = e.touches[0].clientY;
+            e.preventDefault();
+        });
+        
+        window.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            
+            const deltaX = e.touches[0].clientX - lastX;
+            const deltaY = e.touches[0].clientY - lastY;
+            
+            rotationY += deltaX * 0.01;
+            rotationX += deltaY * 0.01;
+            
+            lastX = e.touches[0].clientX;
+            lastY = e.touches[0].clientY;
+            e.preventDefault();
+        });
+        
+        window.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+        
+        // 3D玫瑰绘制函数
+        function drawRose() {
+            time += 0.01;
+            
+            // 清除画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 设置中心点
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const size = Math.min(canvas.width, canvas.height) * 0.4;
+            
+            // 绘制玫瑰
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            
+            // 应用旋转
+            ctx.rotateX = rotationX;
+            ctx.rotateY = rotationY;
+            
+            // 玫瑰花瓣参数
+            const petalCount = 100;
+            const layers = 5;
+            
+            for (let l = 0; l < layers; l++) {
+                const layerRatio = l / layers;
+                const petalSize = size * (0.5 + layerRatio * 0.5);
+                const petalColor = `hsl(${330 + l * 10}, 100%, ${50 + l * 5}%)`;
+                
+                for (let i = 0; i < petalCount; i++) {
+                    const ratio = i / petalCount;
+                    const angle = ratio * Math.PI * 2 + time * 0.5;
+                    const spiralRatio = ratio * 0.5 + layerRatio * 0.5;
+                    
+                    // 3D效果
+                    const x = Math.cos(angle + rotationY) * spiralRatio * petalSize;
+                    const y = Math.sin(angle + rotationX) * spiralRatio * petalSize;
+                    const z = Math.sin(ratio * Math.PI * 4 + time) * petalSize * 0.2;
+                    
+                    // 花瓣大小和透明度
+                    const scale = 0.1 + Math.sin(ratio * Math.PI) * 0.9;
+                    const alpha = 0.3 + 0.7 * (1 - layerRatio);
+                    
+                    // 绘制花瓣
+                    ctx.save();
+                    ctx.translate(x, y + z);
+                    ctx.rotate(angle);
+                    
+                    // 花瓣形状
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.bezierCurveTo(
+                        -10 * scale, -30 * scale,
+                        -40 * scale, -20 * scale,
+                        -20 * scale, 40 * scale
+                    );
+                    ctx.bezierCurveTo(
+                        0, 60 * scale,
+                        20 * scale, 40 * scale,
+                        40 * scale, -20 * scale
+                    );
+                    ctx.bezierCurveTo(
+                        10 * scale, -30 * scale,
+                        0, 0,
+                        0, 0
+                    );
+                    
+                    // 花瓣颜色和阴影
+                    const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 40 * scale);
+                    gradient.addColorStop(0, petalColor);
+                    gradient.addColorStop(1, `hsl(330, 80%, 30%)`);
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.globalAlpha = alpha;
+                    ctx.shadowColor = `rgba(255, 0, 100, ${alpha * 0.5})`;
+                    ctx.shadowBlur = 15;
+                    ctx.fill();
+                    
+                    ctx.restore();
+                }
+            }
+            
+            // 绘制花茎
+            ctx.beginPath();
+            ctx.moveTo(0, size * 0.3);
+            ctx.lineTo(0, size * 1.5);
+            ctx.lineWidth = size * 0.03;
+            ctx.strokeStyle = '#2a5c2a';
+            ctx.shadowColor = 'rgba(0, 100, 0, 0.5)';
+            ctx.shadowBlur = 10;
+            ctx.stroke();
+            
+            // 绘制叶子
+            for (let i = 0; i < 2; i++) {
+                ctx.save();
+                ctx.translate(0, size * (0.7 + i * 0.3));
+                ctx.rotate(i * Math.PI * 0.5 + Math.sin(time) * 0.1);
+                
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(
+                    size * 0.3, -size * 0.1,
+                    size * 0.5, size * 0.2,
+                    0, size * 0.4
+                );
+                ctx.bezierCurveTo(
+                    -size * 0.5, size * 0.2,
+                    -size * 0.3, -size * 0.1,
+                    0, 0
+                );
+                
+                const leafGradient = ctx.createLinearGradient(0, -size * 0.1, 0, size * 0.4);
+                leafGradient.addColorStop(0, '#3a8c3a');
+                leafGradient.addColorStop(1, '#1a5c1a');
+                
+                ctx.fillStyle = leafGradient;
+                ctx.fill();
+                
+                ctx.restore();
+            }
+            
+            ctx.restore();
+            
+            // 动画循环
+            requestAnimationFrame(drawRose);
+        }
+        
+        // 开始绘制
+        resizeCanvas();
+        drawRose();
+        
+        // 添加3D旋转效果
+        CanvasRenderingContext2D.prototype.rotateX = function(angle) {
+            const c = Math.cos(angle);
+            const s = Math.sin(angle);
+            this.transform(1, 0, 0, c, 0, -s);
+        };
+        
+        CanvasRenderingContext2D.prototype.rotateY = function(angle) {
+            const c = Math.cos(angle);
+            const s = Math.sin(angle);
+            this.transform(c, 0, 0, 1, s, 0);
+        };
+    </script>
+</body>
+</html>

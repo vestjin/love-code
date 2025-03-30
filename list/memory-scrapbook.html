@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数字回忆录</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: #f9f3f3;
+            color: #555;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            color: #e75480;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-style: italic;
+            color: #888;
+        }
+        
+        .memory-book {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .memory-page {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+        
+        .memory-page:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .memory-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .memory-content {
+            padding: 20px;
+        }
+        
+        .memory-date {
+            color: #e75480;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .memory-title {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .memory-desc {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .add-memory {
+            text-align: center;
+            margin: 50px 0;
+        }
+        
+        .add-btn {
+            background: #e75480;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(231,84,128,0.3);
+        }
+        
+        .add-btn:hover {
+            background: #d23369;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(231,84,128,0.4);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #888;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        .form-group input, 
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+        }
+        
+        .form-group textarea {
+            height: 100px;
+        }
+        
+        .submit-btn {
+            background: #e75480;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background: #d23369;
+        }
+        
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            color: #e75480;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .heart {
+            color: #e75480;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>数字回忆录 <span class="heart">❤</span></h1>
+            <p class="subtitle">记录我们共同走过的点点滴滴</p>
+        </header>
+        
+        <div class="memory-book" id="memoryBook">
+            <!-- 回忆页面将通过JavaScript动态添加 -->
+        </div>
+        
+        <div class="add-memory">
+            <button class="add-btn" onclick="openModal()">+ 添加新回忆</button>
+        </div>
+        
+        <a href="index.html" class="back-link">← 返回浪漫代码收藏馆</a>
+    </div>
+    
+    <!-- 添加回忆的模态框 -->
+    <div class="modal" id="memoryModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2>添加新回忆</h2>
+            <form id="memoryForm">
+                <div class="form-group">
+                    <label for="memoryDate">日期</label>
+                    <input type="date" id="memoryDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="memoryTitle">标题</label>
+                    <input type="text" id="memoryTitle" placeholder="例如: 第一次约会" required>
+                </div>
+                <div class="form-group">
+                    <label for="memoryImage">图片URL</label>
+                    <input type="url" id="memoryImage" placeholder="输入图片链接" required>
+                </div>
+                <div class="form-group">
+                    <label for="memoryDesc">描述</label>
+                    <textarea id="memoryDesc" placeholder="写下这段回忆的细节..." required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">保存回忆</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // 初始化回忆录数据
+        let memories = [
+            {
+                date: "2023-05-20",
+                title: "我们的相遇",
+                image: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                description: "在五月的阳光下，我们的故事开始了。那天咖啡馆的香气，你微笑的样子，都深深印在我的记忆里。"
+            },
+            {
+                date: "2023-07-15",
+                title: "第一次旅行",
+                image: "https://images.unsplash.com/photo-1505228395891-9a51e7e86bf6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                description: "我们去了海边，听着海浪的声音，看着夕阳西下。那一刻，我知道我想和你一起看遍世界的美景。"
+            },
+            {
+                date: "2023-09-28",
+                title: "你的生日",
+                image: "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                description: "我偷偷准备了惊喜派对，看到你惊讶又开心的表情，我觉得所有的准备都值得了。"
+            }
+        ];
+        
+        // 从本地存储加载回忆
+        function loadMemories() {
+            const savedMemories = localStorage.getItem('memories');
+            if (savedMemories) {
+                memories = JSON.parse(savedMemories);
+            }
+            renderMemories();
+        }
+        
+        // 渲染回忆录
+        function renderMemories() {
+            const memoryBook = document.getElementById('memoryBook');
+            memoryBook.innerHTML = '';
+            
+            // 按日期排序
+            memories.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            memories.forEach(memory => {
+                const memoryPage = document.createElement('div');
+                memoryPage.className = 'memory-page';
+                
+                memoryPage.innerHTML = `
+                    <img src="${memory.image}" alt="${memory.title}" class="memory-image">
+                    <div class="memory-content">
+                        <div class="memory-date">${formatDate(memory.date)}</div>
+                        <h3 class="memory-title">${memory.title}</h3>
+                        <p class="memory-desc">${memory.description}</p>
+                    </div>
+                `;
+                
+                memoryBook.appendChild(memoryPage);
+            });
+        }
+        
+        // 格式化日期
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('zh-CN', options);
+        }
+        
+        // 打开模态框
+        function openModal() {
+            document.getElementById('memoryModal').style.display = 'flex';
+            document.getElementById('memoryDate').valueAsDate = new Date();
+        }
+        
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('memoryModal').style.display = 'none';
+            document.getElementById('memoryForm').reset();
+        }
+        
+        // 处理表单提交
+        document.getElementById('memoryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newMemory = {
+                date: document.getElementById('memoryDate').value,
+                title: document.getElementById('memoryTitle').value,
+                image: document.getElementById('memoryImage').value,
+                description: document.getElementById('memoryDesc').value
+            };
+            
+            memories.push(newMemory);
+            localStorage.setItem('memories', JSON.stringify(memories));
+            
+            renderMemories();
+            closeModal();
+        });
+        
+        // 点击模态框外部关闭
+        window.addEventListener('click', function(e) {
+            if (e.target === document.getElementById('memoryModal')) {
+                closeModal();
+            }
+        });
+        
+        // 页面加载时初始化
+        window.addEventListener('load', loadMemories);
+    </script>
+</body>
+</html>

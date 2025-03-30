@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>爱的问答</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #fff0f5 0%, #ffd6e7 100%);
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        h1 {
+            color: #e75480;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            color: #888;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        
+        .quiz-container {
+            display: none;
+            margin: 20px 0;
+        }
+        
+        .question {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #555;
+            font-weight: bold;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .option {
+            background: #f9f3f3;
+            border: 2px solid #e8c4c4;
+            border-radius: 50px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1em;
+        }
+        
+        .option:hover {
+            background: #f0d8d8;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .option.selected {
+            background: #e75480;
+            color: white;
+            border-color: #d23369;
+        }
+        
+        .result {
+            display: none;
+            font-size: 1.2em;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .correct {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .wrong {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .next-btn, .start-btn, .retry-btn {
+            background: #e75480;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px 5px;
+            box-shadow: 0 5px 15px rgba(231, 84, 128, 0.3);
+        }
+        
+        .next-btn:hover, .start-btn:hover, .retry-btn:hover {
+            background: #d23369;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(231, 84, 128, 0.4);
+        }
+        
+        .photo-gallery {
+            display: none;
+            margin-top: 30px;
+            animation: fadeIn 1s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .photo {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            border-radius: 15px;
+            margin: 20px auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+        
+        .photo.active {
+            display: block;
+        }
+        
+        .photo-caption {
+            font-style: italic;
+            color: #888;
+            margin-top: 10px;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: #f0d8d8;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff9a9e 0%, #fad0c4 100%);
+            border-radius: 5px;
+            transition: width 0.5s ease-in-out;
+        }
+        
+        .heart {
+            color: #e75480;
+            font-size: 1.5em;
+            margin: 0 5px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #e75480;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .intro {
+            margin-bottom: 30px;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #e75480;
+            opacity: 0;
+            z-index: 10;
+            animation: confetti 5s ease-in-out;
+        }
+        
+        @keyframes confetti {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(500px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>爱的问答 <span class="heart">❤</span></h1>
+        <p class="subtitle">回答关于你们的问题，解锁甜蜜回忆</p>
+        
+        <div class="intro" id="intro">
+            <p>这个测验包含5个关于你们两人的问题。<br>每答对一个问题，就能解锁一张甜蜜的回忆照片！</p>
+            <button class="start-btn" id="startBtn">开始测验</button>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            
+            <div class="question" id="question"></div>
+            
+            <div class="options" id="options"></div>
+            
+            <div class="result" id="result"></div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">下一题</button>
+        </div>
+        
+        <div class="photo-gallery" id="photoGallery">
+            <h2>解锁的回忆 <span class="heart">❤</span></h2>
+            
+            <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+                 alt="甜蜜回忆" class="photo" id="photo1">
+            <p class="photo-caption">第一次相遇的地方</p>
+            
+            <img src="https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+                 alt="甜蜜回忆" class="photo" id="photo2">
+            <p class="photo-caption">第一次约会</p>
+            
+            <img src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+                 alt="甜蜜回忆" class="photo" id="photo3">
+            <p class="photo-caption">第一次旅行</p>
+            
+            <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+                 alt="甜蜜回忆" class="photo" id="photo4">
+            <p class="photo-caption">特别的纪念日</p>
+            
+            <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+                 alt="甜蜜回忆" class="photo" id="photo5">
+            <p class="photo-caption">最幸福的时刻</p>
+            
+            <button class="retry-btn" id="retryBtn">再玩一次</button>
+        </div>
+        
+        <a href="index.html" class="back-link">← 返回浪漫代码收藏馆</a>
+    </div>
+
+    <script>
+        // 测验问题和答案
+        const quizData = [
+            {
+                question: "我们第一次见面是在哪里？",
+                options: ["咖啡馆", "学校", "朋友聚会", "工作场所"],
+                answer: "咖啡馆",
+                photoId: "photo1"
+            },
+            {
+                question: "我们第一次约会做了什么？",
+                options: ["看电影", "吃晚餐", "公园散步", "看展览"],
+                answer: "看电影",
+                photoId: "photo2"
+            },
+            {
+                question: "我最喜欢的颜色是什么？",
+                options: ["蓝色", "粉色", "绿色", "紫色"],
+                answer: "粉色",
+                photoId: "photo3"
+            },
+            {
+                question: "我们在一起的第一天是什么季节？",
+                options: ["春天", "夏天", "秋天", "冬天"],
+                answer: "夏天",
+                photoId: "photo4"
+            },
+            {
+                question: "我最喜欢你的哪一点？",
+                options: ["幽默感", "温柔体贴", "聪明才智", "全部都是"],
+                answer: "全部都是",
+                photoId: "photo5"
+            }
+        ];
+        
+        // DOM元素
+        const intro = document.getElementById('intro');
+        const quizContainer = document.getElementById('quizContainer');
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const resultElement = document.getElementById('result');
+        const nextBtn = document.getElementById('nextBtn');
+        const startBtn = document.getElementById('startBtn');
+        const photoGallery = document.getElementById('photoGallery');
+        const progressBar = document.getElementById('progressBar');
+        const retryBtn = document.getElementById('retryBtn');
+        
+        // 测验状态
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedOption = null;
+        let unlockedPhotos = [];
+        
+        // 开始测验
+        startBtn.addEventListener('click', startQuiz);
+        
+        // 重新开始
+        retryBtn.addEventListener('click', function() {
+            currentQuestion = 0;
+            score = 0;
+            unlockedPhotos = [];
+            startQuiz();
+        });
+        
+        // 开始测验函数
+        function startQuiz() {
+            intro.style.display = 'none';
+            quizContainer.style.display = 'block';
+            photoGallery.style.display = 'none';
+            
+            // 隐藏所有照片
+            document.querySelectorAll('.photo').forEach(photo => {
+                photo.style.display = 'none';
+            });
+            
+            loadQuestion();
+        }
+        
+        // 加载问题
+        function loadQuestion() {
+            resetState();
+            const question = quizData[currentQuestion];
+            
+            // 更新进度条
+            progressBar.style.width = `${(currentQuestion / quizData.length) * 100}%`;
+            
+            questionElement.textContent = `问题 ${currentQuestion + 1}: ${question.question}`;
+            
+            // 添加选项
+            question.options.forEach(option => {
+                const button = document.createElement('div');
+                button.textContent = option;
+                button.classList.add('option');
+                button.addEventListener('click', selectOption);
+                optionsElement.appendChild(button);
+            });
+        }
+        
+        // 重置状态
+        function resetState() {
+            while (optionsElement.firstChild) {
+                optionsElement.removeChild(optionsElement.firstChild);
+            }
+            
+            resultElement.style.display = 'none';
+            resultElement.className = 'result';
+            nextBtn.style.display = 'none';
+            selectedOption = null;
+        }
+        
+        // 选择选项
+        function selectOption(e) {
+            if (selectedOption) {
+                return;
+            }
+            
+            selectedOption = e.target;
+            const selectedAnswer = selectedOption.textContent;
+            const correctAnswer = quizData[currentQuestion].answer;
+            
+            // 高亮选中的选项
+            document.querySelectorAll('.option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            selectedOption.classList.add('selected');
+            
+            // 检查答案
+            if (selectedAnswer === correctAnswer) {
+                score++;
+                resultElement.textContent = '回答正确!';
+                resultElement.classList.add('correct');
+                
+                // 解锁照片
+                const photoId = quizData[currentQuestion].photoId;
+                unlockedPhotos.push(photoId);
+                createConfetti();
+            } else {
+                resultElement.textContent = `回答错误! 正确答案是: ${correctAnswer}`;
+                resultElement.classList.add('wrong');
+            }
+            
+            resultElement.style.display = 'block';
+            nextBtn.style.display = 'block';
+        }
+        
+        // 下一题
+        nextBtn.addEventListener('click', function() {
+            currentQuestion++;
+            
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                endQuiz();
+            }
+        });
+        
+        // 结束测验
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            photoGallery.style.display = 'block';
+            
+            // 显示解锁的照片
+            unlockedPhotos.forEach(photoId => {
+                document.getElementById(photoId).classList.add('active');
+            });
+            
+            // 更新进度条
+            progressBar.style.width = '100%';
+        }
+        
+        // 创建彩色纸屑效果
+        function createConfetti() {
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                
+                // 随机颜色
+                const colors = ['#e75480', '#ff9a9e', '#fad0c4', '#ffd6e7', '#ff8fab'];
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.backgroundColor = randomColor;
+                
+                // 随机位置
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.top = '-10px';
+                
+                // 随机大小
+                const size = Math.random() * 10 + 5;
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                
+                // 随机形状
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                
+                // 随机动画延迟
+                confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+                
+                document.body.appendChild(confetti);
+                
+                // 动画结束后移除
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>

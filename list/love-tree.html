@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>爱情树成长</title>
+    <style>
+        :root {
+            --primary-color: #6a5acd;
+            --secondary-color: #9370db;
+            --accent-color: #e6e6fa;
+            --text-color: #333;
+            --light-text: #777;
+            --border-color: #ddd;
+            --love-color: #ff6b6b;
+            --tree-trunk: #8b4513;
+            --tree-leaf: #2e8b57;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #87CEEB, #E0F7FA);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: var(--love-color);
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            color: var(--light-text);
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+        
+        .tree-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .tree-ground {
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(to bottom, #8bc34a, #689f38);
+            border-radius: 0 0 50% 50%;
+            position: relative;
+            z-index: 1;
+            margin-top: -50px;
+        }
+        
+        .tree {
+            position: relative;
+            width: 300px;
+            height: 500px;
+            margin-bottom: 20px;
+            z-index: 2;
+        }
+        
+        .trunk {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            background-color: var(--tree-trunk);
+            border-radius: 10px;
+            z-index: 3;
+        }
+        
+        .branches {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+        
+        .branch {
+            position: absolute;
+            background-color: var(--tree-trunk);
+            border-radius: 5px;
+            transform-origin: bottom center;
+        }
+        
+        .leaves {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        .leaf {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: var(--tree-leaf);
+            border-radius: 50% 0 50% 50%;
+            transform: rotate(45deg);
+            opacity: 0;
+            animation: growIn 1s forwards;
+        }
+        
+        .flower {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: pink;
+            border-radius: 50%;
+            opacity: 0;
+            animation: growIn 1s forwards;
+            z-index: 4;
+        }
+        
+        .flower::before, .flower::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border-radius: 50%;
+        }
+        
+        .flower::before {
+            top: -5px;
+            left: 5px;
+        }
+        
+        .flower::after {
+            bottom: -5px;
+            left: 5px;
+        }
+        
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: var(--love-color);
+            transform: rotate(45deg);
+            opacity: 0;
+            animation: growIn 1s forwards;
+            z-index: 5;
+        }
+        
+        .heart::before, .heart::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: var(--love-color);
+            border-radius: 50%;
+        }
+        
+        .heart::before {
+            top: -10px;
+            left: 0;
+        }
+        
+        .heart::after {
+            top: 0;
+            left: -10px;
+        }
+        
+        @keyframes growIn {
+            from {
+                transform: scale(0) rotate(45deg);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) rotate(45deg);
+                opacity: 1;
+            }
+        }
+        
+        .tree-growth {
+            width: 100%;
+            max-width: 600px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .growth-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--love-color);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+        
+        .progress-container {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: var(--accent-color);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--secondary-color), var(--primary-color));
+            border-radius: 5px;
+            transition: width 1s ease-in-out;
+        }
+        
+        .milestones {
+            width: 100%;
+            max-width: 600px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .milestones-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .milestones-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .add-milestone-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .add-milestone-btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .milestones-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .milestone {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+        
+        .milestone:last-child {
+            border-bottom: none;
+        }
+        
+        .milestone-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+        
+        .milestone-content {
+            flex: 1;
+        }
+        
+        .milestone-date {
+            font-size: 0.8rem;
+            color: var(--light-text);
+            margin-bottom: 5px;
+        }
+        
+        .milestone-text {
+            font-weight: 500;
+        }
+        
+        .milestone-delete {
+            background: none;
+            border: none;
+            color: var(--light-text);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+        
+        .milestone-delete:hover {
+            color: var(--love-color);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--light-text);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-family: inherit;
+        }
+        
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .modal-btn {
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .modal-btn.cancel {
+            background-color: var(--accent-color);
+            border: 1px solid var(--border-color);
+        }
+        
+        .modal-btn.save {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+        }
+        
+        .modal-btn.save:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .modal-btn.cancel:hover {
+            background-color: #e0e0e0;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .tree {
+                width: 250px;
+                height: 400px;
+            }
+            
+            .growth-stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>爱情树成长</h1>
+            <p class="subtitle">记录我们爱情的成长历程</p>
+        </header>
+        
+        <div class="tree-container">
+            <div class="tree">
+                <div class="branches" id="branches"></div>
+                <div class="leaves" id="leaves"></div>
+                <div class="trunk" id="trunk"></div>
+            </div>
+            <div class="tree-ground"></div>
+        </div>
+        
+        <div class="tree-growth">
+            <div class="growth-stats">
+                <div class="stat">
+                    <div class="stat-value" id="days-together">0</div>
+                    <div class="stat-label">在一起天数</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="milestones-count">0</div>
+                    <div class="stat-label">重要时刻</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="tree-age">0</div>
+                    <div class="stat-label">爱情树年龄</div>
+                </div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-label">
+                    <span>爱情成长进度</span>
+                    <span id="progress-percent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="milestones">
+            <div class="milestones-header">
+                <h2 class="milestones-title">重要时刻</h2>
+                <button class="add-milestone-btn" id="addMilestoneBtn">添加时刻</button>
+            </div>
+            
+            <div class="milestones-list" id="milestonesList">
+                <!-- 里程碑将在这里动态添加 -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- 添加里程碑的模态框 -->
+    <div class="modal" id="milestoneModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">添加重要时刻</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            
+            <div class="form-group">
+                <label for="milestoneDate">日期</label>
+                <input type="date" id="milestoneDate" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="milestoneTitle">标题</label>
+                <input type="text" id="milestoneTitle" placeholder="例如: 第一次约会" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="milestoneDescription">描述</label>
+                <textarea id="milestoneDescription" placeholder="描述这个特别的时刻..."></textarea>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="modal-btn cancel" id="cancelBtn">取消</button>
+                <button class="modal-btn save" id="saveMilestoneBtn">保存</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 模拟数据库
+        let loveTreeDB = {
+            // 开始日期 (默认为今天)
+            startDate: new Date(),
+            
+            // 里程碑
+            milestones: [
+                {
+                    date: new Date(),
+                    title: "爱情树种植日",
+                    description: "这是我们爱情树开始生长的日子!"
+                }
+            ]
+        };
+        
+        // 从本地存储加载数据
+        function loadData() {
+            const savedData = localStorage.getItem('loveTreeData');
+            if (savedData) {
+                const parsedData = JSON.parse(savedData);
+                loveTreeDB.startDate = new Date(parsedData.startDate);
+                
+                // 转换日期字符串为Date对象
+                loveTreeDB.milestones = parsedData.milestones.map(m => {
+                    return {
+                        ...m,
+                        date: new Date(m.date)
+                    };
+                });
+            } else {
+                // 如果没有保存的数据，设置默认开始日期为今天
+                loveTreeDB.startDate = new Date();
+                loveTreeDB.milestones = [
+                    {
+                        date: new Date(),
+                        title: "爱情树种植日",
+                        description: "这是我们爱情树开始生长的日子!"
+                    }
+                ];
+                saveData();
+            }
+        }
+        
+        // 保存数据到本地存储
+        function saveData() {
+            // 转换Date对象为字符串以便存储
+            const dataToSave = {
+                ...loveTreeDB,
+                milestones: loveTreeDB.milestones.map(m => {
+                    return {
+                        ...m,
+                        date: m.date.toISOString()
+                    };
+                })
+            };
+            localStorage.setItem('loveTreeData', JSON.stringify(dataToSave));
+        }
+        
+        // 初始化应用
+        function initApp() {
+            loadData();
+            updateStats();
+            renderTree();
+            renderMilestones();
+        }
+        
+        // 更新统计数据
+        function updateStats() {
+            const today = new Date();
+            const startDate = new Date(loveTreeDB.startDate);
+            
+            // 计算在一起的天数
+            const timeDiff = today.getTime() - startDate.getTime();
+            const daysTogether = Math.floor(timeDiff / (1000 * 3600 * 24));
+            document.getElementById('days-together').textContent = daysTogether;
+            
+            // 更新里程碑数量
+            document.getElementById('milestones-count').textContent = loveTreeDB.milestones.length;
+            
+            // 计算爱情树年龄 (以月为单位)
+            const monthsTogether = (today.getFullYear() - startDate.getFullYear()) * 12 + 
+                                 (today.getMonth() - startDate.getMonth());
+            document.getElementById('tree-age').textContent = monthsTogether;
+            
+            // 计算成长进度 (基于里程碑数量和时间)
+            const progress = Math.min(100, Math.floor((loveTreeDB.milestones.length / 10) * 50 + 
+                                      (daysTogether / 365) * 50));
+            document.getElementById('progress-percent').textContent = `${progress}%`;
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+            
+            return {
+                daysTogether,
+                monthsTogether,
+                progress
+            };
+        }
+        
+        // 渲染爱情树
+        function renderTree() {
+            const stats = updateStats();
+            const trunk = document.getElementById('trunk');
+            const branchesContainer = document.getElementById('branches');
+            const leavesContainer = document.getElementById('leaves');
+            
+            // 清空现有树枝和叶子
+            branchesContainer.innerHTML = '';
+            leavesContainer.innerHTML = '';
+            
+            // 设置树干高度 (基于在一起时间)
+            const trunkHeight = Math.min(300, 100 + stats.daysTogether * 0.5);
+            trunk.style.height = `${trunkHeight}px`;
+            
+            // 添加树枝 (数量基于月份)
+            const branchCount = Math.min(15, 3 + stats.monthsTogether);
+            for (let i = 0; i < branchCount; i++) {
+                const branch = document.createElement('div');
+                branch.className = 'branch';
+                
+                // 随机位置和角度
+                const position = Math.random() * trunkHeight * 0.8;
+                const angle = -30 + Math.random() * 60;
+                const length = 50 + Math.random() * 70;
+                const thickness = 5 + Math.random() * 5;
+                
+                branch.style.bottom = `${position}px`;
+                branch.style.left = '50%';
+                branch.style.width = `${length}px`;
+                branch.style.height = `${thickness}px`;
+                branch.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+                
+                branchesContainer.appendChild(branch);
+            }
+            
+            // 添加叶子 (数量基于里程碑数量和天数)
+            const leafCount = Math.min(100, 10 + stats.daysTogether + loveTreeDB.milestones.length * 5);
+            for (let i = 0; i < leafCount; i++) {
+                const leaf = document.createElement('div');
+                leaf.className = 'leaf';
+                
+                // 随机位置
+                const x = 20 + Math.random() * 260;
+                const y = 100 + Math.random() * (trunkHeight - 100);
+                
+                leaf.style.left = `${x}px`;
+                leaf.style.top = `${y}px`;
+                leaf.style.opacity = '0';
+                leaf.style.animationDelay = `${i * 0.1}s`;
+                
+                leavesContainer.appendChild(leaf);
+            }
+            
+            // 添加花朵 (每5个里程碑一朵花)
+            const flowerCount = Math.floor(loveTreeDB.milestones.length / 5);
+            for (let i = 0; i < flowerCount; i++) {
+                const flower = document.createElement('div');
+                flower.className = 'flower';
+                
+                // 随机位置
+                const x = 20 + Math.random() * 260;
+                const y = 100 + Math.random() * (trunkHeight - 100);
+                
+                flower.style.left = `${x}px`;
+                flower.style.top = `${y}px`;
+                flower.style.opacity = '0';
+                flower.style.animationDelay = `${i * 0.2}s`;
+                
+                leavesContainer.appendChild(flower);
+            }
+            
+            // 添加爱心 (每10个里程碑一个爱心)
+            const heartCount = Math.floor(loveTreeDB.milestones.length / 10);
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                
+                // 随机位置
+                const x = 20 + Math.random() * 260;
+                const y = 100 + Math.random() * (trunkHeight - 100);
+                
+                heart.style.left = `${x}px`;
+                heart.style.top = `${y}px`;
+                heart.style.opacity = '0';
+                heart.style.animationDelay = `${i * 0.3}s`;
+                
+                leavesContainer.appendChild(heart);
+            }
+        }
+        
+        // 渲染里程碑列表
+        function renderMilestones() {
+            const milestonesList = document.getElementById('milestonesList');
+            milestonesList.innerHTML = '';
+            
+            // 按日期排序
+            const sortedMilestones = [...loveTreeDB.milestones].sort((a, b) => b.date - a.date);
+            
+            // 添加每个里程碑
+            sortedMilestones.forEach((milestone, index) => {
+                const milestoneElement = document.createElement('div');
+                milestoneElement.className = 'milestone';
+                
+                // 格式化日期
+                const dateStr = milestone.date.toLocaleDateString('zh-CN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                milestoneElement.innerHTML = `
+                    <div class="milestone-icon">${index + 1}</div>
+                    <div class="milestone-content">
+                        <div class="milestone-date">${dateStr}</div>
+                        <div class="milestone-text">${milestone.title}</div>
+                    </div>
+                    <button class="milestone-delete" data-index="${index}">&times;</button>
+                `;
+                
+                milestonesList.appendChild(milestoneElement);
+            });
+            
+            // 添加删除事件
+            document.querySelectorAll('.milestone-delete').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    deleteMilestone(index);
+                });
+            });
+        }
+        
+        // 添加里程碑
+        function addMilestone(date, title, description) {
+            loveTreeDB.milestones.push({
+                date: new Date(date),
+                title,
+                description
+            });
+            
+            saveData();
+            updateStats();
+            renderTree();
+            renderMilestones();
+        }
+        
+        // 删除里程碑
+        function deleteMilestone(index) {
+            if (index >= 0 && index < loveTreeDB.milestones.length) {
+                loveTreeDB.milestones.splice(index, 1);
+                saveData();
+                updateStats();
+                renderTree();
+                renderMilestones();
+            }
+        }
+        
+        // 初始化模态框
+        function initModal() {
+            const modal = document.getElementById('milestoneModal');
+            const addBtn = document.getElementById('addMilestoneBtn');
+            const closeBtn = document.getElementById('modalClose');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const saveBtn = document.getElementById('saveMilestoneBtn');
+            
+            // 打开模态框
+            addBtn.addEventListener('click', function() {
+                // 设置日期默认为今天
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('milestoneDate').value = today;
+                modal.style.display = 'flex';
+            });
+            
+            // 关闭模态框
+            function closeModal() {
+                modal.style.display = 'none';
+                // 清空表单
+                document.getElementById('milestoneTitle').value = '';
+                document.getElementById('milestoneDescription').value = '';
+            }
+            
+            closeBtn.addEventListener('click', closeModal);
+            cancelBtn.addEventListener('click', closeModal);
+            
+            // 点击模态框外部关闭
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+            
+            // 保存里程碑
+            saveBtn.addEventListener('click', function() {
+                const date = document.getElementById('milestoneDate').value;
+                const title = document.getElementById('milestoneTitle').value.trim();
+                const description = document.getElementById('milestoneDescription').value.trim();
+                
+                if (!date || !title) {
+                    alert('请填写日期和标题');
+                    return;
+                }
+                
+                addMilestone(date, title, description);
+                closeModal();
+            });
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', function() {
+            initApp();
+            initModal();
+            
+            // 每天自动更新树
+            setInterval(() => {
+                updateStats();
+            }, 24 * 60 * 60 * 1000);
+        });
+    </script>
+</body>
+</html>

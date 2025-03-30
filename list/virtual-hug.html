@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>虚拟拥抱</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ffd6e7 0%, #ffcce0 100%);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            flex-direction: column;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 500px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+        
+        h1 {
+            color: #e75480;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            color: #888;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        
+        .hug-area {
+            height: 300px;
+            position: relative;
+            margin: 30px 0;
+            overflow: hidden;
+            border-radius: 15px;
+            background: #fff9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .person {
+            position: absolute;
+            width: 80px;
+            height: 120px;
+            transition: all 0.8s ease;
+        }
+        
+        .person-1 {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 150"><circle cx="50" cy="30" r="20" fill="%23ff9a9e"/><path d="M30,50 L70,50 L60,120 L50,150 L40,120 Z" fill="%23fad0c4"/><path d="M20,60 L30,50 M80,60 L70,50" stroke="%23ff9a9e" stroke-width="3" stroke-linecap="round"/></svg>');
+            left: 30%;
+            transform: translateX(-50%);
+        }
+        
+        .person-2 {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 150"><circle cx="50" cy="30" r="20" fill="%239a7eb8"/><path d="M30,50 L70,50 L60,120 L50,150 L40,120 Z" fill="%23c3cfe2"/><path d="M20,60 L30,50 M80,60 L70,50" stroke="%239a7eb8" stroke-width="3" stroke-linecap="round"/></svg>');
+            right: 30%;
+            transform: translateX(50%);
+        }
+        
+        .hug-btn {
+            background: #e75480;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px 5px;
+            box-shadow: 0 5px 15px rgba(231, 84, 128, 0.3);
+        }
+        
+        .hug-btn:hover {
+            background: #d23369;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(231, 84, 128, 0.4);
+        }
+        
+        .hug-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="%23e75480"/></svg>');
+            background-size: contain;
+            opacity: 0;
+            z-index: 5;
+            animation: floatHeart 3s ease-in-out;
+        }
+        
+        @keyframes floatHeart {
+            0% {
+                transform: translateY(0) scale(0.5);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) scale(1.2);
+                opacity: 0;
+            }
+        }
+        
+        .message {
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #666;
+            min-height: 50px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #e75480;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .hugging .person-1 {
+            left: 50%;
+            transform: translateX(-60%) rotate(-10deg);
+        }
+        
+        .hugging .person-2 {
+            right: 50%;
+            transform: translateX(60%) rotate(10deg);
+        }
+        
+        .share-btn {
+            background: #6d5b97;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+        
+        .share-btn:hover {
+            background: #5a4a7d;
+            transform: translateY(-3px);
+        }
+        
+        .countdown {
+            font-size: 1.5em;
+            color: #e75480;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>虚拟拥抱 <span class="heart-icon">❤</span></h1>
+        <p class="subtitle">发送一个温暖的拥抱给你的TA</p>
+        
+        <div class="hug-area" id="hugArea">
+            <div class="person person-1"></div>
+            <div class="person person-2"></div>
+        </div>
+        
+        <div class="countdown" id="countdown"></div>
+        
+        <button class="hug-btn" id="hugBtn">发送拥抱</button>
+        
+        <div class="message" id="message">
+            点击按钮发送一个温暖的虚拟拥抱
+        </div>
+        
+        <button class="share-btn" id="shareBtn" style="display: none;">分享这个拥抱</button>
+        
+        <a href="index.html" class="back-link">← 返回浪漫代码收藏馆</a>
+    </div>
+
+    <script>
+        const hugArea = document.getElementById('hugArea');
+        const hugBtn = document.getElementById('hugBtn');
+        const message = document.getElementById('message');
+        const shareBtn = document.getElementById('shareBtn');
+        const countdown = document.getElementById('countdown');
+        
+        let isHugging = false;
+        let hugCount = 0;
+        const messages = [
+            "拥抱已发送！TA一定能感受到你的温暖",
+            "又一个拥抱上路了！爱会穿越距离",
+            "你的拥抱让TA的心跳加速了",
+            "温暖的拥抱正在传递中...",
+            "距离无法阻挡你们的爱"
+        ];
+        
+        // 发送拥抱
+        hugBtn.addEventListener('click', function() {
+            if (isHugging) return;
+            
+            isHugging = true;
+            hugBtn.disabled = true;
+            hugArea.classList.add('hugging');
+            
+            // 创建漂浮的心
+            createHearts();
+            
+            // 显示倒计时
+            let seconds = 3;
+            countdown.textContent = `拥抱倒计时: ${seconds}`;
+            
+            const timer = setInterval(() => {
+                seconds--;
+                countdown.textContent = `拥抱倒计时: ${seconds}`;
+                
+                if (seconds <= 0) {
+                    clearInterval(timer);
+                    countdown.textContent = "拥抱已送达！";
+                    completeHug();
+                }
+            }, 1000);
+        });
+        
+        function completeHug() {
+            hugCount++;
+            message.textContent = messages[hugCount % messages.length];
+            
+            setTimeout(() => {
+                hugArea.classList.remove('hugging');
+                isHugging = false;
+                hugBtn.disabled = false;
+                countdown.textContent = "";
+                
+                // 显示分享按钮
+                if (hugCount === 1) {
+                    shareBtn.style.display = 'inline-block';
+                }
+            }, 2000);
+        }
+        
+        function createHearts() {
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart';
+                    
+                    // 随机位置
+                    heart.style.left = `${Math.random() * 80 + 10}%`;
+                    heart.style.top = `${Math.random() * 50 + 50}%`;
+                    
+                    // 随机大小
+                    const size = Math.random() * 20 + 10;
+                    heart.style.width = `${size}px`;
+                    heart.style.height = `${size}px`;
+                    
+                    // 随机动画延迟
+                    heart.style.animationDelay = `${Math.random() * 0.5}s`;
+                    
+                    hugArea.appendChild(heart);
+                    
+                    // 动画结束后移除
+                    setTimeout(() => {
+                        heart.remove();
+                    }, 3000);
+                }, i * 200);
+            }
+        }
+        
+        // 分享功能
+        shareBtn.addEventListener('click', function() {
+            const shareText = `我刚刚发送了一个虚拟拥抱给你！❤ 点击这里接收：${window.location.href}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: '虚拟拥抱',
+                    text: shareText,
+                    url: window.location.href
+                }).catch(err => {
+                    console.log('分享失败:', err);
+                    copyToClipboard(shareText);
+                });
+            } else {
+                copyToClipboard(shareText);
+            }
+        });
+        
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            
+            message.textContent = '链接已复制，快去分享给你的TA吧！';
+            setTimeout(() => {
+                message.textContent = messages[hugCount % messages.length];
+            }, 3000);
+        }
+        
+        // 添加心形图标
+        const heartIcon = document.createElement('span');
+        heartIcon.className = 'heart-icon';
+        heartIcon.innerHTML = '❤';
+        document.querySelector('h1').appendChild(heartIcon);
+    </script>
+</body>
+</html>

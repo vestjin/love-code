@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星空下的约定</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: #0a0a1a;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            text-align: center;
+            z-index: 10;
+            width: 90%;
+            max-width: 800px;
+        }
+        
+        h1 {
+            color: #e0b0ff;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(224, 176, 255, 0.7);
+        }
+        
+        .date-picker {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        input {
+            padding: 12px 15px;
+            border: 2px solid #4a3a6e;
+            border-radius: 8px;
+            background: rgba(26, 20, 42, 0.8);
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+        
+        button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #8a2be2, #da70d6);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+        }
+        
+        .star-map {
+            width: 100%;
+            height: 400px;
+            margin: 30px 0;
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.3);
+        }
+        
+        .constellation {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 5px white;
+        }
+        
+        .constellation-line {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            transform-origin: 0 0;
+        }
+        
+        .special-star {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #ff69b4;
+            border-radius: 50%;
+            box-shadow: 0 0 15px #ff69b4;
+            animation: twinkle 2s infinite alternate;
+        }
+        
+        .message {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(26, 20, 42, 0.7);
+            border-radius: 10px;
+            border: 1px solid #4a3a6e;
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            transition: opacity 1s;
+        }
+        
+        .message.show {
+            opacity: 1;
+        }
+        
+        @keyframes twinkle {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .back-link {
+            position: fixed;
+            bottom: 20px;
+            color: #e0b0ff;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 50px;
+            background: rgba(74, 58, 110, 0.5);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover {
+            background: rgba(138, 43, 226, 0.5);
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>星空下的约定</h1>
+        <p>输入你们的纪念日，看看那天的星空是什么样子</p>
+        
+        <div class="date-picker">
+            <input type="date" id="memoryDate">
+            <button onclick="generateStarMap()">生成星空图</button>
+        </div>
+        
+        <div class="star-map" id="starMap"></div>
+        
+        <div class="message" id="message">
+            <p id="constellationName"></p>
+            <p id="romanticMessage"></p>
+        </div>
+    </div>
+    
+    <a href="index.html" class="back-link">← 返回浪漫代码收藏馆</a>
+    
+    <script>
+        // 星座数据
+        const constellations = [
+            { name: "仙女座", stars: [[30, 30], [70, 50], [110, 30], [150, 70]], 
+              message: "仙女座见证了你们的相遇，如同神话中的美丽传说" },
+            { name: "猎户座", stars: [[40, 60], [80, 30], [80, 90], [120, 60]], 
+              message: "猎户座的勇士守护着你们的爱情，如星辰般永恒" },
+            { name: "大熊座", stars: [[20, 20], [50, 40], [80, 20], [110, 40], [140, 20]], 
+              message: "大熊座指引着你们的方向，就像北斗七星指引迷途的旅人" },
+            { name: "天琴座", stars: [[50, 50], [90, 50], [70, 90]], 
+              message: "天琴座为你们奏响爱的乐章，每一个音符都是甜蜜的回忆" },
+            { name: "天鹅座", stars: [[40, 70], [80, 40], [120, 70]], 
+              message: "天鹅座展翅高飞，象征着你们爱情的自由与纯洁" }
+        ];
+        
+        // 生成星空图
+        function generateStarMap() {
+            const dateInput = document.getElementById('memoryDate').value;
+            if (!dateInput) {
+                alert('请选择一个日期');
+                return;
+            }
+            
+            const starMap = document.getElementById('starMap');
+            starMap.innerHTML = '';
+            
+            // 生成随机星星
+            for (let i = 0; i < 200; i++) {
+                const star = document.createElement('div');
+                star.className = 'constellation';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.opacity = Math.random() * 0.5 + 0.5;
+                star.style.width = (Math.random() * 3 + 1) + 'px';
+                star.style.height = star.style.width;
+                starMap.appendChild(star);
+            }
+            
+            // 选择随机星座
+            const selectedConstellation = constellations[Math.floor(Math.random() * constellations.length)];
+            
+            // 绘制星座星星
+            selectedConstellation.stars.forEach((pos, index) => {
+                const star = document.createElement('div');
+                star.className = 'special-star';
+                star.style.left = pos[0] / 200 * 100 + '%';
+                star.style.top = pos[1] / 100 * 100 + '%';
+                star.style.animationDelay = index * 0.2 + 's';
+                starMap.appendChild(star);
+                
+                // 绘制星座连线
+                if (index > 0) {
+                    const prevPos = selectedConstellation.stars[index - 1];
+                    const line = document.createElement('div');
+                    line.className = 'constellation-line';
+                    
+                    const length = Math.sqrt(
+                        Math.pow(pos[0] - prevPos[0], 2) + 
+                        Math.pow(pos[1] - prevPos[1], 2)
+                    );
+                    
+                    const angle = Math.atan2(
+                        pos[1] - prevPos[1], 
+                        pos[0] - prevPos[0]
+                    ) * 180 / Math.PI;
+                    
+                    line.style.width = length / 200 * 100 + '%';
+                    line.style.height = '1px';
+                    line.style.left = prevPos[0] / 200 * 100 + '%';
+                    line.style.top = prevPos[1] / 100 * 100 + '%';
+                    line.style.transform = 'rotate(' + angle + 'deg)';
+                    
+                    starMap.appendChild(line);
+                }
+            });
+            
+            // 显示浪漫消息
+            document.getElementById('constellationName').textContent = 
+                `${dateInput} 的星空: ${selectedConstellation.name}`;
+            document.getElementById('romanticMessage').textContent = 
+                selectedConstellation.message;
+            
+            document.getElementById('message').classList.add('show');
+        }
+        
+        // 设置默认日期为今天
+        document.getElementById('memoryDate').valueAsDate = new Date();
+    </script>
+</body>
+</html>

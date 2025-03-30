@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数字情书 - 二进制浪漫告白</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #fdf2f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            width: 90%;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #e75480;
+            margin-bottom: 30px;
+        }
+        .binary-code {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin-bottom: 30px;
+            text-align: left;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .decode-btn {
+            background: #e75480;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        .decode-btn:hover {
+            background: #d23369;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
+        .message {
+            display: none;
+            background: #f8e1e7;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+            animation: fadeIn 1s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .heart {
+            color: #e75480;
+            font-size: 1.5em;
+            margin: 0 5px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #e75480;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>二进制情书 <span class="heart">❤</span></h1>
+        
+        <div class="binary-code">
+01001001 00100000 01101100 01101111 01110110 01100101 00100000 01111001 01101111 01110101 00101110 00001010 
+01010100 01101000 01101001 01110011 00100000 01101001 01110011 00100000 01101110 01101111 01110100 00100000 
+01101010 01110101 01110011 01110100 00100000 01100001 00100000 01110000 01110010 01101111 01100111 01110010 
+01100001 01101101 00101110 00001010 01001001 01110100 00100111 01110011 00100000 01101101 01111001 00100000 
+01101000 01100101 01100001 01110010 01110100 00100000 01110111 01110010 01101001 01110100 01110100 01100101 
+01101110 00100000 01101001 01101110 00100000 01100010 01101001 01101110 01100001 01110010 01111001 00101110 
+00001010 01011001 01101111 01110101 00100000 01100001 01110010 01100101 00100000 01110100 01101000 01100101 
+00100000 01100010 01110101 01100111 00100000 01110100 01101111 00100000 01101101 01111001 00100000 01100011 
+01101111 01100100 01100101 00101100 00001010 01110100 01101000 01100101 00100000 01100110 01100101 01100001 
+01110100 01110101 01110010 01100101 00100000 01001001 00100000 01100011 01100001 01101110 00100111 01110100 
+00100000 01100110 01101001 01111000 00101110 00001010 01010111 01101001 01110100 01101000 00100000 01111001 
+01101111 01110101 00101100 00100000 01100101 01110110 01100101 01110010 01111001 00100000 01101100 01101001 
+01101110 01100101 00100000 01101001 01110011 00100000 01110000 01100101 01110010 01100110 01100101 01100011 
+01110100 00101110 00001010 01001001 00100000 01110111 01101001 01101100 01101100 00100000 01100001 01101100 
+01110111 01100001 01111001 01110011 00100000 01101100 01101111 01110110 01100101 00100000 01111001 01101111 
+01110101 00101110
+        </div>
+        
+        <button class="decode-btn" onclick="decodeBinary()">解码这份情书</button>
+        
+        <div id="message" class="message">
+            <h2>我的告白 <span class="heart">❤</span></h2>
+            <p>I love you.</p>
+            <p>This is not just a program.</p>
+            <p>It's my heart written in binary.</p>
+            <p>You are the bug to my code,</p>
+            <p>the feature I can't fix.</p>
+            <p>With you, every line is perfect.</p>
+            <p>I will always love you.</p>
+            
+            <p style="margin-top: 30px; font-style: italic;">- 你的程序员爱人</p>
+        </div>
+        
+        <a href="index.html" class="back-link">← 返回浪漫代码收藏馆</a>
+    </div>
+
+    <script>
+        function decodeBinary() {
+            const binaryCode = document.querySelector('.binary-code').textContent;
+            const messageDiv = document.getElementById('message');
+            
+            // 添加解码动画效果
+            messageDiv.style.display = 'none';
+            document.querySelector('.decode-btn').textContent = '解码中...';
+            document.querySelector('.decode-btn').style.backgroundColor = '#9b59b6';
+            
+            setTimeout(() => {
+                // 将二进制转换为文本
+                const binaryArray = binaryCode.trim().split(/\s+/);
+                let text = '';
+                
+                binaryArray.forEach(bin => {
+                    text += String.fromCharCode(parseInt(bin, 2));
+                });
+                
+                // 显示解码后的消息
+                messageDiv.style.display = 'block';
+                document.querySelector('.decode-btn').textContent = '已解码';
+                document.querySelector('.decode-btn').style.backgroundColor = '#27ae60';
+                
+                // 3秒后恢复按钮状态
+                setTimeout(() => {
+                    document.querySelector('.decode-btn').textContent = '再解码一次';
+                    document.querySelector('.decode-btn').style.backgroundColor = '#e75480';
+                }, 3000);
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
