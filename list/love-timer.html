@@ -15,6 +15,7 @@
             --button-hover: rgba(255, 255, 255, 0.4);
             --milestone-color: #ff5c7c;
             --highlight-color: #ffeb3b;
+            --name-color: #fff8e1;
         }
         
         * {
@@ -129,6 +130,26 @@
             filter: drop-shadow(0 0 20px rgba(255, 100, 130, 0.6));
         }
         
+        .lover-name {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin: 0 30px;
+            position: relative;
+            text-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            color: var(--name-color);
+            letter-spacing: 2px;
+            font-family: 'Brush Script MT', cursive;
+            animation: nameGlow 3s infinite alternate;
+        }
+        
+        .lover-name.left {
+            transform: rotate(-5deg);
+        }
+        
+        .lover-name.right {
+            transform: rotate(5deg);
+        }
+        
         @keyframes heartbeat {
             0% { transform: scale(1); }
             15% { transform: scale(1.1); }
@@ -137,6 +158,18 @@
             60% { transform: scale(1); }
             75% { transform: scale(1.08); }
             100% { transform: scale(1); }
+        }
+        
+        @keyframes nameGlow {
+            0% { 
+                text-shadow: 0 0 5px rgba(255, 255, 255, 0.5), 
+                             0 0 15px rgba(255, 255, 255, 0.3); 
+            }
+            100% { 
+                text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 
+                             0 0 20px rgba(255, 255, 255, 0.5),
+                             0 0 30px rgba(255, 255, 255, 0.3); 
+            }
         }
         
         .timer {
@@ -459,6 +492,11 @@
                 font-size: 120px;
             }
             
+            .lover-name {
+                font-size: 2.2rem;
+                margin: 0 15px;
+            }
+            
             .message {
                 font-size: 1.2rem;
                 padding: 15px;
@@ -515,6 +553,11 @@
             .heart-icon {
                 font-size: 100px;
             }
+            
+            .lover-name {
+                font-size: 1.8rem;
+                margin: 0 10px;
+            }
         }
     </style>
 </head>
@@ -525,11 +568,13 @@
         <div class="header">
             <h1><i class="fas fa-heart"></i> 爱的计时器</h1>
             <p class="subtitle">从我们相遇的那一刻起，每一秒都值得珍惜</p>
-            <div class="special-date">2025年6月2日 19:35:21</div>
+            <div class="special-date">2025年6月2日 20:00:00</div>
         </div>
         
         <div class="heart-container">
+            <div class="lover-name left">梁佳琪</div>
             <i class="fas fa-heart heart-icon"></i>
+            <div class="lover-name right">靳马珏</div>
         </div>
         
         <div class="countdown-title" id="countdownTitle">我们的爱情已经持续</div>
@@ -558,7 +603,7 @@
         </div>
         
         <div class="date-display" id="dateDisplay">
-            开始时间：2025年6月2日 19:35:21
+            开始时间：2025年6月2日 20:00:00
         </div>
         
         <div class="controls">
@@ -576,8 +621,8 @@
     <a href="#" class="back-link"><i class="fas fa-arrow-left"></i> 返回浪漫代码收藏馆</a>
     
     <script>
-        // 设置开始时间：
-        const START_DATE = new Date(2025, 5, 2, 19, 35, 21);
+        // 设置开始时间：2025年6月2日20:00:00
+        const START_DATE = new Date(2025, 5, 2, 20, 0, 0);
         
         // 创建漂浮的心形
         function createFloatingHearts() {
@@ -659,7 +704,7 @@
             
             // 设置里程碑卡片关闭按钮事件
             document.getElementById('closeMilestone').addEventListener('click', function() {
-                document.getElementById('milestoneCard').classList.remove('active');
+                document.getElementById('milestoneCard').class.classList.remove('active');
             });
             
             // 设置暂停按钮事件
