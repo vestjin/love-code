@@ -5,71 +5,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>爱的计时器</title>
     <style>
-        body {
+        :root {
+            --primary-color: #ff758c;
+            --secondary-color: #ff7eb3;
+            --text-color: white;
+            --card-bg: rgba(255, 255, 255, 0.2);
+            --button-bg: rgba(255, 255, 255, 0.3);
+            --button-hover: rgba(255, 255, 255, 0.4);
+        }
+        
+        * {
             margin: 0;
             padding: 0;
-            height: 100vh;
-            background: linear-gradient(135deg, #ff758c, #ff7eb3);
-            color: white;
+            box-sizing: border-box;
+        }
+        
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color);
             font-family: 'Arial', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            overflow-x: hidden;
+            padding: 20px;
+            position: relative;
         }
         
         .container {
             text-align: center;
             z-index: 10;
-            width: 90%;
-            max-width: 600px;
-            background: rgba(255, 255, 255, 0.2);
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header {
+            margin-bottom: 20px;
+            position: relative;
         }
         
         h1 {
-            margin-bottom: 30px;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
             text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
         
-        .timer {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin: 30px 0;
-        }
-        
-        .time-unit {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            padding: 15px;
-            min-width: 100px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .time-value {
-            font-size: 3em;
-            font-weight: bold;
-            margin-bottom: 5px;
-            text-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
-        }
-        
-        .time-label {
-            font-size: 1em;
+        .subtitle {
+            font-size: 1.2rem;
             opacity: 0.9;
+            margin-bottom: 15px;
+        }
+        
+        .heart-container {
+            margin: 25px 0;
+            position: relative;
+            height: 120px;
         }
         
         .heart-beat {
             width: 100px;
             height: 100px;
-            margin: 20px auto;
-            position: relative;
-            transform: rotate(45deg);
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) rotate(45deg);
             animation: heartbeat 1.5s infinite;
         }
         
@@ -91,18 +99,86 @@
         }
         
         @keyframes heartbeat {
-            0% { transform: rotate(45deg) scale(1); }
-            25% { transform: rotate(45deg) scale(1.1); }
-            50% { transform: rotate(45deg) scale(1); }
-            75% { transform: rotate(45deg) scale(1.1); }
-            100% { transform: rotate(45deg) scale(1); }
+            0% { transform: translate(-50%, -50%) rotate(45deg) scale(1); }
+            25% { transform: translate(-50%, -50%) rotate(45deg) scale(1.1); }
+            50% { transform: translate(-50%, -50%) rotate(45deg) scale(1); }
+            75% { transform: translate(-50%, -50%) rotate(45deg) scale(1.1); }
+            100% { transform: translate(-50%, -50%) rotate(45deg) scale(1); }
+        }
+        
+        .timer {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .time-unit {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 15px;
+            min-width: 90px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .time-unit:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.4);
+        }
+        
+        .time-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .time-label {
+            font-size: 1rem;
+            opacity: 0.9;
         }
         
         .message {
-            margin-top: 20px;
-            font-size: 1.2em;
+            margin: 25px 0;
+            font-size: 1.2rem;
             line-height: 1.6;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            background: var(--button-bg);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:hover {
+            background: var(--button-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
         }
         
         .floating-hearts {
@@ -147,15 +223,147 @@
             font-weight: bold;
             padding: 10px 20px;
             border-radius: 50px;
-            background: rgba(255, 255, 255, 0.3);
+            background: var(--button-bg);
             backdrop-filter: blur(5px);
             transition: all 0.3s;
             z-index: 20;
         }
         
         .back-link:hover {
-            background: rgba(255, 255, 255, 0.4);
+            background: var(--button-hover);
             transform: translateY(-3px);
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background-color: #f00;
+            animation: confetti-fall 5s linear forwards;
+            z-index: 100;
+        }
+        
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-20vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        .milestone-card {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: rgba(255, 255, 255, 0.95);
+            color: #ff6b81;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.5s ease;
+            max-width: 90%;
+            width: 350px;
+        }
+        
+        .milestone-card.active {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+        
+        .milestone-card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #ff6b81;
+        }
+        
+        .milestone-card p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .close-btn {
+            padding: 8px 20px;
+            background: #ff6b81;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .close-btn:hover {
+            background: #ff4757;
+            transform: scale(1.05);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .time-unit {
+                min-width: 75px;
+                padding: 10px;
+            }
+            
+            .time-value {
+                font-size: 2rem;
+            }
+            
+            .heart-beat {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .heart-beat:before, .heart-beat:after {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .message {
+                font-size: 1rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 80%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .time-unit {
+                min-width: 65px;
+            }
+            
+            .time-value {
+                font-size: 1.8rem;
+            }
+            
+            .timer {
+                gap: 10px;
+            }
         }
     </style>
 </head>
@@ -163,10 +371,14 @@
     <div class="floating-hearts" id="floatingHearts"></div>
     
     <div class="container">
-        <h1>爱的计时器</h1>
-        <p>从我们相遇的那一刻起，每一秒都值得珍惜</p>
+        <div class="header">
+            <h1>爱的计时器</h1>
+            <p class="subtitle">从我们相遇的那一刻起，每一秒都值得珍惜</p>
+        </div>
         
-        <div class="heart-beat"></div>
+        <div class="heart-container">
+            <div class="heart-beat"></div>
+        </div>
         
         <div class="timer">
             <div class="time-unit">
@@ -190,6 +402,17 @@
         <div class="message" id="loveMessage">
             正在计算我们的爱情时光...
         </div>
+        
+        <div class="controls">
+            <button class="btn" id="pauseBtn">暂停计时</button>
+            <button class="btn" id="changeDateBtn">修改日期</button>
+        </div>
+    </div>
+    
+    <div class="milestone-card" id="milestoneCard">
+        <h2 id="milestoneTitle">纪念日快乐！</h2>
+        <p id="milestoneMessage">恭喜你们达到新的爱情里程碑！</p>
+        <button class="close-btn" id="closeMilestone">关闭</button>
     </div>
     
     <a href="../index.html" class="back-link">← 返回浪漫代码收藏馆</a>
@@ -198,7 +421,7 @@
         // 创建漂浮的心形
         function createFloatingHearts() {
             const container = document.getElementById('floatingHearts');
-            const heartCount = 15;
+            const heartCount = 20;
             
             for (let i = 0; i < heartCount; i++) {
                 const heart = document.createElement('div');
@@ -207,22 +430,120 @@
                 heart.style.left = Math.random() * 100 + 'vw';
                 heart.style.animationDuration = 5 + Math.random() * 10 + 's';
                 heart.style.animationDelay = Math.random() * 5 + 's';
-                heart.style.fontSize = 10 + Math.random() * 20 + 'px';
+                heart.style.fontSize = 15 + Math.random() * 25 + 'px';
                 container.appendChild(heart);
             }
         }
         
-        // 页面加载后创建漂浮的心
+        // 创建庆祝彩花
+        function createConfetti() {
+            const colors = ['#ff6b6b', '#ff8e8e', '#ffb6b6', '#ffd6d6', '#ffebeb', '#ff9ff3', '#feca57', '#ff9f43'];
+            const container = document.body;
+            
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.width = Math.random() * 15 + 5 + 'px';
+                confetti.style.height = Math.random() * 5 + 5 + 'px';
+                confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.opacity = Math.random() * 0.7 + 0.3;
+                
+                container.appendChild(confetti);
+                
+                // 动画结束后移除元素
+                setTimeout(() => {
+                    confetti.remove();
+                }, 7000);
+            }
+        }
+        
+        // 显示里程碑卡片
+        function showMilestone(title, message) {
+            const milestoneCard = document.getElementById('milestoneCard');
+            const milestoneTitle = document.getElementById('milestoneTitle');
+            const milestoneMessage = document.getElementById('milestoneMessage');
+            
+            milestoneTitle.textContent = title;
+            milestoneMessage.textContent = message;
+            milestoneCard.classList.add('active');
+            
+            // 创建彩花庆祝效果
+            createConfetti();
+        }
+        
+        // 页面加载后初始化
         window.addEventListener('load', function() {
             createFloatingHearts();
+            
+            // 设置默认开始日期（2023年7月2日）
+            const startDate = new Date(2025, 6, 2, 20, 0, 0);
+            localStorage.setItem('loveStartDate', startDate.getTime());
+            
             startTimer(); // 页面加载自动开始计时
+            
+            // 设置里程碑卡片关闭按钮事件
+            document.getElementById('closeMilestone').addEventListener('click', function() {
+                document.getElementById('milestoneCard').classList.remove('active');
+            });
+            
+            // 设置暂停按钮事件
+            const pauseBtn = document.getElementById('pauseBtn');
+            pauseBtn.addEventListener('click', function() {
+                if (timerRunning) {
+                    clearInterval(timerInterval);
+                    timerRunning = false;
+                    pauseBtn.textContent = '继续计时';
+                } else {
+                    startTimer();
+                    timerRunning = true;
+                    pauseBtn.textContent = '暂停计时';
+                }
+            });
+            
+            // 设置修改日期按钮事件
+            document.getElementById('changeDateBtn').addEventListener('click', function() {
+                const newDate = prompt("请输入新的开始日期和时间 (YYYY-MM-DD HH:MM:SS)\n例如：2023-07-02 20:00:00");
+                if (newDate) {
+                    const dateParts = newDate.split(/[- :]/);
+                    if (dateParts.length >= 5) {
+                        const year = parseInt(dateParts[0]);
+                        const month = parseInt(dateParts[1]) - 1; // 月份从0开始
+                        const day = parseInt(dateParts[2]);
+                        const hour = parseInt(dateParts[3]) || 0;
+                        const minute = parseInt(dateParts[4]) || 0;
+                        const second = parseInt(dateParts[5]) || 0;
+                        
+                        const newStartDate = new Date(year, month, day, hour, minute, second);
+                        
+                        if (!isNaN(newStartDate.getTime())) {
+                            localStorage.setItem('loveStartDate', newStartDate.getTime());
+                            startTimer();
+                            timerRunning = true;
+                            pauseBtn.textContent = '暂停计时';
+                        } else {
+                            alert("日期格式无效，请重新输入");
+                        }
+                    } else {
+                        alert("日期格式无效，请按照示例格式输入");
+                    }
+                }
+            });
         });
         
         // 计时器变量
         let timerInterval;
-        
-        // 固定的起始时间
-        const startDate = new Date(2025, 6, 2, 20, 0, 0); // 注意月份是0-11
+        let timerRunning = true;
+        const milestones = {
+            7: {title: "一周纪念日", message: "你们已经相爱一周啦！❤️ 爱情正在发芽~"},
+            30: {title: "满月纪念日", message: "恭喜你们相爱一个月！🌙 爱情如月光般温柔"},
+            100: {title: "百日纪念日", message: "100天啦！💯 你们的爱情越来越坚定！"},
+            365: {title: "周年纪念日", message: "一周年快乐！🎉 你们的爱情依然炽热！"},
+            730: {title: "两周年纪念日", message: "两周年啦！💖 时间证明你们的爱永恒！"}
+        };
+        let milestoneShown = new Set();
         
         // 开始计时
         function startTimer() {
@@ -235,15 +556,14 @@
             // 设置定时器每秒更新
             timerInterval = setInterval(updateTimer, 1000);
             
-            // 更新消息
-            document.getElementById('loveMessage').innerHTML = `
-                从 ${startDate.toLocaleDateString()} 开始<br>
-                我们的爱情已经持续了...
-            `;
+            timerRunning = true;
         }
         
         // 更新计时器显示
         function updateTimer() {
+            // 从本地存储获取开始日期
+            let startDate = new Date(parseInt(localStorage.getItem('loveStartDate')));
+            
             const now = new Date();
             const diff = now - startDate;
             
@@ -255,9 +575,36 @@
             
             // 更新显示
             document.getElementById('days').textContent = days;
-            document.getElementById('hours').textContent = hours;
-            document.getElementById('minutes').textContent = minutes;
-            document.getElementById('seconds').textContent = seconds;
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            
+            // 更新消息
+            const loveMessage = document.getElementById('loveMessage');
+            
+            // 显示里程碑消息（仅显示一次）
+            if (milestones[days] && !milestoneShown.has(days)) {
+                const milestone = milestones[days];
+                showMilestone(milestone.title, milestone.message);
+                milestoneShown.add(days);
+            }
+            
+            // 根据时间显示不同的消息
+            if (days === 0) {
+                loveMessage.innerHTML = "今天是你们相爱的第一天！<br>让爱从这一刻开始绽放 ❤️";
+            } else if (days < 7) {
+                loveMessage.innerHTML = `你们已经相爱 ${days} 天了<br>爱情正在萌芽阶段 🌱`;
+            } else if (days < 30) {
+                loveMessage.innerHTML = `从 ${startDate.toLocaleDateString()} 开始<br>你们的爱情已经持续 ${days} 天`;
+            } else if (days < 100) {
+                loveMessage.innerHTML = `从 ${startDate.toLocaleDateString()} 开始<br>你们的爱情已经持续 ${days} 天`;
+            } else if (days < 365) {
+                loveMessage.innerHTML = `从 ${startDate.toLocaleDateString()} 开始<br>你们的爱情已经持续 ${days} 天`;
+            } else {
+                const years = Math.floor(days / 365);
+                const remainingDays = days % 365;
+                loveMessage.innerHTML = `从 ${startDate.toLocaleDateString()} 开始<br>你们的爱情已经持续 ${years} 年 ${remainingDays} 天`;
+            }
         }
     </script>
 </body>
