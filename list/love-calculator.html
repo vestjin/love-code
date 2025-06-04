@@ -3,45 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>缘分计算器</title>
+    <title>梁佳琪专属缘分计算器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
         body {
-            font-family: 'Arial', sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            color: #333;
+            color: #5a3a4e;
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .heart-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .heart {
+            position: absolute;
+            color: rgba(231, 84, 128, 0.15);
+            font-size: 30px;
+            animation: float 15s infinite linear;
         }
         
         .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(109, 91, 151, 0.3);
             padding: 40px;
             width: 90%;
-            max-width: 600px;
+            max-width: 650px;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(231, 84, 128, 0.2);
+            z-index: 10;
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ff69b4, #9a7eb8, #6d5b97);
+        }
+        
+        .header {
+            position: relative;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+        }
+        
+        .header::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #e75480, transparent);
         }
         
         h1 {
-            color: #6d5b97;
-            margin-bottom: 10px;
+            color: #e75480;
+            margin-bottom: 15px;
+            font-size: 2.5rem;
+            text-shadow: 0 2px 5px rgba(154, 50, 89, 0.2);
+        }
+        
+        .special-name {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff69b4, #e75480);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: bold;
+            padding: 0 10px;
+            animation: pulse 2s infinite;
         }
         
         .subtitle {
-            color: #888;
-            margin-bottom: 30px;
-            font-style: italic;
+            font-size: 1.2rem;
+            color: #8a4b6e;
+            max-width: 500px;
+            margin: 0 auto 25px;
+            line-height: 1.6;
         }
         
         .input-group {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 25px;
             margin-bottom: 30px;
         }
         
@@ -51,146 +124,341 @@
             gap: 20px;
         }
         
-        input {
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-size: 16px;
+        .input-wrapper {
             flex: 1;
+            position: relative;
+        }
+        
+        .input-wrapper i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #e75480;
+            font-size: 1.2rem;
+        }
+        
+        input {
+            padding: 16px 16px 16px 45px;
+            border: 2px solid #f8c4d0;
+            border-radius: 15px;
+            font-size: 16px;
+            width: 100%;
             transition: all 0.3s;
+            background: rgba(255, 240, 245, 0.6);
+            color: #5a3a4e;
         }
         
         input:focus {
-            border-color: #9a7eb8;
+            border-color: #e75480;
             outline: none;
-            box-shadow: 0 0 10px rgba(154, 126, 184, 0.3);
+            box-shadow: 0 0 15px rgba(231, 84, 128, 0.3);
+            background: rgba(255, 240, 245, 0.9);
         }
         
         .birthday-input {
             display: flex;
             justify-content: space-between;
-            gap: 10px;
+            gap: 15px;
         }
         
-        .birthday-input input {
+        .birthday-input .input-wrapper {
             flex: 1;
-            text-align: center;
         }
         
         .calculate-btn {
-            background: linear-gradient(45deg, #9a7eb8, #6d5b97);
+            background: linear-gradient(45deg, #ff69b4, #e75480);
             color: white;
             border: none;
-            padding: 15px 30px;
-            font-size: 18px;
+            padding: 16px 40px;
+            font-size: 1.1rem;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(109, 91, 151, 0.3);
-            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(231, 84, 128, 0.4);
+            margin: 20px 0 30px;
             width: 100%;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
         
         .calculate-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(109, 91, 151, 0.4);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(231, 84, 128, 0.6);
         }
         
         .result-container {
             display: none;
-            margin-top: 30px;
+            margin-top: 20px;
             animation: fadeIn 1s;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(255, 240, 245, 0.7), rgba(240, 255, 250, 0.7));
+            border-radius: 20px;
+            border: 1px solid rgba(231, 84, 128, 0.2);
         }
         
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .score-container {
+            position: relative;
+            margin: 30px 0;
+            display: inline-block;
         }
         
         .score {
-            font-size: 5em;
+            font-size: 5.5rem;
             font-weight: bold;
             color: #e75480;
-            margin: 20px 0;
+            position: relative;
+            z-index: 2;
             text-shadow: 0 3px 10px rgba(231, 84, 128, 0.3);
+        }
+        
+        .score-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 8rem;
+            opacity: 0.1;
+            color: #e75480;
+            z-index: 1;
         }
         
         .progress-container {
             width: 100%;
-            height: 20px;
-            background: #eee;
-            border-radius: 10px;
-            margin: 20px 0;
+            height: 25px;
+            background: #f0f0f0;
+            border-radius: 12px;
+            margin: 25px 0;
             overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         
         .progress-bar {
             height: 100%;
             background: linear-gradient(90deg, #ff9a9e 0%, #fad0c4 100%);
-            border-radius: 10px;
-            transition: width 1s ease-in-out;
+            border-radius: 12px;
+            transition: width 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-bar::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.6), 
+                transparent);
+            animation: shine 2s infinite;
         }
         
         .message {
-            font-size: 1.2em;
-            margin-top: 20px;
-            color: #555;
-            line-height: 1.6;
+            font-size: 1.3rem;
+            margin-top: 25px;
+            color: #5a3a4e;
+            line-height: 1.7;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 15px;
         }
         
         .love-icon {
-            font-size: 2em;
+            font-size: 2rem;
             margin: 0 5px;
             color: #e75480;
-        }
-        
-        .back-link {
-            display: inline-block;
-            margin-top: 30px;
-            color: #6d5b97;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        
-        .back-link:hover {
-            text-decoration: underline;
+            animation: pulse 2s infinite;
         }
         
         .zodiac-info {
             display: flex;
             justify-content: space-between;
-            margin: 20px 0;
-            font-size: 0.9em;
-            color: #666;
+            margin: 30px 0;
+            font-size: 1.1rem;
+            color: #8a4b6e;
+            font-weight: 500;
+            gap: 15px;
+        }
+        
+        .zodiac-card {
+            flex: 1;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 15px;
+            border: 1px solid rgba(231, 84, 128, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .zodiac-name {
+            font-weight: bold;
+            color: #e75480;
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 30px;
+            color: #e75480;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 12px 25px;
+            border-radius: 50px;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(231, 84, 128, 0.3);
+        }
+        
+        .back-link:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(231, 84, 128, 0.2);
+        }
+        
+        .signature {
+            margin-top: 20px;
+            font-size: 1rem;
+            color: #8a4b6e;
+            font-style: italic;
+        }
+        
+        .signature span {
+            color: #e75480;
+            font-weight: bold;
+        }
+        
+        /* 动画 */
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .name-input, .birthday-input {
+                flex-direction: column;
+            }
+            
+            .zodiac-info {
+                flex-direction: column;
+            }
+            
+            .score {
+                font-size: 4.5rem;
+            }
+            
+            .score-bg {
+                font-size: 6rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .score {
+                font-size: 4rem;
+            }
+            
+            .score-bg {
+                font-size: 5.5rem;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- 背景爱心 -->
+    <div class="heart-bg" id="heartBg"></div>
+    
     <div class="container">
-        <h1>缘分计算器 <span class="love-icon">❤</span></h1>
-        <p class="subtitle">输入你们的信息，计算你们的缘分指数</p>
+        <div class="header">
+            <h1><span class="love-icon">❤</span> 缘分计算器 <span class="love-icon">❤</span></h1>
+            <p class="subtitle">为<span class="special-name">梁佳琪</span>特别设计的专属缘分测试</p>
+        </div>
         
         <div class="input-group">
             <div class="name-input">
-                <input type="text" id="name1" placeholder="你的名字">
-                <input type="text" id="name2" placeholder="TA的名字">
+                <div class="input-wrapper">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="name1" placeholder="你的名字" value="梁佳琪">
+                </div>
+                <div class="input-wrapper">
+                    <i class="fas fa-heart"></i>
+                    <input type="text" id="name2" placeholder="TA的名字">
+                </div>
             </div>
             
             <div class="birthday-input">
-                <input type="date" id="birthday1">
-                <input type="date" id="birthday2">
+                <div class="input-wrapper">
+                    <i class="fas fa-birthday-cake"></i>
+                    <input type="date" id="birthday1">
+                </div>
+                <div class="input-wrapper">
+                    <i class="fas fa-birthday-cake"></i>
+                    <input type="date" id="birthday2">
+                </div>
             </div>
         </div>
         
-        <button class="calculate-btn" onclick="calculateCompatibility()">计算缘分</button>
+        <button class="calculate-btn" onclick="calculateCompatibility()">
+            <i class="fas fa-calculator"></i> 计算我们的缘分
+        </button>
         
         <div class="result-container" id="resultContainer">
             <div class="zodiac-info">
-                <span id="zodiac1"></span>
-                <span id="zodiac2"></span>
+                <div class="zodiac-card" id="zodiacCard1">
+                    <div class="zodiac-name" id="zodiacName1"></div>
+                    <div id="zodiacElement1"></div>
+                </div>
+                <div class="zodiac-card" id="zodiacCard2">
+                    <div class="zodiac-name" id="zodiacName2"></div>
+                    <div id="zodiacElement2"></div>
+                </div>
             </div>
             
-            <div class="score" id="score">0</div>
+            <div class="score-container">
+                <div class="score" id="score">0</div>
+                <div class="score-bg">❤</div>
+            </div>
             
             <div class="progress-container">
                 <div class="progress-bar" id="progressBar"></div>
@@ -199,34 +467,73 @@
             <div class="message" id="message"></div>
         </div>
         
-        <a href="../index.html" class="back-link">← 返回浪漫代码收藏馆</a>
+        <div class="signature">为 <span>梁佳琪</span> 特别制作 | 真爱无价，缘分天定</div>
+        
+        <a href="../index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            返回浪漫代码收藏馆
+        </a>
     </div>
 
     <script>
+        // 生成背景爱心
+        function createHearts() {
+            const heartBg = document.getElementById('heartBg');
+            const heartCount = 20;
+            
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerHTML = '❤';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.fontSize = (Math.random() * 25 + 15) + 'px';
+                heart.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                heart.style.opacity = Math.random() * 0.6 + 0.2;
+                heartBg.appendChild(heart);
+            }
+        }
+        
         // 星座数据
         const zodiacSigns = [
-            { name: "白羊座", dateRange: "3.21-4.19", element: "火" },
-            { name: "金牛座", dateRange: "4.20-5.20", element: "土" },
-            { name: "双子座", dateRange: "5.21-6.21", element: "风" },
-            { name: "巨蟹座", dateRange: "6.22-7.22", element: "水" },
-            { name: "狮子座", dateRange: "7.23-8.22", element: "火" },
-            { name: "处女座", dateRange: "8.23-9.22", element: "土" },
-            { name: "天秤座", dateRange: "9.23-10.23", element: "风" },
-            { name: "天蝎座", dateRange: "10.24-11.21", element: "水" },
-            { name: "射手座", dateRange: "11.22-12.21", element: "火" },
-            { name: "摩羯座", dateRange: "12.22-1.19", element: "土" },
-            { name: "水瓶座", dateRange: "1.20-2.18", element: "风" },
-            { name: "双鱼座", dateRange: "2.19-3.20", element: "水" }
+            { name: "白羊座", dateRange: "3.21-4.19", element: "火", symbol: "♈" },
+            { name: "金牛座", dateRange: "4.20-5.20", element: "土", symbol: "♉" },
+            { name: "双子座", dateRange: "5.21-6.21", element: "风", symbol: "♊" },
+            { name: "巨蟹座", dateRange: "6.22-7.22", element: "水", symbol: "♋" },
+            { name: "狮子座", dateRange: "7.23-8.22", element: "火", symbol: "♌" },
+            { name: "处女座", dateRange: "8.23-9.22", element: "土", symbol: "♍" },
+            { name: "天秤座", dateRange: "9.23-10.23", element: "风", symbol: "♎" },
+            { name: "天蝎座", dateRange: "10.24-11.21", element: "水", symbol: "♏" },
+            { name: "射手座", dateRange: "11.22-12.21", element: "火", symbol: "♐" },
+            { name: "摩羯座", dateRange: "12.22-1.19", element: "土", symbol: "♑" },
+            { name: "水瓶座", dateRange: "1.20-2.18", element: "风", symbol: "♒" },
+            { name: "双鱼座", dateRange: "2.19-3.20", element: "水", symbol: "♓" }
         ];
         
         // 缘分消息
         const compatibilityMessages = [
-            { min: 0, max: 30, message: "缘分尚浅，但爱情往往始于偶然的相遇" },
-            { min: 31, max: 50, message: "有缘相识，未来如何发展取决于你们的努力" },
-            { min: 51, max: 70, message: "不错的缘分，你们有很多共同点" },
-            { min: 71, max: 85, message: "很相配的一对，珍惜这段缘分吧" },
-            { min: 86, max: 100, message: "天作之合！你们简直是命中注定的一对" }
+            { min: 0, max: 30, message: "缘分尚浅，但爱情往往始于偶然的相遇，每一段美好的故事都有个平凡的开始" },
+            { min: 31, max: 50, message: "有缘相识，未来如何发展取决于你们的努力和坚持，真爱需要用心经营" },
+            { min: 51, max: 70, message: "不错的缘分，你们有很多共同点，彼此欣赏和理解是感情长久的关键" },
+            { min: 71, max: 85, message: "很相配的一对，珍惜这段缘分，相互包容会让你们的关系更加甜蜜" },
+            { min: 86, max: 100, message: "天作之合！你们简直是命中注定的一对，这样的缘分值得用一生去珍惜" }
         ];
+        
+        // 星座配对描述
+        const zodiacCompatibility = {
+            "白羊座": { "狮子座": "热情似火的一对，充满激情与活力", "射手座": "充满活力的组合，共同追求自由与冒险" },
+            "金牛座": { "处女座": "稳重踏实的组合，共同追求安稳生活", "摩羯座": "务实可靠的一对，共同建设美好未来" },
+            "双子座": { "天秤座": "聪明机智的组合，充满话题与乐趣", "水瓶座": "创新思维的一对，共同探索新奇世界" },
+            "巨蟹座": { "天蝎座": "深情专一的组合，情感深厚而稳定", "双鱼座": "温柔浪漫的一对，彼此理解与包容" },
+            "狮子座": { "白羊座": "热情似火的一对，充满激情与活力", "射手座": "阳光开朗的组合，充满欢乐与正能量" },
+            "处女座": { "金牛座": "稳重踏实的组合，共同追求安稳生活", "摩羯座": "认真负责的一对，共同实现目标" },
+            "天秤座": { "双子座": "聪明机智的组合，充满话题与乐趣", "水瓶座": "和谐优雅的一对，共同追求美好生活" },
+            "天蝎座": { "巨蟹座": "深情专一的组合，情感深厚而稳定", "双鱼座": "神秘浪漫的一对，彼此深刻理解" },
+            "射手座": { "白羊座": "充满活力的组合，共同追求自由与冒险", "狮子座": "阳光开朗的组合，充满欢乐与正能量" },
+            "摩羯座": { "金牛座": "务实可靠的一对，共同建设美好未来", "处女座": "认真负责的一对，共同实现目标" },
+            "水瓶座": { "双子座": "创新思维的一对，共同探索新奇世界", "天秤座": "和谐优雅的一对，共同追求美好生活" },
+            "双鱼座": { "巨蟹座": "温柔浪漫的一对，彼此理解与包容", "天蝎座": "神秘浪漫的一对，彼此深刻理解" }
+        };
         
         // 计算缘分
         function calculateCompatibility() {
@@ -267,18 +574,7 @@
             }
             
             // 星座相性判断
-            if ((zodiac1.name === "白羊座" && zodiac2.name === "狮子座") || 
-                (zodiac1.name === "金牛座" && zodiac2.name === "处女座") ||
-                (zodiac1.name === "双子座" && zodiac2.name === "天秤座") ||
-                (zodiac1.name === "巨蟹座" && zodiac2.name === "天蝎座") ||
-                (zodiac1.name === "狮子座" && zodiac2.name === "射手座") ||
-                (zodiac1.name === "处女座" && zodiac2.name === "摩羯座") ||
-                (zodiac1.name === "天秤座" && zodiac2.name === "水瓶座") ||
-                (zodiac1.name === "天蝎座" && zodiac2.name === "双鱼座") ||
-                (zodiac1.name === "射手座" && zodiac2.name === "白羊座") ||
-                (zodiac1.name === "摩羯座" && zodiac2.name === "金牛座") ||
-                (zodiac1.name === "水瓶座" && zodiac2.name === "双子座") ||
-                (zodiac1.name === "双鱼座" && zodiac2.name === "巨蟹座")) {
+            if (zodiacCompatibility[zodiac1.name] && zodiacCompatibility[zodiac1.name][zodiac2.name]) {
                 zodiacScore += 30;
             }
             
@@ -288,18 +584,35 @@
                 100
             );
             
-            // 显示结果
-            document.getElementById('zodiac1').textContent = `${name1}: ${zodiac1.name} (${zodiac1.element}象)`;
-            document.getElementById('zodiac2').textContent = `${name2}: ${zodiac2.name} (${zodiac2.element}象)`;
+            // 显示星座信息
+            document.getElementById('zodiacName1').innerHTML = `${name1}: ${zodiac1.symbol} ${zodiac1.name}`;
+            document.getElementById('zodiacElement1').innerHTML = `${zodiac1.element}象星座`;
+            
+            document.getElementById('zodiacName2').innerHTML = `${name2}: ${zodiac2.symbol} ${zodiac2.name}`;
+            document.getElementById('zodiacElement2').innerHTML = `${zodiac2.element}象星座`;
+            
+            // 显示分数
             document.getElementById('score').textContent = totalScore;
-            document.getElementById('progressBar').style.width = `${totalScore}%`;
+            
+            // 显示进度条
+            setTimeout(() => {
+                document.getElementById('progressBar').style.width = `${totalScore}%`;
+            }, 300);
             
             // 显示缘分消息
             const messageObj = compatibilityMessages.find(m => totalScore >= m.min && totalScore <= m.max);
             document.getElementById('message').textContent = messageObj.message;
             
+            // 如果星座配对有特殊描述，则显示
+            if (zodiacCompatibility[zodiac1.name] && zodiacCompatibility[zodiac1.name][zodiac2.name]) {
+                document.getElementById('message').textContent += ` ${zodiac1.name}和${zodiac2.name}是${zodiacCompatibility[zodiac1.name][zodiac2.name]}`;
+            }
+            
             // 显示结果容器
             document.getElementById('resultContainer').style.display = 'block';
+            
+            // 滚动到结果
+            document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth' });
         }
         
         // 根据日期获取星座
@@ -322,14 +635,25 @@
             return zodiacSigns[11]; // 默认双鱼座
         }
         
-        // 设置默认生日为当前日期
+        // 页面加载完成后执行
         window.addEventListener('load', function() {
+            // 创建背景爱心
+            createHearts();
+            
+            // 设置默认生日为当前日期
             const today = new Date();
             document.getElementById('birthday1').valueAsDate = today;
             
-            const nextWeek = new Date();
-            nextWeek.setDate(today.getDate() + 7);
-            document.getElementById('birthday2').valueAsDate = nextWeek;
+            // 设置梁佳琪的名字
+            document.getElementById('name1').value = "梁佳琪";
+            
+            // 设置TA的名字为"你"（表示用户）
+            document.getElementById('name2').placeholder = "TA的名字";
+            
+            // 设置默认TA的生日为一个月后
+            const nextMonth = new Date();
+            nextMonth.setMonth(today.getMonth() + 1);
+            document.getElementById('birthday2').valueAsDate = nextMonth;
         });
     </script>
 </body>

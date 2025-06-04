@@ -3,163 +3,462 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数字情书 - 二进制浪漫告白</title>
+    <title>给梁佳琪的二进制情书</title>
     <style>
-        body {
-            font-family: 'Courier New', monospace;
-            background-color: #fdf2f5;
-            color: #333;
-            line-height: 1.6;
-            padding: 0;
+        * {
             margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #fad0e4 0%, #ffeff7 100%);
+            color: #5a3a5c;
             min-height: 100vh;
-        }
-        .container {
-            max-width: 800px;
-            width: 90%;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        h1 {
-            color: #e75480;
-            margin-bottom: 30px;
-        }
-        .binary-code {
-            background: #2c3e50;
-            color: #ecf0f1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             padding: 20px;
-            border-radius: 5px;
-            font-family: monospace;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 200, 224, 0.2) 0%, transparent 15%),
+                radial-gradient(circle at 90% 30%, rgba(220, 180, 255, 0.2) 0%, transparent 15%),
+                radial-gradient(circle at 50% 80%, rgba(200, 220, 255, 0.2) 0%, transparent 15%);
+            z-index: -1;
+        }
+        
+        .header {
+            text-align: center;
+            margin: 30px 0;
+            width: 100%;
+            max-width: 800px;
+            position: relative;
+        }
+        
+        .heart-badge {
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            background: #ff6b9d;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(255, 107, 157, 0.4);
+            animation: pulse 2s infinite;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            color: #d43f7b;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 4px;
+            background: linear-gradient(to right, #ff9bc8, #d43f7b);
+            border-radius: 2px;
+        }
+        
+        .subtitle {
+            font-size: 1.4rem;
+            color: #8a4c7d;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(170, 100, 150, 0.2);
+            width: 100%;
+            max-width: 800px;
+            padding: 35px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 220, 235, 0.8);
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, #ffd1e6, #ff9bc8);
+            border-radius: 50%;
+            opacity: 0.2;
+            z-index: 0;
+        }
+        
+        .container::after {
+            content: "";
+            position: absolute;
+            bottom: -30px;
+            left: -30px;
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(45deg, #d1bbff, #a68cff);
+            border-radius: 50%;
+            opacity: 0.15;
+            z-index: 0;
+        }
+        
+        .binary-section {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .binary-title {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #6a3a6d;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .binary-title .heart {
+            color: #ff6b9d;
+            margin: 0 10px;
+            font-size: 1.8rem;
+        }
+        
+        .binary-code {
+            background: linear-gradient(to right, #2c3e50, #1a2530);
+            color: #ecf0f1;
+            padding: 25px;
+            border-radius: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
             white-space: pre-wrap;
             word-wrap: break-word;
             margin-bottom: 30px;
             text-align: left;
             max-height: 300px;
             overflow-y: auto;
+            line-height: 1.8;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 2;
         }
+        
+        .binary-code::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .binary-code::-webkit-scrollbar-track {
+            background: rgba(50, 50, 60, 0.5);
+            border-radius: 4px;
+        }
+        
+        .binary-code::-webkit-scrollbar-thumb {
+            background: #ff6b9d;
+            border-radius: 4px;
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
         .decode-btn {
-            background: #e75480;
+            background: linear-gradient(to right, #ff6b9d, #d43f7b);
             color: white;
             border: none;
-            padding: 12px 25px;
-            font-size: 1.1em;
+            padding: 14px 40px;
+            font-size: 1.2rem;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s;
-            margin-bottom: 20px;
+            box-shadow: 0 6px 20px rgba(212, 63, 123, 0.4);
+            position: relative;
+            overflow: hidden;
+            font-weight: 600;
+            letter-spacing: 1px;
+            z-index: 2;
         }
+        
         .decode-btn:hover {
-            background: #d23369;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(212, 63, 123, 0.6);
         }
+        
+        .decode-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .decode-btn::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 30px;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(30deg);
+            transition: all 0.6s;
+        }
+        
+        .decode-btn:hover::after {
+            left: 120%;
+        }
+        
         .message {
             display: none;
-            background: #f8e1e7;
-            padding: 20px;
-            border-radius: 5px;
+            background: rgba(255, 240, 247, 0.95);
+            padding: 30px;
+            border-radius: 15px;
             margin-top: 20px;
             text-align: center;
             animation: fadeIn 1s;
+            border: 1px solid rgba(255, 200, 220, 0.8);
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        
+        .message h2 {
+            color: #d43f7b;
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .heart {
-            color: #e75480;
-            font-size: 1.5em;
-            margin: 0 5px;
+        
+        .message h2 .heart {
+            color: #ff6b9d;
+            margin: 0 10px;
+            font-size: 2rem;
+            animation: heartbeat 1.2s infinite;
         }
-        .back-link {
-            display: inline-block;
+        
+        .message p {
+            font-size: 1.4rem;
+            line-height: 1.8;
+            margin: 20px 0;
+            color: #5a3a5c;
+            font-weight: 500;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .highlight {
+            color: #d43f7b;
+            font-weight: 700;
+            text-shadow: 0 0 1px rgba(212, 63, 123, 0.3);
+        }
+        
+        .signature {
             margin-top: 30px;
-            color: #e75480;
-            text-decoration: none;
-            font-weight: bold;
+            font-style: italic;
+            font-size: 1.3rem;
+            color: #8a4c7d;
+            text-align: right;
+            padding-right: 40px;
+            position: relative;
         }
+        
+        .signature::before {
+            content: "";
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            width: 25px;
+            height: 2px;
+            background: #d43f7b;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: auto;
+            padding: 20px;
+            width: 100%;
+            color: #8a4c7d;
+            font-size: 1.1rem;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: #d43f7b;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-top: 10px;
+            transition: all 0.3s;
+            padding: 8px 20px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        
         .back-link:hover {
-            text-decoration: underline;
+            background: white;
+            transform: translateX(-5px);
+        }
+        
+        .back-link::before {
+            content: "←";
+            margin-right: 8px;
+            font-size: 1.4rem;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 4px 12px rgba(255, 107, 157, 0.4); }
+            50% { transform: scale(1.1); box-shadow: 0 6px 20px rgba(255, 107, 157, 0.6); }
+            100% { transform: scale(1); box-shadow: 0 4px 12px rgba(255, 107, 157, 0.4); }
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.2); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        @media (max-width: 600px) {
+            h1 { font-size: 2.2rem; }
+            .subtitle { font-size: 1.1rem; }
+            .container { padding: 20px; }
+            .binary-code { font-size: 0.9rem; padding: 15px; }
+            .message p { font-size: 1.2rem; }
+            .decode-btn { padding: 12px 30px; font-size: 1.1rem; }
         }
     </style>
 </head>
 <body>
+    <div class="header">
+        <h1>给梁佳琪的二进制情书</h1>
+        <div class="heart-badge">❤</div>
+        <div class="subtitle">用代码书写最浪漫的告白</div>
+    </div>
+    
     <div class="container">
-        <h1>二进制情书 <span class="heart">❤</span></h1>
-        
-        <div class="binary-code">
-01001001 00100000 01101100 01101111 01110110 01100101 00100000 01111001 01101111 01110101 00101110 00001010 
-01010100 01101000 01101001 01110011 00100000 01101001 01110011 00100000 01101110 01101111 01110100 00100000 
-01101010 01110101 01110011 01110100 00100000 01100001 00100000 01110000 01110010 01101111 01100111 01110010 
-01100001 01101101 00101110 00001010 01001001 01110100 00100111 01110011 00100000 01101101 01111001 00100000 
-01101000 01100101 01100001 01110010 01110100 00100000 01110111 01110010 01101001 01110100 01110100 01100101 
-01101110 00100000 01101001 01101110 00100000 01100010 01101001 01101110 01100001 01110010 01111001 00101110 
-00001010 01011001 01101111 01110101 00100000 01100001 01110010 01100101 00100000 01110100 01101000 01100101 
-00100000 01100010 01110101 01100111 00100000 01110100 01101111 00100000 01101101 01111001 00100000 01100011 
-01101111 01100100 01100101 00101100 00001010 01110100 01101000 01100101 00100000 01100110 01100101 01100001 
-01110100 01110101 01110010 01100101 00100000 01001001 00100000 01100011 01100001 01101110 00100111 01110100 
-00100000 01100110 01101001 01111000 00101110 00001010 01010111 01101001 01110100 01101000 00100000 01111001 
-01101111 01110101 00101100 00100000 01100101 01110110 01100101 01110010 01111001 00100000 01101100 01101001 
-01101110 01100101 00100000 01101001 01110011 00100000 01110000 01100101 01110010 01100110 01100101 01100011 
-01110100 00101110 00001010 01001001 00100000 01110111 01101001 01101100 01101100 00100000 01100001 01101100 
-01110111 01100001 01111001 01110011 00100000 01101100 01101111 01110110 01100101 00100000 01111001 01101111 
-01110101 00101110
-        </div>
-        
-        <button class="decode-btn" onclick="decodeBinary()">解码这份情书</button>
-        
-        <div id="message" class="message">
-            <h2>我的告白 <span class="heart">❤</span></h2>
-            <p>I love you.</p>
-            <p>This is not just a program.</p>
-            <p>It's my heart written in binary.</p>
-            <p>You are the bug to my code,</p>
-            <p>the feature I can't fix.</p>
-            <p>With you, every line is perfect.</p>
-            <p>I will always love you.</p>
+        <div class="binary-section">
+            <div class="binary-title">专属<span class="heart">❤</span>情书代码</div>
             
-            <p style="margin-top: 30px; font-style: italic;">- 你的程序员爱人</p>
+            <div class="binary-code">
+01001001 00100000 01001100 01101111 01110110 01100101 00100000 01011000 01101001 01100001 01101110 01100111 00100000 01001010 01101001 01100001 01110001 01101001 00001010 
+01010100 01101000 01101001 01110011 00100000 01101001 01110011 00100000 01101110 01101111 01110100 00100000 01101010 01110101 01110011 01110100 00100000 01100001 00100000 
+01110000 01110010 01101111 01100111 01110010 01100001 01101101 00101110 00001010 01001001 01110100 00100111 01110011 00100000 01101101 01111001 00100000 01101000 01100101 
+01100001 01110010 01110100 00100000 01110111 01110010 01101001 01110100 01110100 01100101 01101110 00100000 01101001 01101110 00100000 01100010 01101001 01101110 01100001 
+01110010 01111001 00101110 00001010 01011001 01101111 01110101 00100000 01100001 01110010 01100101 00100000 01110100 01101000 01100101 00100000 01100001 01101100 01100111 
+01101111 01110010 01101001 01110100 01101000 01101101 00100000 01110100 01101111 00100000 01101101 01111001 00100000 01101100 01101001 01100110 01100101 00101110 00001010 
+01010111 01101001 01110100 01101000 00100000 01111001 01101111 01110101 00101100 00100000 01100101 01110110 01100101 01110010 01111001 00100000 01101100 01101001 01101110 
+01100101 00100000 01101001 01110011 00100000 01110000 01100101 01110010 01100110 01100101 01100011 01110100 00101110 00001010 01001001 00100000 01110111 01101001 01101100 
+01101100 00100000 01100001 01101100 01110111 01100001 01111001 01110011 00100000 01101100 01101111 01110110 01100101 00100000 01111001 01101111 01110101 00101110
+            </div>
+            
+            <div class="controls">
+                <button class="decode-btn" onclick="decodeBinary()">解码这份情书</button>
+            </div>
+            
+            <div id="message" class="message">
+                <h2>给<span class="heart">❤</span>梁佳琪的告白</h2>
+                <p>I <span class="highlight">Love</span> Liang Jiaqi</p>
+                <p>这不是一段普通的代码</p>
+                <p>这是我用二进制写下的心声</p>
+                <p>你是我生命中的完美算法</p>
+                <p>有你在，每一行代码都变得完美</p>
+                <p>我会永远爱你</p>
+                
+                <div class="signature">—— 爱你的程序员</div>
+            </div>
+            
+            <a href="../index.html" class="back-link">返回浪漫代码收藏馆</a>
         </div>
-        
-        <a href="../index.html" class="back-link">← 返回浪漫代码收藏馆</a>
+    </div>
+    
+    <div class="footer">
+        <p>❤ 专属定制 · 永恒的爱 ❤</p>
     </div>
 
     <script>
         function decodeBinary() {
             const binaryCode = document.querySelector('.binary-code').textContent;
             const messageDiv = document.getElementById('message');
+            const decodeBtn = document.querySelector('.decode-btn');
             
             // 添加解码动画效果
             messageDiv.style.display = 'none';
-            document.querySelector('.decode-btn').textContent = '解码中...';
-            document.querySelector('.decode-btn').style.backgroundColor = '#9b59b6';
+            decodeBtn.textContent = '解码中...';
+            decodeBtn.style.background = 'linear-gradient(to right, #a68cff, #7b5cff)';
             
-            setTimeout(() => {
-                // 将二进制转换为文本
-                const binaryArray = binaryCode.trim().split(/\s+/);
-                let text = '';
+            // 添加二进制闪烁效果
+            const originalBinary = binaryCode;
+            let count = 0;
+            const interval = setInterval(() => {
+                const chars = '01 ';
+                let newCode = '';
+                for(let i = 0; i < originalBinary.length; i++) {
+                    if (originalBinary[i] === '\n' || originalBinary[i] === ' ') {
+                        newCode += originalBinary[i];
+                    } else {
+                        newCode += chars[Math.floor(Math.random() * chars.length)];
+                    }
+                }
+                document.querySelector('.binary-code').textContent = newCode;
+                count++;
                 
-                binaryArray.forEach(bin => {
-                    text += String.fromCharCode(parseInt(bin, 2));
-                });
-                
-                // 显示解码后的消息
-                messageDiv.style.display = 'block';
-                document.querySelector('.decode-btn').textContent = '已解码';
-                document.querySelector('.decode-btn').style.backgroundColor = '#27ae60';
-                
-                // 3秒后恢复按钮状态
-                setTimeout(() => {
-                    document.querySelector('.decode-btn').textContent = '再解码一次';
-                    document.querySelector('.decode-btn').style.backgroundColor = '#e75480';
-                }, 3000);
-            }, 1500);
+                if(count > 20) {
+                    clearInterval(interval);
+                    
+                    // 恢复原始二进制代码
+                    document.querySelector('.binary-code').textContent = originalBinary;
+                    
+                    // 显示解码后的消息
+                    setTimeout(() => {
+                        messageDiv.style.display = 'block';
+                        decodeBtn.textContent = '已解码';
+                        decodeBtn.style.background = 'linear-gradient(to right, #5cd46a, #2ecc71)';
+                        
+                        // 3秒后恢复按钮状态
+                        setTimeout(() => {
+                            decodeBtn.textContent = '再解码一次';
+                            decodeBtn.style.background = 'linear-gradient(to right, #ff6b9d, #d43f7b)';
+                        }, 3000);
+                    }, 500);
+                }
+            }, 80);
         }
     </script>
 </body>

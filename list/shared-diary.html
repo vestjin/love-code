@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>共享日记本</title>
+    <title>共享日记本 - IndexedDB存储</title>
     <style>
+        /* 原有样式保持不变 */
         :root {
             --primary-color: #6a5acd;
             --secondary-color: #9370db;
@@ -392,6 +393,7 @@
         <header>
             <h1>共享日记本 <span style="color:#6a5acd;">✍️</span></h1>
             <p class="subtitle">记录各自视角下的同一天</p>
+            <p class="subtitle">使用 IndexedDB 存储数据</p>
         </header>
         
         <div id="authSection" class="auth-section">
@@ -399,11 +401,11 @@
                 <h2>用户1登录</h2>
                 <div class="form-group">
                     <label for="user1Email">邮箱</label>
-                    <input type="email" id="user1Email" placeholder="user1@example.com">
+                    <input type="email" id="user1Email" value="user1@example.com" readonly>
                 </div>
                 <div class="form-group">
                     <label for="user1Password">密码</label>
-                    <input type="password" id="user1Password" placeholder="输入密码">
+                    <input type="password" id="user1Password" value="password1" readonly>
                 </div>
                 <button id="user1LoginBtn">登录</button>
             </div>
@@ -412,11 +414,11 @@
                 <h2>用户2登录</h2>
                 <div class="form-group">
                     <label for="user2Email">邮箱</label>
-                    <input type="email" id="user2Email" placeholder="user2@example.com">
+                    <input type="email" id="user2Email" value="user2@example.com" readonly>
                 </div>
                 <div class="form-group">
                     <label for="user2Password">密码</label>
-                    <input type="password" id="user2Password" placeholder="输入密码">
+                    <input type="password" id="user2Password" value="password2" readonly>
                 </div>
                 <button id="user2LoginBtn">登录</button>
             </div>
@@ -512,50 +514,23 @@
             </div>
         </div>
         
-        <a href="../index.html" class="back-link">← 返回浪漫代码收藏馆</a>
+        <a href="#" class="back-link">← 返回浪漫代码收藏馆</a>
     </div>
 
     <script>
-        // 模拟数据库
-        let diaryDB = {
-            // 用户数据
-            users: {
-                "user1@example.com": {
-                    id: "user1",
-                    name: "小明",
-                    password: "password1",
-                    avatar: "A"
-                },
-                "user2@example.com": {
-                    id: "user2",
-                    name: "小红",
-                    password: "password2",
-                    avatar: "B"
-                }
+        // 用户数据（固定）
+        const users = {
+            "user1@example.com": {
+                id: "user1",
+                name: "小明",
+                password: "password1",
+                avatar: "A"
             },
-            
-            // 日记条目
-            entries: {
-                "2023-11-15": {
-                    user1: {
-                        text: "今天和小红一起去了公园，秋天的落叶很美。",
-                        timestamp: "2023-11-15T18:30:00"
-                    },
-                    user2: {
-                        text: "和小明在公园野餐，他准备了我最喜欢的三明治！",
-                        timestamp: "2023-11-15T19:15:00"
-                    }
-                },
-                "2023-11-18": {
-                    user1: {
-                        text: "加班到很晚，但小红给我发了鼓励的消息，感觉很温暖。",
-                        timestamp: "2023-11-18T22:45:00"
-                    },
-                    user2: {
-                        text: "今天小明加班，给他点了外卖送到公司，希望他不要太累。",
-                        timestamp: "2023-11-18T20:30:00"
-                    }
-                }
+            "user2@example.com": {
+                id: "user2",
+                name: "小红",
+                password: "password2",
+                avatar: "B"
             }
         };
         
@@ -565,7 +540,8 @@
             currentDate: new Date(),
             viewingDate: new Date(),
             viewingMonth: new Date().getMonth(),
-            viewingYear: new Date().getFullYear()
+            viewingYear: new Date().getFullYear(),
+            db: null
         };
         
         // DOM元素
@@ -604,11 +580,137 @@
         const user2SaveBtn = document.getElementById('user2SaveBtn');
         const syncStatus = document.getElementById('syncStatus');
         
+        // IndexedDB 初始化
+        const openDB = () => {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('SharedDiaryDB', 1);
+                
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains('entries')) {
+                        // 创建对象存储，键为日期字符串
+                        const store = db.createObjectStore('entries', { keyPath: 'date' });
+                        // 创建索引以便按日期范围查询
+                        store.createIndex('dateIndex', 'date', { unique: true });
+                    }
+                };
+                
+                request.onsuccess = (event) => {
+                    resolve(event.target.result);
+                };
+                
+                request.onerror = (event) => {
+                    reject('IndexedDB 打开失败: ' + event.target.error);
+                };
+            });
+        };
+        
+        // 保存日记条目到数据库
+        const saveEntryToDB = async (date, userType, entryData) => {
+            return new Promise(async (resolve, reject) => {
+                if (!appState.db) {
+                    reject('数据库未初始化');
+                    return;
+                }
+                
+                const transaction = appState.db.transaction(['entries'], 'readwrite');
+                const store = transaction.objectStore('entries');
+                
+                // 先尝试获取现有条目
+                const getRequest = store.get(date);
+                
+                getRequest.onsuccess = () => {
+                    let entry = getRequest.result || { date: date };
+                    
+                    // 更新指定用户的条目
+                    entry[userType] = {
+                        text: entryData.text,
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    // 保存更新后的条目
+                    const putRequest = store.put(entry);
+                    
+                    putRequest.onsuccess = () => {
+                        resolve();
+                    };
+                    
+                    putRequest.onerror = (event) => {
+                        reject('保存失败: ' + event.target.error);
+                    };
+                };
+                
+                getRequest.onerror = (event) => {
+                    reject('获取条目失败: ' + event.target.error);
+                };
+            });
+        };
+        
+        // 从数据库获取日记条目
+        const getEntryFromDB = async (date) => {
+            return new Promise((resolve, reject) => {
+                if (!appState.db) {
+                    reject('数据库未初始化');
+                    return;
+                }
+                
+                const transaction = appState.db.transaction(['entries'], 'readonly');
+                const store = transaction.objectStore('entries');
+                const request = store.get(date);
+                
+                request.onsuccess = () => {
+                    resolve(request.result);
+                };
+                
+                request.onerror = (event) => {
+                    reject('获取条目失败: ' + event.target.error);
+                };
+            });
+        };
+        
+        // 获取指定月份的所有日记日期
+        const getEntriesForMonth = async (year, month) => {
+            return new Promise((resolve, reject) => {
+                if (!appState.db) {
+                    reject('数据库未初始化');
+                    return;
+                }
+                
+                // 计算该月的第一天和最后一天
+                const firstDay = new Date(year, month, 1);
+                const lastDay = new Date(year, month + 1, 0);
+                const startDate = formatDate(firstDay);
+                const endDate = formatDate(lastDay);
+                
+                const transaction = appState.db.transaction(['entries'], 'readonly');
+                const store = transaction.objectStore('entries');
+                const index = store.index('dateIndex');
+                
+                const keyRange = IDBKeyRange.bound(startDate, endDate);
+                const request = index.getAll(keyRange);
+                const entries = [];
+                
+                request.onsuccess = (event) => {
+                    const results = event.target.result;
+                    if (results && results.length > 0) {
+                        results.forEach(entry => {
+                            entries.push(entry.date);
+                        });
+                    }
+                    resolve(entries);
+                };
+                
+                request.onerror = (event) => {
+                    reject('查询失败: ' + event.target.error);
+                };
+            });
+        };
+        
         // 登录功能
         user1LoginBtn.addEventListener('click', () => login('user1'));
         user2LoginBtn.addEventListener('click', () => login('user2'));
         
-        function login(userType) {
+        async function login(userType) {
             const emailField = userType === 'user1' ? user1Email : user2Email;
             const passwordField = userType === 'user1' ? user1Password : user2Password;
             
@@ -616,9 +718,17 @@
             const password = passwordField.value;
             
             // 验证用户
-            if (diaryDB.users[email] && diaryDB.users[email].password === password) {
-                appState.currentUser = diaryDB.users[email];
-                initApp();
+            if (users[email] && users[email].password === password) {
+                appState.currentUser = users[email];
+                
+                // 初始化数据库
+                try {
+                    appState.db = await openDB();
+                    initApp();
+                } catch (error) {
+                    console.error('数据库初始化失败:', error);
+                    alert('数据库初始化失败: ' + error);
+                }
             } else {
                 alert('邮箱或密码不正确');
             }
@@ -627,14 +737,9 @@
         // 退出登录
         logoutBtn.addEventListener('click', () => {
             appState.currentUser = null;
+            appState.db = null;
             authSection.style.display = 'flex';
             diaryApp.style.display = 'none';
-            
-            // 清空输入
-            user1Email.value = '';
-            user1Password.value = '';
-            user2Email.value = '';
-            user2Password.value = '';
         });
         
         // 初始化应用
@@ -647,8 +752,8 @@
             currentUserName.textContent = appState.currentUser.name;
             
             // 设置用户名称
-            user1Name.textContent = diaryDB.users['user1@example.com'].name;
-            user2Name.textContent = diaryDB.users['user2@example.com'].name;
+            user1Name.textContent = users['user1@example.com'].name;
+            user2Name.textContent = users['user2@example.com'].name;
             
             // 初始化日历
             updateCalendar();
@@ -664,7 +769,7 @@
         }
         
         // 更新日历显示
-        function updateCalendar() {
+        async function updateCalendar() {
             // 设置月份标题
             currentMonth.textContent = `${appState.viewingYear}年${appState.viewingMonth + 1}月`;
             
@@ -677,6 +782,14 @@
             
             // 获取第一天是星期几 (0-6, 0是星期日)
             const firstDayOfWeek = firstDay.getDay();
+            
+            // 获取该月所有有日记的日期
+            let entriesForMonth = [];
+            try {
+                entriesForMonth = await getEntriesForMonth(appState.viewingYear, appState.viewingMonth);
+            } catch (error) {
+                console.error('获取月份条目失败:', error);
+            }
             
             // 添加上个月的日期
             for (let i = 0; i < firstDayOfWeek; i++) {
@@ -695,8 +808,7 @@
                 const dateStr = formatDate(currentDate);
                 
                 // 检查是否有日记条目
-                if (diaryDB.entries[dateStr] && 
-                    (diaryDB.entries[dateStr].user1 || diaryDB.entries[dateStr].user2)) {
+                if (entriesForMonth.includes(dateStr)) {
                     dayElement.classList.add('has-entry');
                 }
                 
@@ -722,56 +834,66 @@
         }
         
         // 导航到上个月
-        function goToPrevMonth() {
+        async function goToPrevMonth() {
             appState.viewingMonth--;
             if (appState.viewingMonth < 0) {
                 appState.viewingMonth = 11;
                 appState.viewingYear--;
             }
-            updateCalendar();
+            await updateCalendar();
         }
         
         // 导航到下个月
-        function goToNextMonth() {
+        async function goToNextMonth() {
             appState.viewingMonth++;
             if (appState.viewingMonth > 11) {
                 appState.viewingMonth = 0;
                 appState.viewingYear++;
             }
-            updateCalendar();
+            await updateCalendar();
         }
         
         // 加载日记条目
-        function loadDiaryEntries(dateStr) {
+        async function loadDiaryEntries(dateStr) {
             // 更新日期标题
             const date = new Date(dateStr);
             const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
             diaryDateHeader.textContent = date.toLocaleDateString('zh-CN', options);
             
-            // 加载用户1的条目
-            if (diaryDB.entries[dateStr] && diaryDB.entries[dateStr].user1) {
-                user1Entry.innerHTML = `<p>${diaryDB.entries[dateStr].user1.text}</p>`;
-                user1EntryInput.value = diaryDB.entries[dateStr].user1.text;
-            } else {
-                user1Entry.innerHTML = '<p class="no-entry">这一天还没有记录</p>';
+            try {
+                const entry = await getEntryFromDB(dateStr);
+                
+                // 加载用户1的条目
+                if (entry && entry.user1) {
+                    user1Entry.innerHTML = `<p>${entry.user1.text}</p>`;
+                    user1EntryInput.value = entry.user1.text;
+                } else {
+                    user1Entry.innerHTML = '<p class="no-entry">这一天还没有记录</p>';
+                    user1EntryInput.value = '';
+                }
+                
+                // 加载用户2的条目
+                if (entry && entry.user2) {
+                    user2Entry.innerHTML = `<p>${entry.user2.text}</p>`;
+                    user2EntryInput.value = entry.user2.text;
+                } else {
+                    user2Entry.innerHTML = '<p class="no-entry">这一天还没有记录</p>';
+                    user2EntryInput.value = '';
+                }
+                
+                // 更新同步状态
+                updateSyncStatus(entry);
+            } catch (error) {
+                console.error('加载条目失败:', error);
+                user1Entry.innerHTML = '<p class="no-entry">加载失败</p>';
+                user2Entry.innerHTML = '<p class="no-entry">加载失败</p>';
                 user1EntryInput.value = '';
-            }
-            
-            // 加载用户2的条目
-            if (diaryDB.entries[dateStr] && diaryDB.entries[dateStr].user2) {
-                user2Entry.innerHTML = `<p>${diaryDB.entries[dateStr].user2.text}</p>`;
-                user2EntryInput.value = diaryDB.entries[dateStr].user2.text;
-            } else {
-                user2Entry.innerHTML = '<p class="no-entry">这一天还没有记录</p>';
                 user2EntryInput.value = '';
             }
-            
-            // 更新同步状态
-            updateSyncStatus();
         }
         
         // 保存日记条目
-        function saveEntry(userType) {
+        async function saveEntry(userType) {
             const dateStr = formatDate(appState.viewingDate);
             const entryInput = userType === 'user1' ? user1EntryInput : user2EntryInput;
             const entryText = entryInput.value.trim();
@@ -781,41 +903,35 @@
                 return;
             }
             
-            // 确保该日期的条目存在
-            if (!diaryDB.entries[dateStr]) {
-                diaryDB.entries[dateStr] = {};
+            try {
+                await saveEntryToDB(dateStr, userType, { text: entryText });
+                await loadDiaryEntries(dateStr);
+                await updateCalendar();
+                simulateSync();
+            } catch (error) {
+                console.error('保存失败:', error);
+                alert('保存失败: ' + error);
             }
-            
-            // 保存条目
-            diaryDB.entries[dateStr][userType] = {
-                text: entryText,
-                timestamp: new Date().toISOString()
-            };
-            
-            // 更新显示
-            loadDiaryEntries(dateStr);
-            updateCalendar();
-            
-            // 模拟同步
-            simulateSync();
         }
         
         // 更新同步状态
-        function updateSyncStatus() {
-            const dateStr = formatDate(appState.viewingDate);
+        function updateSyncStatus(entry) {
+            if (!entry) {
+                syncStatus.textContent = '还未同步';
+                return;
+            }
+            
             let latestSync = null;
             
-            if (diaryDB.entries[dateStr]) {
-                if (diaryDB.entries[dateStr].user1 && diaryDB.entries[dateStr].user2) {
-                    latestSync = new Date(Math.max(
-                        new Date(diaryDB.entries[dateStr].user1.timestamp),
-                        new Date(diaryDB.entries[dateStr].user2.timestamp)
-                    ));
-                } else if (diaryDB.entries[dateStr].user1) {
-                    latestSync = new Date(diaryDB.entries[dateStr].user1.timestamp);
-                } else if (diaryDB.entries[dateStr].user2) {
-                    latestSync = new Date(diaryDB.entries[dateStr].user2.timestamp);
-                }
+            if (entry.user1 && entry.user2) {
+                latestSync = new Date(Math.max(
+                    new Date(entry.user1.timestamp),
+                    new Date(entry.user2.timestamp)
+                ));
+            } else if (entry.user1) {
+                latestSync = new Date(entry.user1.timestamp);
+            } else if (entry.user2) {
+                latestSync = new Date(entry.user2.timestamp);
             }
             
             if (latestSync) {
@@ -830,7 +946,7 @@
             syncStatus.textContent = "同步中...";
             
             setTimeout(() => {
-                updateSyncStatus();
+                loadDiaryEntries(formatDate(appState.viewingDate));
             }, 1000);
         }
         
@@ -853,17 +969,6 @@
                    date1.getMonth() === date2.getMonth() &&
                    date1.getDate() === date2.getDate();
         }
-        
-        // 模拟实时更新 (在实际应用中应该是WebSocket或轮询)
-        setInterval(() => {
-            if (appState.currentUser) {
-                // 这里应该是从服务器获取更新
-                // 现在只是随机更新同步状态
-                if (Math.random() > 0.8) {
-                    updateSyncStatus();
-                }
-            }
-        }, 10000);
     </script>
 </body>
 </html>

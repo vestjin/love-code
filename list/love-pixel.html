@@ -1,13 +1,16 @@
+
+# 梁佳琪专属像素情书编辑器优化版
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>像素情书</title>
+    <title>梁佳琪的像素情书</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background: #1a1a2e;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
             color: #fff;
             margin: 0;
             padding: 20px;
@@ -15,29 +18,74 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
         }
         
         h1 {
             color: #e94560;
             text-shadow: 2px 2px 0 #000;
-            margin-bottom: 10px;
-            font-size: 2.5em;
+            margin-bottom: 5px;
+            font-size: 2.8em;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: "❤";
+            position: absolute;
+            right: -30px;
+            top: -10px;
+            font-size: 0.8em;
+            animation: heartbeat 1.5s infinite;
         }
         
         .subtitle {
             color: #a5a5a5;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             font-style: italic;
+            font-size: 1.1em;
+        }
+        
+        .special-message {
+            background: linear-gradient(to right, #e94560, #533483);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 5px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s infinite;
         }
         
         .editor-container {
-            background: #16213e;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            background: rgba(22, 33, 62, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             margin-bottom: 20px;
             width: 100%;
-            max-width: 800px;
+            max-width: 850px;
+            border: 1px solid rgba(83, 52, 131, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .editor-container::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, #e94560, #533483, #0f3460, #16213e);
+            z-index: -1;
+            filter: blur(20px);
+            opacity: 0.3;
         }
         
         .toolbar {
@@ -49,52 +97,61 @@
         }
         
         .tool-btn, .color-btn {
-            padding: 10px 15px;
+            padding: 12px 18px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-family: inherit;
             font-weight: bold;
-            transition: all 0.2s;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }
         
         .tool-btn {
-            background: #0f3460;
+            background: linear-gradient(to bottom, #0f3460, #16213e);
             color: #fff;
+            min-width: 90px;
         }
         
         .tool-btn:hover {
-            background: #e94560;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to bottom, #e94560, #c70039);
         }
         
         .tool-btn.active {
-            background: #e94560;
-            box-shadow: 0 0 10px rgba(233, 69, 96, 0.7);
+            background: linear-gradient(to bottom, #e94560, #c70039);
+            box-shadow: 0 0 15px rgba(233, 69, 96, 0.7);
         }
         
         .color-palette {
             display: flex;
             flex-wrap: wrap;
-            gap: 5px;
+            gap: 8px;
             margin-bottom: 20px;
             justify-content: center;
+            background: rgba(15, 52, 96, 0.5);
+            padding: 15px;
+            border-radius: 10px;
         }
         
         .color-btn {
-            width: 30px;
-            height: 30px;
+            width: 35px;
+            height: 35px;
             border: 2px solid transparent;
             padding: 0;
+            transition: all 0.2s;
         }
         
         .color-btn:hover {
-            transform: scale(1.1);
+            transform: scale(1.15);
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
         }
         
         .color-btn.active {
             border-color: #fff;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+            transform: scale(1.2);
         }
         
         .canvas-container {
@@ -102,70 +159,95 @@
             justify-content: center;
             margin-bottom: 20px;
             overflow: auto;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
         }
         
         .pixel-canvas {
-            border: 2px solid #0f3460;
+            border: 3px solid #0f3460;
             background: #000;
             image-rendering: pixelated;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
         }
         
         .size-controls {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             margin-bottom: 20px;
             justify-content: center;
             align-items: center;
+            flex-wrap: wrap;
         }
         
         .size-controls label {
             margin-right: 5px;
+            color: #a5a5a5;
         }
         
         .size-controls input {
-            width: 60px;
-            padding: 5px;
-            border-radius: 5px;
-            border: none;
-            background: #0f3460;
+            width: 70px;
+            padding: 8px;
+            border-radius: 8px;
+            border: 2px solid #0f3460;
+            background: rgba(15, 52, 96, 0.3);
             color: #fff;
             text-align: center;
+            font-weight: bold;
         }
         
         .export-options {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             justify-content: center;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
         
         .export-btn {
-            background: #533483;
+            background: linear-gradient(to bottom, #533483, #3a2464);
             color: #fff;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 12px 25px;
+            border-radius: 30px;
             cursor: pointer;
             font-weight: bold;
-            transition: all 0.2s;
+            transition: all 0.3s;
+            min-width: 140px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            font-size: 1.1em;
         }
         
         .export-btn:hover {
-            background: #e94560;
-            transform: translateY(-2px);
+            background: linear-gradient(to bottom, #e94560, #c70039);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
         }
         
         .preview-container {
             margin-top: 30px;
             text-align: center;
+            background: rgba(15, 52, 96, 0.3);
+            padding: 20px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        .preview-container h3 {
+            margin-top: 0;
+            color: #e94560;
+            font-size: 1.5em;
+            margin-bottom: 15px;
         }
         
         .pixel-preview {
-            border: 2px solid #e94560;
+            border: 3px solid #e94560;
             background: #000;
             image-rendering: pixelated;
             margin: 0 auto;
-            display: none;
+            display: block;
+            box-shadow: 0 0 20px rgba(233, 69, 96, 0.3);
         }
         
         .back-link {
@@ -174,10 +256,18 @@
             color: #e94560;
             text-decoration: none;
             font-weight: bold;
+            font-size: 1.1em;
+            padding: 10px 20px;
+            border-radius: 30px;
+            background: rgba(15, 52, 96, 0.3);
+            transition: all 0.3s;
         }
         
         .back-link:hover {
-            text-decoration: underline;
+            text-decoration: none;
+            background: rgba(233, 69, 96, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
         
         .pixel-cursor {
@@ -185,16 +275,57 @@
             width: 16px;
             height: 16px;
             background: rgba(255, 255, 255, 0.5);
+            border: 2px solid #fff;
             pointer-events: none;
             display: none;
             z-index: 10;
+            border-radius: 3px;
         }
         
         .grid-toggle {
             margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(15, 52, 96, 0.5);
+            padding: 8px 15px;
+            border-radius: 8px;
         }
         
-        @media (max-width: 600px) {
+        .grid-toggle input {
+            cursor: pointer;
+        }
+        
+        .history-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+        
+        .history-btn {
+            background: linear-gradient(to bottom, #0f3460, #16213e);
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .history-btn:hover {
+            background: linear-gradient(to bottom, #533483, #3a2464);
+            transform: translateY(-2px);
+        }
+        
+        .shortcut-hint {
+            font-size: 0.85em;
+            color: #a5a5a5;
+            margin-top: 5px;
+            text-align: center;
+        }
+        
+        @media (max-width: 700px) {
             .toolbar {
                 flex-direction: column;
                 align-items: center;
@@ -203,12 +334,79 @@
             .size-controls {
                 flex-direction: column;
             }
+            
+            .export-options {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            h1 {
+                font-size: 2.2em;
+            }
+            
+            .editor-container {
+                padding: 15px;
+            }
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            5% { transform: scale(1.2); }
+            10% { transform: scale(1); }
+            15% { transform: scale(1.3); }
+            50% { transform: scale(1); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(233, 69, 96, 0.7); }
+            70% { box-shadow: 0 0 0 12px rgba(233, 69, 96, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(233, 69, 96, 0); }
+        }
+        
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .heart {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(233, 69, 96, 0.5);
+            animation: float 15s infinite linear;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>像素情书 <span style="color:#e94560;">❤</span></h1>
-    <p class="subtitle">创作属于你们的8-bit风格情书</p>
+    <div class="floating-hearts" id="floatingHearts"></div>
+    
+    <div class="header">
+        <h1>梁佳琪的像素情书</h1>
+        <p class="subtitle">用像素创作你独一无二的爱意表达</p>
+        <div class="special-message">❤ 专属定制，只为特别的你 ❤</div>
+    </div>
     
     <div class="editor-container">
         <div class="toolbar">
@@ -217,7 +415,7 @@
             <button class="tool-btn" id="fillBtn">填充</button>
             <button class="tool-btn" id="moveBtn">移动</button>
             <button class="tool-btn" id="clearBtn">清空</button>
-            <label class="tool-btn grid-toggle">
+            <label class="grid-toggle">
                 <input type="checkbox" id="gridToggle" checked> 网格
             </label>
         </div>
@@ -239,11 +437,11 @@
                 <label for="pixelSize">像素大小:</label>
                 <input type="number" id="pixelSize" min="8" max="32" value="16">
             </div>
-            <button class="tool-btn" id="resizeBtn">应用</button>
+            <button class="tool-btn" id="resizeBtn">应用尺寸</button>
         </div>
         
         <div class="canvas-container">
-            <canvas id="pixelCanvas"></canvas>
+            <canvas id="pixelCanvas" class="pixel-canvas"></canvas>
         </div>
         
         <div class="export-options">
@@ -251,6 +449,12 @@
             <button class="export-btn" id="shareBtn">分享作品</button>
             <button class="export-btn" id="loadBtn">加载作品</button>
         </div>
+        
+        <div class="history-controls">
+            <button class="history-btn" id="undoBtn">撤销 (Ctrl+Z)</button>
+            <button class="history-btn" id="redoBtn">重做 (Ctrl+Y)</button>
+        </div>
+        <div class="shortcut-hint">提示：使用键盘快捷键可以更快操作</div>
     </div>
     
     <div class="preview-container">
@@ -258,11 +462,29 @@
         <canvas id="pixelPreview" class="pixel-preview"></canvas>
     </div>
     
-    <a href="../index.html" class="back-link">← 返回浪漫代码收藏馆</a>
+    <a href="#" class="back-link">❤ 保存爱的记忆 ❤</a>
     
     <div class="pixel-cursor" id="pixelCursor"></div>
 
     <script>
+        // 创建漂浮爱心
+        function createFloatingHearts() {
+            const container = document.getElementById('floatingHearts');
+            const heartCount = 30;
+            
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerHTML = '❤';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 20 + 10) + 's';
+                heart.style.animationDelay = Math.random() * 10 + 's';
+                heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                heart.style.opacity = Math.random() * 0.5 + 0.1;
+                container.appendChild(heart);
+            }
+        }
+        
         // 获取DOM元素
         const canvas = document.getElementById('pixelCanvas');
         const preview = document.getElementById('pixelPreview');
@@ -289,6 +511,10 @@
         const shareBtn = document.getElementById('shareBtn');
         const loadBtn = document.getElementById('loadBtn');
         
+        // 历史控制
+        const undoBtn = document.getElementById('undoBtn');
+        const redoBtn = document.getElementById('redoBtn');
+        
         // 颜色调色板
         const colorPalette = document.getElementById('colorPalette');
         
@@ -299,6 +525,10 @@
         let canvasData = [];
         let canvasOffset = { x: 0, y: 0 };
         let startPos = { x: 0, y: 0 };
+        
+        // 历史记录（撤销/重做）
+        let history = [];
+        let historyIndex = -1;
         
         // 初始化颜色调色板
         const colors = [
@@ -324,14 +554,21 @@
             colorPalette.appendChild(btn);
         });
         
-        // 默认选中第一个颜色
-        colorPalette.firstChild.classList.add('active');
+        // 默认选中第三个颜色（粉色）
+        colorPalette.children[2].classList.add('active');
+        
+        // 获取画布尺寸
+        function getCanvasDimensions() {
+            return {
+                width: parseInt(canvasWidthInput.value),
+                height: parseInt(canvasHeightInput.value),
+                pixelSize: parseInt(pixelSizeInput.value)
+            };
+        }
         
         // 初始化画布
         function initCanvas() {
-            const width = parseInt(canvasWidthInput.value);
-            const height = parseInt(canvasHeightInput.value);
-            const pixelSize = parseInt(pixelSizeInput.value);
+            const { width, height, pixelSize } = getCanvasDimensions();
             
             canvas.width = width * pixelSize;
             canvas.height = height * pixelSize;
@@ -347,29 +584,32 @@
             // 显示预览
             preview.style.display = 'block';
             updatePreview();
+            
+            // 保存初始状态
+            saveState();
         }
         
         // 清空画布
         function clearCanvas() {
+            const { pixelSize, width, height } = getCanvasDimensions();
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawGrid();
             
             // 重置画布数据
-            const width = parseInt(canvasWidthInput.value);
-            const height = parseInt(canvasHeightInput.value);
             canvasData = Array(height).fill().map(() => Array(width).fill('#00000000'));
+            
+            // 保存状态
+            saveState();
         }
         
         // 绘制网格
         function drawGrid() {
             if (!gridToggle.checked) return;
             
-            const pixelSize = parseInt(pixelSizeInput.value);
-            const width = parseInt(canvasWidthInput.value);
-            const height = parseInt(canvasHeightInput.value);
+            const { width, height, pixelSize } = getCanvasDimensions();
             
-            ctx.strokeStyle = '#333';
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
             ctx.lineWidth = 1;
             
             // 垂直线
@@ -391,6 +631,7 @@
         
         // 更新预览
         function updatePreview() {
+            previewCtx.clearRect(0, 0, preview.width, preview.height);
             previewCtx.drawImage(canvas, 0, 0);
         }
         
@@ -422,7 +663,7 @@
         
         // 获取鼠标位置对应的像素坐标
         function getPixelPosition(x, y) {
-            const pixelSize = parseInt(pixelSizeInput.value);
+            const { pixelSize } = getCanvasDimensions();
             const rect = canvas.getBoundingClientRect();
             
             return {
@@ -433,11 +674,10 @@
         
         // 绘制像素
         function drawPixel(x, y, color) {
-            const pixelSize = parseInt(pixelSizeInput.value);
+            const { pixelSize, width, height } = getCanvasDimensions();
             
             // 确保在画布范围内
-            if (x < 0 || x >= parseInt(canvasWidthInput.value) || 
-                y < 0 || y >= parseInt(canvasHeightInput.value)) {
+            if (x < 0 || x >= width || y < 0 || y >= height) {
                 return;
             }
             
@@ -460,51 +700,142 @@
             updatePreview();
         }
         
-        // 填充区域
-        function fillArea(x, y, targetColor, fillColor) {
-            const width = parseInt(canvasWidthInput.value);
-            const height = parseInt(canvasHeightInput.value);
+        // 填充区域（使用队列避免递归栈溢出）
+        function fillArea(startX, startY, targetColor, fillColor) {
+            const { width, height } = getCanvasDimensions();
             
-            // 如果目标颜色已经是填充颜色，或者不在画布范围内，则返回
-            if (x < 0 || x >= width || y < 0 || y >= height || 
-                canvasData[y][x] !== targetColor || 
-                canvasData[y][x] === fillColor) {
-                return;
+            // 如果目标颜色与填充颜色相同，则返回
+            if (targetColor === fillColor) return;
+            
+            // 初始化队列
+            const queue = [{x: startX, y: startY}];
+            const visited = Array(height).fill().map(() => Array(width).fill(false));
+            
+            while (queue.length > 0) {
+                const {x, y} = queue.shift();
+                
+                // 检查边界
+                if (x < 0 || x >= width || y < 0 || y >= height) continue;
+                
+                // 检查是否访问过
+                if (visited[y][x]) continue;
+                visited[y][x] = true;
+                
+                // 检查颜色是否匹配
+                if (canvasData[y][x] !== targetColor) continue;
+                
+                // 设置颜色
+                drawPixel(x, y, fillColor);
+                
+                // 将相邻像素加入队列
+                queue.push({x: x+1, y});
+                queue.push({x: x-1, y});
+                queue.push({x, y: y+1});
+                queue.push({x, y: y-1});
             }
-            
-            // 设置新颜色
-            drawPixel(x, y, fillColor);
-            
-            // 递归填充相邻像素
-            fillArea(x + 1, y, targetColor, fillColor);
-            fillArea(x - 1, y, targetColor, fillColor);
-            fillArea(x, y + 1, targetColor, fillColor);
-            fillArea(x, y - 1, targetColor, fillColor);
         }
         
-        // 事件监听器
-        pencilBtn.addEventListener('click', () => setTool('pencil'));
-        eraserBtn.addEventListener('click', () => setTool('eraser'));
-        fillBtn.addEventListener('click', () => setTool('fill'));
-        moveBtn.addEventListener('click', () => setTool('move'));
-        clearBtn.addEventListener('click', clearCanvas);
-        
-        gridToggle.addEventListener('change', () => {
-            clearCanvas();
-            // 重新绘制所有像素
-            const width = parseInt(canvasWidthInput.value);
-            const height = parseInt(canvasHeightInput.value);
+        // 保存状态到历史记录
+        function saveState() {
+            // 深拷贝当前画布数据
+            const state = JSON.parse(JSON.stringify(canvasData));
+            // 如果当前不是历史记录的最新状态，则丢弃后面的记录
+            if (historyIndex < history.length - 1) {
+                history = history.slice(0, historyIndex + 1);
+            }
+            history.push(state);
+            historyIndex = history.length - 1;
             
+            // 更新按钮状态
+            updateHistoryButtons();
+        }
+        
+        // 撤销
+        function undo() {
+            if (historyIndex > 0) {
+                historyIndex--;
+                canvasData = JSON.parse(JSON.stringify(history[historyIndex]));
+                redrawCanvas();
+                updateHistoryButtons();
+            }
+        }
+        
+        // 重做
+        function redo() {
+            if (historyIndex < history.length - 1) {
+                historyIndex++;
+                canvasData = JSON.parse(JSON.stringify(history[historyIndex]));
+                redrawCanvas();
+                updateHistoryButtons();
+            }
+        }
+        
+        // 更新历史按钮状态
+        function updateHistoryButtons() {
+            undoBtn.disabled = historyIndex <= 0;
+            redoBtn.disabled = historyIndex >= history.length - 1;
+        }
+        
+        // 重绘画布（根据canvasData重绘）
+        function redrawCanvas() {
+            const { width, height, pixelSize } = getCanvasDimensions();
+            
+            // 清空画布
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制所有像素
             for (let y = 0; y < height; y++) {
                 for (let x = 0; x < width; x++) {
                     if (canvasData[y][x] !== '#00000000') {
-                        drawPixel(x, y, canvasData[y][x]);
+                        ctx.fillStyle = canvasData[y][x];
+                        ctx.fillRect(
+                            x * pixelSize + canvasOffset.x, 
+                            y * pixelSize + canvasOffset.y, 
+                            pixelSize, 
+                            pixelSize
+                        );
                     }
                 }
             }
+            
+            // 绘制网格
+            drawGrid();
+            
+            // 更新预览
+            updatePreview();
+        }
+        
+        // 事件监听器
+        // 使用事件委托处理工具按钮点击
+        document.querySelector('.toolbar').addEventListener('click', (e) => {
+            if (e.target.classList.contains('tool-btn') && e.target.id !== 'clearBtn') {
+                const tool = e.target.id.replace('Btn', '');
+                setTool(tool);
+            }
+        });
+        
+        clearBtn.addEventListener('click', clearCanvas);
+        
+        gridToggle.addEventListener('change', () => {
+            // 重新绘制所有像素
+            redrawCanvas();
         });
         
         resizeBtn.addEventListener('click', initCanvas);
+        
+        // 键盘事件（撤销/重做）
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey) {
+                if (e.key === 'z') {
+                    e.preventDefault();
+                    undo();
+                } else if (e.key === 'y') {
+                    e.preventDefault();
+                    redo();
+                }
+            }
+        });
         
         // 鼠标事件
         canvas.addEventListener('mousedown', (e) => {
@@ -514,19 +845,22 @@
             
             if (currentTool === 'pencil') {
                 drawPixel(pos.x, pos.y, currentColor);
+                saveState(); // 保存状态
             } else if (currentTool === 'eraser') {
                 drawPixel(pos.x, pos.y, '#00000000');
+                saveState(); // 保存状态
             } else if (currentTool === 'fill') {
                 const targetColor = canvasData[pos.y][pos.x];
                 if (targetColor !== currentColor) {
                     fillArea(pos.x, pos.y, targetColor, currentColor);
+                    saveState(); // 保存状态
                 }
             }
         });
         
         canvas.addEventListener('mousemove', (e) => {
             const pos = getPixelPosition(e.clientX, e.clientY);
-            const pixelSize = parseInt(pixelSizeInput.value);
+            const { pixelSize } = getCanvasDimensions();
             
             // 更新光标位置
             const rect = canvas.getBoundingClientRect();
@@ -539,36 +873,15 @@
             if (isDrawing) {
                 if (currentTool === 'pencil') {
                     drawPixel(pos.x, pos.y, currentColor);
+                    saveState(); // 保存状态
                 } else if (currentTool === 'eraser') {
                     drawPixel(pos.x, pos.y, '#00000000');
+                    saveState(); // 保存状态
                 } else if (currentTool === 'move') {
                     canvasOffset.x += e.clientX - startPos.x;
                     canvasOffset.y += e.clientY - startPos.y;
                     startPos = { x: e.clientX, y: e.clientY };
-                    
-                    // 重绘画布
-                    ctx.fillStyle = '#000';
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    
-                    const width = parseInt(canvasWidthInput.value);
-                    const height = parseInt(canvasHeightInput.value);
-                    const pixelSize = parseInt(pixelSizeInput.value);
-                    
-                    for (let y = 0; y < height; y++) {
-                        for (let x = 0; x < width; x++) {
-                            if (canvasData[y][x] !== '#00000000') {
-                                ctx.fillStyle = canvasData[y][x];
-                                ctx.fillRect(
-                                    x * pixelSize + canvasOffset.x, 
-                                    y * pixelSize + canvasOffset.y, 
-                                    pixelSize, 
-                                    pixelSize
-                                );
-                            }
-                        }
-                    }
-                    
-                    drawGrid();
+                    redrawCanvas();
                 }
             }
         });
@@ -581,10 +894,37 @@
             pixelCursor.style.display = 'none';
         });
         
+        // 触摸事件（移动端支持）
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousedown', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        });
+        
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousemove', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        });
+        
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            const mouseEvent = new MouseEvent('mouseup', {});
+            canvas.dispatchEvent(mouseEvent);
+        });
+        
         // 保存图片
         saveBtn.addEventListener('click', () => {
             const link = document.createElement('a');
-            link.download = '像素情书.png';
+            link.download = '梁佳琪的像素情书.png';
             link.href = preview.toDataURL('image/png');
             link.click();
         });
@@ -592,7 +932,7 @@
         // 分享作品
         shareBtn.addEventListener('click', () => {
             const dataUrl = preview.toDataURL('image/png');
-            const shareText = '我创作了一封像素情书，快来看看吧！';
+            const shareText = '我使用梁佳琪专属像素情书编辑器创作了一封情书，快来看看吧！';
             
             if (navigator.share) {
                 navigator.share({
@@ -602,6 +942,7 @@
                 }).catch(err => {
                     console.log('分享失败:', err);
                     copyToClipboard(shareText + ' ' + dataUrl);
+                    alert('分享失败，链接已复制到剪贴板！');
                 });
             } else {
                 copyToClipboard(shareText + ' ' + dataUrl);
@@ -617,10 +958,21 @@
             
             input.onchange = e => {
                 const file = e.target.files[0];
+                if (!file) return;
+                
                 const reader = new FileReader();
+                
+                reader.onerror = () => {
+                    alert('文件读取失败，请重试！');
+                };
                 
                 reader.onload = event => {
                     const img = new Image();
+                    
+                    img.onerror = () => {
+                        alert('图片加载失败，请重试！');
+                    };
+                    
                     img.onload = () => {
                         // 将图片绘制到预览画布上
                         preview.width = img.width;
@@ -628,12 +980,12 @@
                         previewCtx.drawImage(img, 0, 0);
                         
                         // 分析像素颜色
-                        const width = parseInt(canvasWidthInput.value);
-                        const height = parseInt(canvasHeightInput.value);
+                        const { width, height } = getCanvasDimensions();
                         
                         // 调整画布大小
-                        canvas.width = width * parseInt(pixelSizeInput.value);
-                        canvas.height = height * parseInt(pixelSizeInput.value);
+                        const pixelSize = parseInt(pixelSizeInput.value);
+                        canvas.width = width * pixelSize;
+                        canvas.height = height * pixelSize;
                         
                         // 清空画布数据
                         canvasData = Array(height).fill().map(() => Array(width).fill('#00000000'));
@@ -648,21 +1000,22 @@
                         }
                         
                         // 重绘画布
-                        clearCanvas();
-                        for (let y = 0; y < height; y++) {
-                            for (let x = 0; x < width; x++) {
-                                if (canvasData[y][x] !== '#00000000') {
-                                    drawPixel(x, y, canvasData[y][x]);
-                                }
-                            }
-                        }
+                        redrawCanvas();
+                        saveState(); // 保存状态
                     };
+                    
                     img.src = event.target.result;
                 };
+                
                 reader.readAsDataURL(file);
             };
+            
             input.click();
         });
+        
+        // 撤销/重做按钮
+        undoBtn.addEventListener('click', undo);
+        redoBtn.addEventListener('click', redo);
         
         // 复制到剪贴板
         function copyToClipboard(text) {
@@ -677,6 +1030,7 @@
         // 初始化
         initCanvas();
         setTool('pencil');
+        createFloatingHearts();
     </script>
 </body>
 </html>

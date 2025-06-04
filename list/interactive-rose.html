@@ -3,301 +3,669 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>永不凋谢的玫瑰</title>
+    <title>二维优雅玫瑰 · 致梁佳琪</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
-            overflow: hidden;
-            background: #000;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #2c0b36 0%, #1a1a2e 50%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
             flex-direction: column;
-            font-family: 'Arial', sans-serif;
-        }
-        
-        canvas {
-            display: block;
-            cursor: pointer;
-        }
-        
-        .title {
-            color: #fff;
-            text-align: center;
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px rgba(255, 0, 100, 0.8);
+            align-items: center;
             z-index: 10;
         }
         
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            color: #ff0064;
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 1.5s ease-out;
+        }
+        
+        .title {
+            font-size: 3.5rem;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4, #fad0c4, #a18cd1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 15px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
         
         .subtitle {
-            font-size: 1.2em;
-            color: #ff8fab;
-            font-style: italic;
-        }
-        
-        .back-link {
-            position: fixed;
-            bottom: 20px;
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            padding: 10px 20px;
-            border-radius: 50px;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(5px);
-            transition: all 0.3s;
-            z-index: 100;
-        }
-        
-        .back-link:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-3px);
+            font-size: 1.3rem;
+            color: #e0c3fc;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.7;
         }
         
         .heart {
-            color: #ff0064;
+            color: #ff6b6b;
             animation: pulse 1.5s infinite;
+            margin: 0 10px;
         }
         
+        .content {
+            display: flex;
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            gap: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.4s, box-shadow 0.4s;
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+        
+        .card-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #ffd3b6;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #rose-container {
+            width: 100%;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .rose-svg {
+            width: 280px;
+            height: 280px;
+            filter: drop-shadow(0 0 20px rgba(255, 105, 180, 0.4));
+            animation: float 6s infinite ease-in-out;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: white;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-width: 140px;
+        }
+        
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-3px);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #ff9a9e, #f6d365);
+            color: #5a1a3a;
+        }
+        
+        .poem {
+            font-style: italic;
+            line-height: 1.8;
+            color: #e2d1f9;
+            font-size: 1.1rem;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .poem::before {
+            content: """;
+            font-size: 4rem;
+            position: absolute;
+            top: -20px;
+            left: -10px;
+            color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .dedication {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 1.2rem;
+            color: #ffd3b6;
+            max-width: 800px;
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeIn 2s ease-out;
+        }
+        
+        .petal {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            border-radius: 50% 0 50% 50%;
+            transform: rotate(45deg);
+            opacity: 0.7;
+            pointer-events: none;
+            z-index: 5;
+        }
+        
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #ffd3b6;
+            box-shadow: 0 0 15px rgba(255, 0, 150, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .music-control:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.2;
+            animation: float 15s infinite ease-in-out;
+        }
+        
+        /* Animations */
         @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.8; }
+        }
+        
+        @keyframes petal-fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
+            100% { transform: translateY(800px) rotate(360deg); opacity: 0; }
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes breathe {
             0% { transform: scale(1); }
-            50% { transform: scale(1.3); }
+            50% { transform: scale(1.05); }
             100% { transform: scale(1); }
+        }
+        
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .content {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .card {
+                min-width: 100%;
+            }
+            
+            #rose-container {
+                height: 300px;
+            }
+            
+            .rose-svg {
+                width: 220px;
+                height: 220px;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="title">
-        <h1>永不凋谢的玫瑰 <span class="heart">❤</span></h1>
-        <p class="subtitle">点击旋转玫瑰，我们的爱情如这玫瑰般永恒</p>
+    <!-- 悬浮装饰元素 -->
+    <div class="floating-elements" id="floatingElements"></div>
+    
+    <!-- 音乐控制 -->
+    <div class="music-control" id="musicControl">
+        <i class="fas fa-music"></i>
     </div>
     
-    <canvas id="roseCanvas"></canvas>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">优雅玫瑰 <span class="heart">❤</span> 致梁佳琪</h1>
+            <p class="subtitle">这朵精致的二维玫瑰象征着我们永恒的爱情，如同艺术般优雅绽放</p>
+        </div>
+        
+        <div class="content">
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-rose"></i> 二维玫瑰展示</h2>
+                <div class="card-content">
+                    <div id="rose-container">
+                        <svg class="rose-svg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+                            <!-- 外层花瓣 -->
+                            <path class="petal outer-1" d="M250,200 C200,150 150,200 200,280 C250,320 300,280 300,230 C300,180 250,180 250,200 Z" 
+                                  fill="url(#outer-petal-gradient)" />
+                            <path class="petal outer-2" d="M250,200 C300,150 350,200 300,280 C250,320 200,280 200,230 C200,180 250,180 250,200 Z" 
+                                  fill="url(#outer-petal-gradient)" transform="rotate(60,250,250)" />
+                            <path class="petal outer-3" d="M250,200 C300,150 350,200 300,280 C250,320 200,280 200,230 C200,180 250,180 250,200 Z" 
+                                  fill="url(#outer-petal-gradient)" transform="rotate(120,250,250)" />
+                            
+                            <!-- 中层花瓣 -->
+                            <path class="petal middle-1" d="M250,220 C220,200 180,220 210,260 C240,280 280,260 280,240 C280,210 250,210 250,220 Z" 
+                                  fill="url(#middle-petal-gradient)" />
+                            <path class="petal middle-2" d="M250,220 C280,200 320,220 290,260 C260,280 220,260 220,240 C220,210 250,210 250,220 Z" 
+                                  fill="url(#middle-petal-gradient)" transform="rotate(45,250,250)" />
+                            <path class="petal middle-3" d="M250,220 C280,200 320,220 290,260 C260,280 220,260 220,240 C220,210 250,210 250,220 Z" 
+                                  fill="url(#middle-petal-gradient)" transform="rotate(90,250,250)" />
+                            <path class="petal middle-4" d="M250,220 C280,200 320,220 290,260 C260,280 220,260 220,240 C220,210 250,210 250,220 Z" 
+                                  fill="url(#middle-petal-gradient)" transform="rotate(135,250,250)" />
+                            
+                            <!-- 内层花瓣 -->
+                            <path class="petal inner-1" d="M250,240 C235,230 220,235 230,250 C240,260 260,255 260,245 C260,235 250,235 250,240 Z" 
+                                  fill="url(#inner-petal-gradient)" />
+                            <path class="petal inner-2" d="M250,240 C265,230 280,235 270,250 C260,260 240,255 240,245 C240,235 250,235 250,240 Z" 
+                                  fill="url(#inner-petal-gradient)" transform="rotate(45,250,250)" />
+                            <path class="petal inner-3" d="M250,240 C265,230 280,235 270,250 C260,260 240,255 240,245 C240,235 250,235 250,240 Z" 
+                                  fill="url(#inner-petal-gradient)" transform="rotate(90,250,250)" />
+                            <path class="petal inner-4" d="M250,240 C265,230 280,235 270,250 C260,260 240,255 240,245 C240,235 250,235 250,240 Z" 
+                                  fill="url(#inner-petal-gradient)" transform="rotate(135,250,250)" />
+                            
+                            <!-- 花蕊 -->
+                            <circle cx="250" cy="250" r="25" fill="url(#center-gradient)" filter="url(#shadow)" />
+                            <circle cx="250" cy="250" r="15" fill="#FFDD00" />
+                            
+                            <!-- 花茎 -->
+                            <path d="M250,350 C250,450 250,450 250,350 L250,300 C250,300 250,300 250,300 Z" 
+                                  stroke="#2a5c2a" stroke-width="15" stroke-linecap="round" />
+                            
+                            <!-- 叶子 -->
+                            <path class="leaf" d="M250,320 C280,310 320,330 290,350 C260,370 230,350 250,320 Z" 
+                                  fill="#3a8c3a" transform="rotate(30,250,330)" />
+                            <path class="leaf" d="M250,320 C220,310 180,330 210,350 C240,370 270,350 250,320 Z" 
+                                  fill="#3a8c3a" transform="rotate(-30,250,330)" />
+                            
+                            <!-- 渐变定义 -->
+                            <defs>
+                                <linearGradient id="outer-petal-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#ff6b6b" />
+                                    <stop offset="100%" stop-color="#ff9a9e" />
+                                </linearGradient>
+                                
+                                <linearGradient id="middle-petal-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#ff9a9e" />
+                                    <stop offset="100%" stop-color="#fad0c4" />
+                                </linearGradient>
+                                
+                                <linearGradient id="inner-petal-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#fad0c4" />
+                                    <stop offset="100%" stop-color="#fff" />
+                                </linearGradient>
+                                
+                                <linearGradient id="center-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#ff6b6b" />
+                                    <stop offset="100%" stop-color="#ff9a9e" />
+                                </linearGradient>
+                                
+                                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feGaussianBlur in="SourceAlpha" stdDeviation="4" />
+                                    <feOffset dx="5" dy="5" result="offsetblur" />
+                                    <feFlood flood-color="rgba(0,0,0,0.3)" />
+                                    <feComposite in2="offsetblur" operator="in" />
+                                    <feMerge>
+                                        <feMergeNode />
+                                        <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                </filter>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="controls">
+                        <button class="btn" id="rotateBtn"><i class="fas fa-sync"></i> 旋转玫瑰</button>
+                        <button class="btn" id="breatheBtn"><i class="fas fa-wind"></i> 呼吸效果</button>
+                        <button class="btn btn-primary" id="petalsBtn"><i class="fas fa-wind"></i> 花瓣飘落</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-heart"></i> 爱的诗篇</h2>
+                <div class="card-content">
+                    <div class="poem">
+                        <p>你是我生命中最美的玫瑰，</p>
+                        <p>在时光中静静绽放。</p>
+                        <p>每一片花瓣都诉说爱意，</p>
+                        <p>每一次绽放都传递深情。</p>
+                        <br>
+                        <p>如同这永不凋谢的花朵，</p>
+                        <p>我对你的爱永不褪色。</p>
+                        <p>岁月流转，四季更迭，</p>
+                        <p>唯爱永恒，永驻心间。</p>
+                        <br>
+                        <p>愿这朵玫瑰代我诉说，</p>
+                        <p>那些言语难以表达的爱恋。</p>
+                        <p>你是我今生最美的遇见，</p>
+                        <p>我愿用一生守护你的笑颜。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dedication">
+            <p>献给我此生挚爱的梁佳琪，愿这朵玫瑰如同我对你的爱，永恒绽放，永不凋谢</p>
+            <p>—— 永远爱你的，[你的名字]</p>
+        </div>
+    </div>
     
-    <a href="../index.html" class="back-link">← 返回浪漫代码收藏馆</a>
+    <audio id="bgMusic" loop>
+        <source src="https://cdn.pixabay.com/download/audio/2023/10/23/audio_ff5a3f1b38.mp3" type="audio/mpeg">
+    </audio>
 
     <script>
-        const canvas = document.getElementById('roseCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        // 设置画布大小为窗口大小
-        function resizeCanvas() {
-            const size = Math.min(window.innerWidth, window.innerHeight) * 0.9;
-            canvas.width = size;
-            canvas.height = size;
-        }
-        
-        window.addEventListener('load', resizeCanvas);
-        window.addEventListener('resize', resizeCanvas);
-        
-        // 3D玫瑰参数
-        let time = 0;
-        let rotationX = 0;
-        let rotationY = 0;
-        let isDragging = false;
-        let lastX, lastY;
-        
-        // 鼠标交互
-        canvas.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            lastX = e.clientX;
-            lastY = e.clientY;
-        });
-        
-        window.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
+        // 创建悬浮装饰元素
+        function createFloatingElements() {
+            const container = document.getElementById('floatingElements');
+            const elementCount = 15;
             
-            const deltaX = e.clientX - lastX;
-            const deltaY = e.clientY - lastY;
-            
-            rotationY += deltaX * 0.01;
-            rotationX += deltaY * 0.01;
-            
-            lastX = e.clientX;
-            lastY = e.clientY;
-        });
-        
-        window.addEventListener('mouseup', () => {
-            isDragging = false;
-        });
-        
-        // 触摸屏支持
-        canvas.addEventListener('touchstart', (e) => {
-            isDragging = true;
-            lastX = e.touches[0].clientX;
-            lastY = e.touches[0].clientY;
-            e.preventDefault();
-        });
-        
-        window.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            
-            const deltaX = e.touches[0].clientX - lastX;
-            const deltaY = e.touches[0].clientY - lastY;
-            
-            rotationY += deltaX * 0.01;
-            rotationX += deltaY * 0.01;
-            
-            lastX = e.touches[0].clientX;
-            lastY = e.touches[0].clientY;
-            e.preventDefault();
-        });
-        
-        window.addEventListener('touchend', () => {
-            isDragging = false;
-        });
-        
-        // 3D玫瑰绘制函数
-        function drawRose() {
-            time += 0.01;
-            
-            // 清除画布
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // 设置中心点
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-            const size = Math.min(canvas.width, canvas.height) * 0.4;
-            
-            // 绘制玫瑰
-            ctx.save();
-            ctx.translate(centerX, centerY);
-            
-            // 应用旋转
-            ctx.rotateX = rotationX;
-            ctx.rotateY = rotationY;
-            
-            // 玫瑰花瓣参数
-            const petalCount = 100;
-            const layers = 5;
-            
-            for (let l = 0; l < layers; l++) {
-                const layerRatio = l / layers;
-                const petalSize = size * (0.5 + layerRatio * 0.5);
-                const petalColor = `hsl(${330 + l * 10}, 100%, ${50 + l * 5}%)`;
+            for (let i = 0; i < elementCount; i++) {
+                const element = document.createElement('div');
+                element.classList.add('floating-element');
                 
-                for (let i = 0; i < petalCount; i++) {
-                    const ratio = i / petalCount;
-                    const angle = ratio * Math.PI * 2 + time * 0.5;
-                    const spiralRatio = ratio * 0.5 + layerRatio * 0.5;
-                    
-                    // 3D效果
-                    const x = Math.cos(angle + rotationY) * spiralRatio * petalSize;
-                    const y = Math.sin(angle + rotationX) * spiralRatio * petalSize;
-                    const z = Math.sin(ratio * Math.PI * 4 + time) * petalSize * 0.2;
-                    
-                    // 花瓣大小和透明度
-                    const scale = 0.1 + Math.sin(ratio * Math.PI) * 0.9;
-                    const alpha = 0.3 + 0.7 * (1 - layerRatio);
-                    
-                    // 绘制花瓣
-                    ctx.save();
-                    ctx.translate(x, y + z);
-                    ctx.rotate(angle);
-                    
-                    // 花瓣形状
-                    ctx.beginPath();
-                    ctx.moveTo(0, 0);
-                    ctx.bezierCurveTo(
-                        -10 * scale, -30 * scale,
-                        -40 * scale, -20 * scale,
-                        -20 * scale, 40 * scale
-                    );
-                    ctx.bezierCurveTo(
-                        0, 60 * scale,
-                        20 * scale, 40 * scale,
-                        40 * scale, -20 * scale
-                    );
-                    ctx.bezierCurveTo(
-                        10 * scale, -30 * scale,
-                        0, 0,
-                        0, 0
-                    );
-                    
-                    // 花瓣颜色和阴影
-                    const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 40 * scale);
-                    gradient.addColorStop(0, petalColor);
-                    gradient.addColorStop(1, `hsl(330, 80%, 30%)`);
-                    
-                    ctx.fillStyle = gradient;
-                    ctx.globalAlpha = alpha;
-                    ctx.shadowColor = `rgba(255, 0, 100, ${alpha * 0.5})`;
-                    ctx.shadowBlur = 15;
-                    ctx.fill();
-                    
-                    ctx.restore();
+                // 随机位置
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                
+                // 随机大小
+                const size = Math.random() * 60 + 20;
+                
+                // 随机形状
+                const isCircle = Math.random() > 0.5;
+                if (!isCircle) {
+                    element.style.borderRadius = "0";
+                    element.style.transform = "rotate(45deg)";
                 }
+                
+                // 随机颜色
+                const colors = [
+                    'rgba(255, 154, 158, 0.1)',
+                    'rgba(250, 208, 196, 0.1)',
+                    'rgba(161, 140, 209, 0.1)',
+                    'rgba(146, 224, 208, 0.1)'
+                ];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                // 随机动画
+                const duration = Math.random() * 20 + 20;
+                const delay = Math.random() * 10;
+                
+                element.style.left = `${x}%`;
+                element.style.top = `${y}%`;
+                element.style.width = `${size}px`;
+                element.style.height = `${size}px`;
+                element.style.background = color;
+                element.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
+                
+                container.appendChild(element);
             }
-            
-            // 绘制花茎
-            ctx.beginPath();
-            ctx.moveTo(0, size * 0.3);
-            ctx.lineTo(0, size * 1.5);
-            ctx.lineWidth = size * 0.03;
-            ctx.strokeStyle = '#2a5c2a';
-            ctx.shadowColor = 'rgba(0, 100, 0, 0.5)';
-            ctx.shadowBlur = 10;
-            ctx.stroke();
-            
-            // 绘制叶子
-            for (let i = 0; i < 2; i++) {
-                ctx.save();
-                ctx.translate(0, size * (0.7 + i * 0.3));
-                ctx.rotate(i * Math.PI * 0.5 + Math.sin(time) * 0.1);
-                
-                ctx.beginPath();
-                ctx.moveTo(0, 0);
-                ctx.bezierCurveTo(
-                    size * 0.3, -size * 0.1,
-                    size * 0.5, size * 0.2,
-                    0, size * 0.4
-                );
-                ctx.bezierCurveTo(
-                    -size * 0.5, size * 0.2,
-                    -size * 0.3, -size * 0.1,
-                    0, 0
-                );
-                
-                const leafGradient = ctx.createLinearGradient(0, -size * 0.1, 0, size * 0.4);
-                leafGradient.addColorStop(0, '#3a8c3a');
-                leafGradient.addColorStop(1, '#1a5c1a');
-                
-                ctx.fillStyle = leafGradient;
-                ctx.fill();
-                
-                ctx.restore();
-            }
-            
-            ctx.restore();
-            
-            // 动画循环
-            requestAnimationFrame(drawRose);
         }
         
-        // 开始绘制
-        resizeCanvas();
-        drawRose();
+        // 创建花瓣飘落效果
+        function createFallingPetals() {
+            const container = document.querySelector('.container');
+            const petalCount = 40;
+            
+            for (let i = 0; i < petalCount; i++) {
+                const petal = document.createElement('div');
+                petal.className = 'petal';
+                
+                // 随机位置
+                const startLeft = Math.random() * 100;
+                petal.style.left = `${startLeft}%`;
+                petal.style.top = `-30px`;
+                
+                // 随机大小
+                const size = Math.random() * 15 + 10;
+                petal.style.width = `${size}px`;
+                petal.style.height = `${size}px`;
+                
+                // 随机旋转
+                const rotation = Math.random() * 360;
+                petal.style.transform = `rotate(${rotation}deg)`;
+                
+                // 随机透明度
+                petal.style.opacity = Math.random() * 0.5 + 0.3;
+                
+                // 随机动画
+                const duration = Math.random() * 10 + 10;
+                const delay = Math.random() * 5;
+                
+                petal.style.animation = `petal-fall ${duration}s linear forwards`;
+                
+                container.appendChild(petal);
+                
+                // 动画结束后移除花瓣
+                setTimeout(() => {
+                    petal.remove();
+                }, (duration + delay) * 1000);
+            }
+        }
         
-        // 添加3D旋转效果
-        CanvasRenderingContext2D.prototype.rotateX = function(angle) {
-            const c = Math.cos(angle);
-            const s = Math.sin(angle);
-            this.transform(1, 0, 0, c, 0, -s);
-        };
+        // 初始化音乐控制
+        function initMusicControl() {
+            const bgMusic = document.getElementById('bgMusic');
+            const musicControl = document.getElementById('musicControl');
+            
+            // 尝试自动播放音乐
+            setTimeout(() => {
+                bgMusic.play().catch(e => {
+                    console.log('Autoplay prevented:', e);
+                    musicControl.innerHTML = '<i class="fas fa-play"></i>';
+                });
+            }, 1000);
+            
+            musicControl.addEventListener('click', () => {
+                if (bgMusic.paused) {
+                    bgMusic.play();
+                    musicControl.innerHTML = '<i class="fas fa-music"></i>';
+                } else {
+                    bgMusic.pause();
+                    musicControl.innerHTML = '<i class="fas fa-play"></i>';
+                }
+            });
+        }
         
-        CanvasRenderingContext2D.prototype.rotateY = function(angle) {
-            const c = Math.cos(angle);
-            const s = Math.sin(angle);
-            this.transform(c, 0, 0, 1, s, 0);
-        };
+        // 初始化玫瑰交互
+        function initRoseInteractions() {
+            const roseSvg = document.querySelector('.rose-svg');
+            let isRotating = false;
+            let isBreathing = false;
+            let rotateInterval;
+            
+            // 旋转玫瑰
+            document.getElementById('rotateBtn').addEventListener('click', () => {
+                if (isRotating) {
+                    clearInterval(rotateInterval);
+                    document.getElementById('rotateBtn').innerHTML = '<i class="fas fa-sync"></i> 旋转玫瑰';
+                } else {
+                    let rotation = 0;
+                    rotateInterval = setInterval(() => {
+                        rotation += 1;
+                        roseSvg.style.transform = `rotate(${rotation}deg)`;
+                    }, 50);
+                    document.getElementById('rotateBtn').innerHTML = '<i class="fas fa-pause"></i> 停止旋转';
+                }
+                isRotating = !isRotating;
+            });
+            
+            // 呼吸效果
+            document.getElementById('breatheBtn').addEventListener('click', () => {
+                if (isBreathing) {
+                    roseSvg.style.animation = 'float 6s infinite ease-in-out';
+                    document.getElementById('breatheBtn').innerHTML = '<i class="fas fa-wind"></i> 呼吸效果';
+                } else {
+                    roseSvg.style.animation = 'breathe 3s infinite ease-in-out';
+                    document.getElementById('breatheBtn').innerHTML = '<i class="fas fa-pause"></i> 停止呼吸';
+                }
+                isBreathing = !isBreathing;
+            });
+            
+            // 花瓣飘落
+            document.getElementById('petalsBtn').addEventListener('click', createFallingPetals);
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', () => {
+            createFloatingElements();
+            initMusicControl();
+            initRoseInteractions();
+            
+            // 初始花瓣飘落
+            setTimeout(createFallingPetals, 2000);
+            
+            // 添加文字动画
+            gsap.from('.title', {
+                opacity: 0,
+                y: -30,
+                duration: 1.5,
+                ease: "power2.out"
+            });
+            
+            gsap.from('.subtitle', {
+                opacity: 0,
+                y: 20,
+                duration: 1.5,
+                delay: 0.5,
+                ease: "power2.out"
+            });
+            
+            gsap.from('.card', {
+                opacity: 0,
+                y: 50,
+                duration: 1,
+                stagger: 0.2,
+                delay: 1,
+                ease: "power2.out"
+            });
+        });
     </script>
 </body>
 </html>

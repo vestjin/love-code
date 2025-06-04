@@ -3,68 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>星空下的约定</title>
+    <title>星空下的约定 - 爱的纪念日</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
-            height: 100vh;
-            background: #0a0a1a;
-            color: white;
-            font-family: 'Arial', sans-serif;
-            overflow: hidden;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0a1a, #1a0a2a, #0a1a2a);
+            color: #f0f0ff;
+            overflow: auto;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            position: relative;
+            animation: bgGradient 15s ease infinite;
+            background-size: 300% 300%;
+        }
+        
+        @keyframes bgGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
         
         .container {
             text-align: center;
-            z-index: 10;
+            z-index: 20;
             width: 90%;
             max-width: 800px;
+            padding: 30px;
+            background: rgba(10, 8, 24, 0.7);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            position: relative;
+            margin: 40px 0;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #e0b0ff;
+            text-shadow: 0 0 15px rgba(224, 176, 255, 0.8);
         }
         
         h1 {
             color: #e0b0ff;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
             text-shadow: 0 0 10px rgba(224, 176, 255, 0.7);
+            letter-spacing: 1px;
+            background: linear-gradient(to right, #e0b0ff, #ff69b4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 10px rgba(224, 176, 255, 0.7), 0 0 20px rgba(224, 176, 255, 0.5); }
+            to { text-shadow: 0 0 15px rgba(224, 极76, 255, 0.9), 0 0 30px rgba(224, 176, 255, 0.7), 0 0 40px rgba(255, 105, 180, 0.5); }
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: #b0b0ff;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
         }
         
         .date-picker {
-            margin: 20px 0;
+            margin: 30px 0;
             display: flex;
             justify-content: center;
             align-items: center;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 15px;
         }
         
-        input {
-            padding: 12px 15px;
+        .input-group {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #da70d6;
+            font-size: 1.2rem;
+            pointer-events: none;
+            z-index: 2;
+        }
+        
+        input[type="date"] {
+            padding: 14px 15px 14px 45px;
             border: 2px solid #4a3a6e;
-            border-radius: 8px;
+            border-radius: 50px;
             background: rgba(26, 20, 42, 0.8);
             color: white;
             font-size: 16px;
             outline: none;
+            width: 100%;
+            transition: all 0.3s;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+        
+        input[type="date"]:focus {
+            border-color: #da70d6;
+            box-shadow: 0 0 15px rgba(218, 112, 214, 0.5);
+        }
+        
+        .date-hint {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #da70d6;
+            pointer-events: none;
+            z-index: 2;
         }
         
         button {
-            padding: 12px 25px;
+            padding: 14px 35px;
             background: linear-gradient(45deg, #8a2be2, #da70d6);
             border: none;
-            border-radius: 8px;
+            border-radius: 50px;
             color: white;
             font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
         }
         
         button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(138, 43, 226, 0.6);
+            background: linear-gradient(45deg, #9a3bf2, #ea80e6);
         }
         
         .star-map {
@@ -72,131 +171,574 @@
             height: 400px;
             margin: 30px 0;
             position: relative;
-            border-radius: 10px;
+            border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 0 30px rgba(138, 43, 226, 0.3);
+            background: rgba(5, 5, 15, 0.5);
+            border: 1px solid rgba(138, 43, 226, 0.2);
         }
         
         .constellation {
             position: absolute;
-            width: 2px;
-            height: 2px;
+            width: 3px;
+            height: 3px;
             background: white;
             border-radius: 50%;
-            box-shadow: 0 0 5px white;
+            box-shadow: 0 0 8px white;
+            animation: twinkle 3s infinite alternate;
         }
         
         .constellation-line {
             position: absolute;
-            background: rgba(255, 255, 255, 0.3);
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.7), transparent);
+            height: 2px;
             transform-origin: 0 0;
+            z-index: 5;
         }
         
         .special-star {
             position: absolute;
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
             background: #ff69b4;
             border-radius: 50%;
-            box-shadow: 0 0 15px #ff69b4;
-            animation: twinkle 2s infinite alternate;
+            box-shadow: 0 0 20px #ff69b4;
+            animation: twinkle 2s infinite alternate, pulse 3s infinite ease-in-out;
+            z-index: 10;
         }
         
         .message {
             margin-top: 20px;
-            padding: 20px;
-            background: rgba(26, 20, 42, 0.7);
-            border-radius: 10px;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(26, 20, 42, 0.8), rgba(42, 20, 62, 0.8));
+            border-radius: 15px;
             border: 1px solid #4a3a6e;
             backdrop-filter: blur(5px);
             opacity: 0;
-            transition: opacity 1s;
+            transform: translateY(20px);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
         }
         
         .message.show {
             opacity: 1;
+            transform: translateY(0);
+        }
+        
+        #constellationName {
+            font-size: 1.8rem;
+            color: #ff69b极;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        #romanticMessage {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: #e0e0ff;
+            margin-bottom: 15px;
+        }
+        
+        .constellation-desc {
+            font-size: 1rem;
+            color: #b0b0ff;
+            font-style: italic;
+            margin-top: 10px;
         }
         
         @keyframes twinkle {
-            0% { opacity: 0.5; }
+            0% { opacity: 0.3; }
             100% { opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
         }
         
         .back-link {
             position: fixed;
-            bottom: 20px;
+            bottom: 25px;
             color: #e0b0ff;
             text-decoration: none;
             font-weight: bold;
-            padding: 10px 20px;
+            padding: 12px 25px;
             border-radius: 50px;
-            background: rgba(74, 58, 110, 0.5);
+            background: rgba(74, 58, 110, 0.7);
             backdrop-filter: blur(5px);
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 30;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
         
         .back-link:hover {
-            background: rgba(138, 43, 226, 0.5);
+            background: rgba(138, 43, 226, 0.7);
             transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(138, 43, 226, 0.4);
+        }
+        
+        /* 星空背景 */
+        .stars-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        /* 流星效果 */
+        .shooting-star {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(to right, rgba(255,255,255,0), white, rgba(255,255,255,0));
+            filter: drop-shadow(0 0 6px rgba(224, 176, 255, 0.8));
+            animation: shooting 5s linear infinite;
+            top: -50px;
+        }
+        
+        @keyframes shooting {
+            0% { transform: rotate(-30deg) translateX(-100px); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: rotate(-30deg) translateX(100vw); opacity: 0; }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 20px;
+                margin: 20px 0;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .date-picker {
+                flex-direction: column;
+            }
+            
+            .input-group {
+                max-width: 100%;
+            }
+            
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .star-map {
+                height: 300px;
+            }
+            
+            #constellationName {
+                font-size: 1.5rem;
+            }
+            
+            #romanticMessage {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .star-map {
+                height: 250px;
+            }
+            
+            #constellationName {
+                font-size: 1.3rem;
+            }
+            
+            .message {
+                padding: 15px;
+            }
+            
+            input[type="date"] {
+                padding: 12px 12px 12px 40px;
+                font-size: 14px;
+            }
+        }
+        
+        /* 加载动画 */
+        .loader {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 15;
+        }
+        
+        .loader .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(138, 43, 226, 0.2);
+            border-top: 5px solid #8a2be2;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 分享按钮 */
+        .share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .share-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .share-btn.wechat {
+            background: linear-gradient(45deg, #2cbe4e, #1aad19);
+        }
+        
+        .share-btn.weibo {
+            background: linear-gradient(45deg, #e6162d, #d40e20);
+        }
+        
+        .share-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .signature {
+            margin-top: 20px;
+            color: rgba(224, 176, 255, 0.6);
+            font-size: 0.9rem;
+        }
+        
+        /* 修复日期选择器兼容性问题 */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            opacity: 1;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            z-index: 3;
+        }
+        
+        /* 错误提示 */
+        .error-message {
+            color: #ff6b6b;
+            margin-top: 8px;
+            font-size: 14px;
+            text-align: left;
+            padding-left: 15px;
+            display: none;
+        }
+        
+        /* 日期选择器动画 */
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(218, 112, 214, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(218, 112, 214, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(218, 112, 214, 0); }
+        }
+        
+        .pulse {
+            animation: pulse-border 1.5s infinite;
+        }
+        
+        /* 初始提示 */
+        .initial-msg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #b0b0ff;
+            text-align: center;
+            width: 80%;
+            z-index: 5;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+        
+        /* 修复星座连线 */
+        .constellation-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* 布局优化 */
+        .content-wrapper {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .visual-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        @media (min-width: 992px) {
+            .visual-section {
+                flex-direction: row;
+            }
+            
+            .star-map {
+                flex: 1;
+                height: 350px;
+            }
+            
+            .message {
+                flex: 1;
+                margin-top: 0;
+                height: 350px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- 星空背景 -->
+    <div class="stars-bg" id="starsBg"></div>
+    
     <div class="container">
+        <div class="logo">
+            <i class="fas fa-star"></i>
+        </div>
         <h1>星空下的约定</h1>
-        <p>输入你们的纪念日，看看那天的星空是什么样子</p>
+        <p class="subtitle">输入你们的纪念日，我将为你重现那夜的星空，让星辰见证你们的爱情故事</p>
         
         <div class="date-picker">
-            <input type="date" id="memoryDate">
-            <button onclick="generateStarMap()">生成星空图</button>
+            <div class="input-group">
+                <i class="fas fa-calendar-alt"></i>
+                <input type="date" id="memoryDate" class="pulse">
+                <span class="date-hint"><i class="fas fa-chevron-down"></i></span>
+                <div class="error-message" id="dateError">请选择一个日期</div>
+            </div>
+            <button id="generateBtn">
+                <i class="fas fa-magic"></i>
+                生成星空图
+            </button>
         </div>
         
-        <div class="star-map" id="starMap"></div>
+        <div class="content-wrapper">
+            <div class="visual-section">
+                <div class="star-map" id="starMap">
+                    <div class="initial-msg" id="initialMessage">
+                        <i class="fas fa-star" style="font-size: 3rem; margin-bottom: 20px; color: #da70d6;"></i>
+                        <h3>选择您的特别日期</h3>
+                        <p>点击上方日历图标，选择你们的纪念日</p>
+                        <p>我们将为您重现那天的星空</p>
+                    </div>
+                    <div class="constellation-container" id="constellationContainer"></div>
+                </div>
+                
+                <div class="message" id="message">
+                    <div>
+                        <p id="constellationName"></p>
+                        <p id="romanticMessage"></p>
+                        <p class="constellation-desc" id="constellationDesc"></p>
+                    </div>
+                    
+                    <div class="share-buttons">
+                        <div class="share-btn wechat" title="分享到微信">
+                            <i class="fab fa-weixin"></i>
+                        </div>
+                        <div class="share-btn weibo" title="分享到微博">
+                            <i class="fab fa-weibo"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         
-        <div class="message" id="message">
-            <p id="constellationName"></p>
-            <p id="romanticMessage"></p>
+        <div class="signature">
+            Crafted with <i class="fas fa-heart" style="color: #ff69b4;"></i> for Liang Jiaqi
         </div>
     </div>
     
-    <a href="../index.html" class="back-link">← 返回浪漫代码收藏馆</a>
+    <a href="../index.html" class="back-link">
+        <i class="fas fa-arrow-left"></i>
+        返回浪漫代码收藏馆
+    </a>
     
     <script>
-        // 星座数据
+        // 星座数据 - 扩展了更多星座和描述
         const constellations = [
-            { name: "仙女座", stars: [[30, 30], [70, 50], [110, 30], [150, 70]], 
-              message: "仙女座见证了你们的相遇，如同神话中的美丽传说" },
-            { name: "猎户座", stars: [[40, 60], [80, 30], [80, 90], [120, 60]], 
-              message: "猎户座的勇士守护着你们的爱情，如星辰般永恒" },
-            { name: "大熊座", stars: [[20, 20], [50, 40], [80, 20], [110, 40], [140, 20]], 
-              message: "大熊座指引着你们的方向，就像北斗七星指引迷途的旅人" },
-            { name: "天琴座", stars: [[50, 50], [90, 50], [70, 90]], 
-              message: "天琴座为你们奏响爱的乐章，每一个音符都是甜蜜的回忆" },
-            { name: "天鹅座", stars: [[40, 70], [80, 40], [120, 70]], 
-              message: "天鹅座展翅高飞，象征着你们爱情的自由与纯洁" }
+            { 
+                name: "仙女座", 
+                stars: [[30, 30], [70, 50], [110, 30], [150, 70], [190, 90]],
+                message: "仙女座见证了你们的相遇，如同神话中的美丽传说",
+                desc: "仙女座是希腊神话中安德洛墨达的化身，象征着被拯救的爱情"
+            },
+            { 
+                name: "猎户座", 
+                stars: [[40, 60], [80, 30], [80, 90], [120, 60], [160, 40]],
+                message: "猎户座的勇士守护着你们的爱情，如星辰般永恒",
+                desc: "猎户座是希腊神话中的猎人俄里翁，代表力量与守护"
+            },
+            { 
+                name: "大熊座", 
+                stars: [[20, 20], [50, 40], [80, 20], [110, 40], [140, 20], [170, 40]],
+                message: "大熊座指引着你们的方向，就像北斗七星指引迷途的旅人",
+                desc: "大熊座包含北斗七星，自古以来就是航行的指引"
+            },
+            { 
+                name: "天琴座", 
+                stars: [[50, 50], [90, 50], [70, 90], [50, 70], [90, 70]],
+                message: "天琴座为你们奏响爱的乐章，每一个音符都是甜蜜的回忆",
+                desc: "天琴座代表俄耳甫斯的竖琴，象征音乐与艺术之美"
+            },
+            { 
+                name: "天鹅座", 
+                stars: [[40, 70], [80, 40], [120, 70], [100, 90], [60, 90]],
+                message: "天鹅座展翅高飞，象征着你们爱情的自由与纯洁",
+                desc: "天鹅座代表宙斯化作的天鹅，寓意神圣之爱"
+            },
+            { 
+                name: "天蝎座", 
+                stars: [[30, 80], [60, 60], [90, 70], [120, 50], [150, 60], [180, 80]],
+                message: "天蝎座守护着你们炽热的爱情，如星辰般永恒闪耀",
+                desc: "天蝎座是黄道星座之一，象征神秘与强烈的情感"
+            },
+            { 
+                name: "双鱼座", 
+                stars: [[40, 40], [60, 60], [80, 40], [100, 60], [120, 40], [140, 60]],
+                message: "双鱼座连接着你们的心灵，如同星座中的两颗心紧紧相连",
+                desc: "双鱼座是黄道星座的最后一个，象征永恒与轮回"
+            }
         ];
         
-        // 生成星空图
-        function generateStarMap() {
-            const dateInput = document.getElementById('memoryDate').value;
-            if (!dateInput) {
-                alert('请选择一个日期');
-                return;
-            }
+        // 浪漫语录库
+        const romanticQuotes = [
+            "在亿万星辰中，我找到了最亮的那颗 - 就是你",
+            "我们的爱情比银河更宽广，比宇宙更永恒",
+            "每一颗星星都是我对你的思念，每一道星光都是我的爱意",
+            "在星空下许下的诺言，是时间无法抹去的印记",
+            "即使宇宙毁灭，我对你的爱依然如星辰般闪耀",
+            "你是我生命中最美的星座，照亮我前行的道路"
+        ];
+        
+        // 初始化星空背景
+        function initStarsBackground() {
+            const starsBg = document.getElementById('starsBg');
+            const fragment = document.createDocumentFragment();
             
-            const starMap = document.getElementById('starMap');
-            starMap.innerHTML = '';
-            
-            // 生成随机星星
+            // 创建背景星星
             for (let i = 0; i < 200; i++) {
                 const star = document.createElement('div');
                 star.className = 'constellation';
                 star.style.left = Math.random() * 100 + '%';
                 star.style.top = Math.random() * 100 + '%';
-                star.style.opacity = Math.random() * 0.5 + 0.5;
+                star.style.opacity = Math.random() * 0.5 + 0.3;
                 star.style.width = (Math.random() * 3 + 1) + 'px';
                 star.style.height = star.style.width;
-                starMap.appendChild(star);
+                star.style.animationDelay = Math.random() * 5 + 's';
+                fragment.appendChild(star);
+            }
+            
+            // 创建流星
+            for (let i = 0; i < 3; i++) {
+                const meteor = document.createElement('div');
+                meteor.className = 'shooting-star';
+                meteor.style.top = Math.random() * 50 + 10 + '%';
+                meteor.style.width = Math.random() * 100 + 50 + 'px';
+                meteor.style.animationDelay = Math.random() * 10 + 's';
+                fragment.appendChild(meteor);
+            }
+            
+            starsBg.appendChild(fragment);
+        }
+        
+        // 生成星空图
+        function generateStarMap() {
+            const dateInput = document.getElementById('memoryDate');
+            const dateValue = dateInput.value;
+            const errorMessage = document.getElementById('dateError');
+            
+            if (!dateValue) {
+                errorMessage.style.display = 'block';
+                dateInput.classList.add('pulse');
+                setTimeout(() => {
+                    dateInput.classList.remove('pulse');
+                }, 1500);
+                return;
+            }
+            
+            errorMessage.style.display = 'none';
+            
+            const starMap = document.getElementById('starMap');
+            // 清除之前的内容
+            const container = document.getElementById('constellationContainer');
+            container.innerHTML = '';
+            
+            // 隐藏初始提示
+            document.getElementById('initialMessage').style.display = 'none';
+            
+            // 显示加载动画
+            const loader = document.createElement('div');
+            loader.className = 'loader';
+            loader.innerHTML = '<div class="spinner"></div>';
+            container.appendChild(loader);
+            
+            // 模拟加载时间
+            setTimeout(() => {
+                loader.remove();
+                createStarMap(container, dateValue);
+            }, 1000);
+        }
+        
+        // 创建星空图
+        function createStarMap(container, date) {
+            const fragment = document.createDocumentFragment();
+            
+            // 生成随机星星
+            for (let i = 0; i < 150; i++) {
+                const star = document.createElement('div');
+                star.className = 'constellation';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.opacity = Math.random() * 0.5 + 0.3;
+                star.style.width = (Math.random() * 3 + 1) + 'px';
+                star.style.height = star.style.width;
+                star.style.animationDelay = Math.random() * 5 + 's';
+                fragment.appendChild(star);
             }
             
             // 选择随机星座
@@ -209,7 +751,7 @@
                 star.style.left = pos[0] / 200 * 100 + '%';
                 star.style.top = pos[1] / 100 * 100 + '%';
                 star.style.animationDelay = index * 0.2 + 's';
-                starMap.appendChild(star);
+                fragment.appendChild(star);
                 
                 // 绘制星座连线
                 if (index > 0) {
@@ -228,26 +770,81 @@
                     ) * 180 / Math.PI;
                     
                     line.style.width = length / 200 * 100 + '%';
-                    line.style.height = '1px';
                     line.style.left = prevPos[0] / 200 * 100 + '%';
                     line.style.top = prevPos[1] / 100 * 100 + '%';
                     line.style.transform = 'rotate(' + angle + 'deg)';
                     
-                    starMap.appendChild(line);
+                    fragment.appendChild(line);
                 }
             });
             
-            // 显示浪漫消息
-            document.getElementById('constellationName').textContent = 
-                `${dateInput} 的星空: ${selectedConstellation.name}`;
-            document.getElementById('romanticMessage').textContent = 
-                selectedConstellation.message;
+            container.appendChild(fragment);
             
-            document.getElementById('message').classList.add('show');
+            // 显示浪漫消息
+            showMessage(date, selectedConstellation);
         }
         
-        // 设置默认日期为今天
-        document.getElementById('memoryDate').valueAsDate = new Date();
+        // 显示消息
+        function showMessage(date, constellation) {
+            const messageEl = document.getElementById('message');
+            const nameEl = document.getElementById('constellationName');
+            const msgEl = document.getElementById('romanticMessage');
+            const descEl = document.getElementById('constellationDesc');
+            
+            // 清除之前的语录
+            const existingQuote = document.querySelector('.constellation-desc.quote');
+            if (existingQuote) existingQuote.remove();
+            
+            // 添加随机浪漫语录
+            const randomQuote = romanticQuotes[Math.floor(Math.random() * romanticQuotes.length)];
+            
+            nameEl.textContent = `${date} 的星空: ${constellation.name}`;
+            msgEl.textContent = constellation.message;
+            descEl.textContent = constellation.desc;
+            
+            // 添加浪漫语录
+            const quoteEl = document.createElement('p');
+            quoteEl.className = 'constellation-desc quote';
+            quoteEl.innerHTML = `<i class="fas fa-quote-left"></i> ${randomQuote} <i class="fas fa-quote-right"></i>`;
+            msgEl.after(quoteEl);
+            
+            messageEl.classList.add('show');
+        }
+        
+        // 初始化
+        function init() {
+            // 设置默认日期为今天
+            const today = new Date();
+            const formattedDate = today.getFullYear() + '-' + 
+                                  String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+                                  String(today.getDate()).padStart(2, '0');
+            document.getElementById('memoryDate').value = formattedDate;
+            
+            // 初始化星空背景
+            initStarsBackground();
+            
+            // 添加事件监听器
+            document.getElementById('generateBtn').addEventListener('click', generateStarMap);
+            
+            // 添加CSS动画
+            const style = document.createElement('style');
+            style.innerHTML = `
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    20%, 60% { transform: translateX(-5px); }
+                    40%, 80% { transform: translateX(5px); }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // 添加日期选择事件
+            document.getElementById('memoryDate').addEventListener('change', function() {
+                document.getElementById('dateError').style.display = 'none';
+            });
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>

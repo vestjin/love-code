@@ -3,109 +3,374 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数字回忆录</title>
+    <title>数字回忆录 | 梁佳琪的专属记忆</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
-            font-family: 'Arial', sans-serif;
-            background: #f9f3f3;
-            color: #555;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
+        :root {
+            --primary: #e75480;
+            --primary-light: #ff85a2;
+            --primary-dark: #d23369;
+            --secondary: #ffb6c1;
+            --light: #fff9fb;
+            --dark: #4a4a68;
+            --accent: #ff9eb5;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fff0f5 0%, #ffe4e1 100%);
+            background-attachment: fixed;
+            color: #555;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
-        
+
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .heart {
+            position: absolute;
+            color: rgba(231, 84, 128, 0.3);
+            font-size: 20px;
+            animation: float 12s linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-50px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
         header {
             text-align: center;
             margin-bottom: 40px;
+            position: relative;
+            padding: 30px 0;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            margin-top: 20px;
         }
-        
+
         h1 {
-            color: #e75480;
-            font-size: 2.5em;
+            color: var(--primary);
+            font-size: 3.2rem;
             margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
         }
-        
+
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
         .subtitle {
             font-style: italic;
-            color: #888;
+            color: var(--dark);
+            font-size: 1.3rem;
+            max-width: 600px;
+            margin: 20px auto 0;
+            line-height: 1.6;
         }
-        
+
+        .heart-icon {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin: 0 10px;
+            animation: pulse 2s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px 20px 14px 50px;
+            border: 2px solid rgba(231, 84, 128, 0.3);
+            border-radius: 50px;
+            font-size: 1.1rem;
+            background: white;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(231, 84, 128, 0.2);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .filter-btn {
+            background: rgba(231, 84, 128, 0.1);
+            color: var(--primary);
+            border: 2px solid rgba(231, 84, 128, 0.3);
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-btn:hover {
+            background: rgba(231, 84, 128, 0.2);
+        }
+
         .memory-book {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 30px;
             margin-bottom: 50px;
         }
-        
+
         .memory-page {
             background: white;
-            border-radius: 10px;
+            border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: transform 0.4s, box-shadow 0.4s;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
-        
+
         .memory-page:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
-        
+
+        .memory-image-container {
+            position: relative;
+            height: 250px;
+            overflow: hidden;
+        }
+
         .memory-image {
             width: 100%;
-            height: 200px;
+            height: 100%;
             object-fit: cover;
+            transition: transform 0.5s;
         }
-        
-        .memory-content {
-            padding: 20px;
+
+        .memory-page:hover .memory-image {
+            transform: scale(1.1);
         }
-        
+
         .memory-date {
-            color: #e75480;
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255, 255, 255, 0.85);
+            color: var(--primary);
             font-weight: bold;
-            margin-bottom: 10px;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        
+
+        .memory-content {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
         .memory-title {
-            font-size: 1.3em;
-            margin-bottom: 10px;
-            color: #333;
-        }
-        
-        .memory-desc {
-            line-height: 1.6;
+            font-size: 1.4rem;
             margin-bottom: 15px;
+            color: var(--dark);
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        
+
+        .memory-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--light);
+            color: var(--primary);
+            border: 1px solid rgba(231, 84, 128, 0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .memory-desc {
+            line-height: 1.7;
+            margin-bottom: 20px;
+            flex-grow: 1;
+            color: #666;
+        }
+
+        .memory-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: auto;
+        }
+
+        .tag {
+            background: rgba(231, 84, 128, 0.1);
+            color: var(--primary-dark);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
         .add-memory {
             text-align: center;
-            margin: 50px 0;
+            margin: 60px 0 40px;
+            position: relative;
         }
-        
+
         .add-btn {
-            background: #e75480;
+            background: linear-gradient(45deg, var(--primary), var(--primary-dark));
             color: white;
             border: none;
-            padding: 15px 30px;
-            font-size: 1.1em;
+            padding: 16px 40px;
+            font-size: 1.2rem;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(231,84,128,0.3);
+            box-shadow: 0 8px 20px rgba(231, 84, 128, 0.4);
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
         }
-        
+
         .add-btn:hover {
-            background: #d23369;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(231,84,128,0.4);
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(231, 84, 128, 0.5);
         }
-        
+
+        .add-btn:active {
+            transform: translateY(2px);
+        }
+
+        .add-btn::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: all 0.5s;
+        }
+
+        .add-btn:hover::after {
+            left: 100%;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 30px auto;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: bold;
+            padding: 12px 25px;
+            border-radius: 50px;
+            background: rgba(231, 84, 128, 0.1);
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: rgba(231, 84, 128, 0.2);
+            text-decoration: none;
+            transform: translateX(-5px);
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -113,127 +378,322 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 100;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
-        
+
         .modal-content {
             background: white;
-            padding: 30px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 600px;
+            padding: 40px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 700px;
             position: relative;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            animation: modalAppear 0.5s ease-out;
         }
-        
+
+        @keyframes modalAppear {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .close-btn {
             position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 1.5em;
+            top: 20px;
+            right: 20px;
+            font-size: 1.8rem;
             cursor: pointer;
-            color: #888;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-        
-        .form-group input, 
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-family: inherit;
-        }
-        
-        .form-group textarea {
-            height: 100px;
-        }
-        
-        .submit-btn {
-            background: #e75480;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-size: 1em;
-            border-radius: 5px;
-            cursor: pointer;
+            color: #aaa;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
             transition: all 0.3s;
         }
-        
-        .submit-btn:hover {
-            background: #d23369;
+
+        .close-btn:hover {
+            color: var(--primary);
+            background: var(--light);
+            transform: rotate(90deg);
         }
-        
-        .back-link {
-            display: block;
+
+        .modal-title {
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 30px;
             text-align: center;
-            margin-top: 30px;
-            color: #e75480;
-            text-decoration: none;
-            font-weight: bold;
+            position: relative;
+            padding-bottom: 15px;
         }
-        
-        .back-link:hover {
-            text-decoration: underline;
+
+        .modal-title::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
         }
-        
-        .heart {
-            color: #e75480;
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group label i {
+            color: var(--primary);
+        }
+
+        .form-group input, 
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus, 
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(231, 84, 128, 0.2);
+        }
+
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .tag-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .tag-input input {
+            flex-grow: 1;
+            min-width: 120px;
+        }
+
+        .tag-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .tag-preview .tag {
+            background: rgba(231, 84, 128, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tag-preview .tag .remove-tag {
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 16px 35px;
+            font-size: 1.2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: block;
+            margin: 20px auto 0;
+            width: 100%;
+            max-width: 300px;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(231, 84, 128, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(231, 84, 128, 0.4);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            grid-column: 1 / -1;
+            color: #888;
+        }
+
+        .empty-state i {
+            font-size: 5rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .memory-book {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                padding: 30px 20px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- 动态背景 -->
+    <div class="floating-hearts" id="floatingHearts"></div>
+
     <div class="container">
         <header>
-            <h1>数字回忆录 <span class="heart">❤</span></h1>
-            <p class="subtitle">记录我们共同走过的点点滴滴</p>
+            <h1>数字回忆录 <i class="heart-icon">❤</i></h1>
+            <p class="subtitle">记录我们共同走过的点点滴滴，珍藏每一个美好瞬间</p>
         </header>
+        
+        <div class="controls">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="搜索回忆...">
+            </div>
+            
+            <button class="filter-btn" id="filterBtn">
+                <i class="fas fa-filter"></i> 筛选回忆
+            </button>
+        </div>
         
         <div class="memory-book" id="memoryBook">
             <!-- 回忆页面将通过JavaScript动态添加 -->
         </div>
         
         <div class="add-memory">
-            <button class="add-btn" onclick="openModal()">+ 添加新回忆</button>
+            <button class="add-btn" id="addMemoryBtn">
+                <i class="fas fa-plus"></i> 添加新回忆
+            </button>
         </div>
         
-        <a href="../index.html" class="back-link">← 返回浪漫代码收藏馆</a>
+        <div class="back-link-container">
+            <a href="../index.html" class="back-link">
+                <i class="fas fa-arrow-left"></i> 返回浪漫代码收藏馆
+            </a>
+        </div>
     </div>
     
-    <!-- 添加回忆的模态框 -->
+    <!-- 添加/编辑回忆的模态框 -->
     <div class="modal" id="memoryModal">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <h2>添加新回忆</h2>
+            <span class="close-btn" id="closeModalBtn">&times;</span>
+            <h2 class="modal-title" id="modalTitle">添加新回忆</h2>
+            
             <form id="memoryForm">
-                <div class="form-group">
-                    <label for="memoryDate">日期</label>
-                    <input type="date" id="memoryDate" required>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="memoryDate"><i class="fas fa-calendar"></i> 日期</label>
+                        <input type="date" id="memoryDate" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="memoryTitle"><i class="fas fa-heading"></i> 标题</label>
+                        <input type="text" id="memoryTitle" placeholder="例如: 第一次约会" required>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="memoryImage"><i class="fas fa-image"></i> 图片URL</label>
+                        <input type="url" id="memoryImage" placeholder="输入图片链接" required>
+                        <div class="image-preview" id="imagePreview" style="margin-top: 10px; display: none;">
+                            <img src="" alt="预览图" style="max-width: 100%; max-height: 200px; border-radius: 10px;">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="memoryDesc"><i class="fas fa-align-left"></i> 描述</label>
+                        <textarea id="memoryDesc" placeholder="写下这段回忆的细节..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label><i class="fas fa-tags"></i> 标签</label>
+                        <div class="tag-input">
+                            <input type="text" id="tagInput" placeholder="添加标签 (按回车确认)">
+                        </div>
+                        <div class="tag-preview" id="tagPreview"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="memoryMood"><i class="fas fa-smile"></i> 心情</label>
+                        <select id="memoryMood">
+                            <option value="happy">😊 开心</option>
+                            <option value="excited">😆 兴奋</option>
+                            <option value="romantic">🥰 浪漫</option>
+                            <option value="peaceful">😌 平静</option>
+                            <option value="surprised">😲 惊喜</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="memoryLocation"><i class="fas fa-map-marker-alt"></i> 地点</label>
+                        <input type="text" id="memoryLocation" placeholder="例如: 上海外滩">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="memoryTitle">标题</label>
-                    <input type="text" id="memoryTitle" placeholder="例如: 第一次约会" required>
-                </div>
-                <div class="form-group">
-                    <label for="memoryImage">图片URL</label>
-                    <input type="url" id="memoryImage" placeholder="输入图片链接" required>
-                </div>
-                <div class="form-group">
-                    <label for="memoryDesc">描述</label>
-                    <textarea id="memoryDesc" placeholder="写下这段回忆的细节..." required></textarea>
-                </div>
-                <button type="submit" class="submit-btn">保存回忆</button>
+                
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <i class="fas fa-save"></i> 保存回忆
+                </button>
             </form>
         </div>
     </div>
@@ -242,24 +702,66 @@
         // 初始化回忆录数据
         let memories = [
             {
+                id: 1,
                 date: "2023-05-20",
                 title: "我们的相遇",
                 image: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-                description: "在五月的阳光下，我们的故事开始了。那天咖啡馆的香气，你微笑的样子，都深深印在我的记忆里。"
+                description: "在五月的阳光下，我们的故事开始了。那天咖啡馆的香气，你微笑的样子，都深深印在我的记忆里。",
+                tags: ["相遇", "咖啡馆", "第一印象"],
+                mood: "happy",
+                location: "星巴克咖啡"
             },
             {
+                id: 2,
                 date: "2023-07-15",
                 title: "第一次旅行",
                 image: "https://images.unsplash.com/photo-1505228395891-9a51e7e86bf6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-                description: "我们去了海边，听着海浪的声音，看着夕阳西下。那一刻，我知道我想和你一起看遍世界的美景。"
+                description: "我们去了海边，听着海浪的声音，看着夕阳西下。那一刻，我知道我想和你一起看遍世界的美景。",
+                tags: ["旅行", "海边", "夕阳"],
+                mood: "romantic",
+                location: "三亚海滩"
             },
             {
+                id: 3,
                 date: "2023-09-28",
                 title: "你的生日",
                 image: "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-                description: "我偷偷准备了惊喜派对，看到你惊讶又开心的表情，我觉得所有的准备都值得了。"
+                description: "我偷偷准备了惊喜派对，看到你惊讶又开心的表情，我觉得所有的准备都值得了。",
+                tags: ["生日", "惊喜", "庆祝"],
+                mood: "excited",
+                location: "家里"
+            },
+            {
+                id: 4,
+                date: "2023-12-24",
+                title: "圣诞夜",
+                image: "https://images.unsplash.com/photo-1513151233558-d94c498921c7?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                description: "第一次一起过圣诞节，在雪花飘舞的夜晚交换礼物，你送我的围巾是我最珍贵的礼物。",
+                tags: ["圣诞节", "礼物", "雪夜"],
+                mood: "romantic",
+                location: "中央公园"
             }
         ];
+        
+        // 当前编辑的记忆ID
+        let currentEditId = null;
+        let currentTags = [];
+        
+        // 创建动态背景
+        function createHearts() {
+            const container = document.getElementById('floatingHearts');
+            const heartCount = 20;
+            
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.innerHTML = '❤';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDelay = Math.random() * 10 + 's';
+                heart.style.fontSize = (Math.random() * 15 + 15) + 'px';
+                container.appendChild(heart);
+            }
+        }
         
         // 从本地存储加载回忆
         function loadMemories() {
@@ -271,27 +773,70 @@
         }
         
         // 渲染回忆录
-        function renderMemories() {
+        function renderMemories(filteredMemories = null) {
             const memoryBook = document.getElementById('memoryBook');
             memoryBook.innerHTML = '';
             
-            // 按日期排序
-            memories.sort((a, b) => new Date(b.date) - new Date(a.date));
+            const memsToRender = filteredMemories || memories;
             
-            memories.forEach(memory => {
+            if (memsToRender.length === 0) {
+                memoryBook.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-book-open"></i>
+                        <h3>暂无回忆记录</h3>
+                        <p>点击"添加新回忆"按钮，创建你的第一个美好记忆</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 按日期排序
+            memsToRender.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            memsToRender.forEach(memory => {
                 const memoryPage = document.createElement('div');
                 memoryPage.className = 'memory-page';
                 
                 memoryPage.innerHTML = `
-                    <img src="${memory.image}" alt="${memory.title}" class="memory-image">
-                    <div class="memory-content">
+                    <div class="memory-image-container">
+                        <img src="${memory.image}" alt="${memory.title}" class="memory-image">
                         <div class="memory-date">${formatDate(memory.date)}</div>
-                        <h3 class="memory-title">${memory.title}</h3>
+                    </div>
+                    <div class="memory-content">
+                        <div class="memory-title">
+                            <span>${memory.title}</span>
+                            <div class="memory-actions">
+                                <button class="action-btn edit-btn" data-id="${memory.id}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn delete-btn" data-id="${memory.id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
                         <p class="memory-desc">${memory.description}</p>
+                        <div class="memory-tags">
+                            ${memory.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
                     </div>
                 `;
                 
                 memoryBook.appendChild(memoryPage);
+            });
+            
+            // 添加编辑和删除事件
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.dataset.id);
+                    editMemory(id);
+                });
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.dataset.id);
+                    deleteMemory(id);
+                });
             });
         }
         
@@ -305,41 +850,181 @@
         function openModal() {
             document.getElementById('memoryModal').style.display = 'flex';
             document.getElementById('memoryDate').valueAsDate = new Date();
+            currentEditId = null;
+            currentTags = [];
+            document.getElementById('modalTitle').textContent = '添加新回忆';
+            document.getElementById('submitBtn').innerHTML = '<i class="fas fa-save"></i> 保存回忆';
+            document.getElementById('memoryForm').reset();
+            document.getElementById('tagPreview').innerHTML = '';
+            document.getElementById('imagePreview').style.display = 'none';
+        }
+        
+        // 编辑回忆
+        function editMemory(id) {
+            const memory = memories.find(m => m.id === id);
+            if (!memory) return;
+            
+            document.getElementById('memoryModal').style.display = 'flex';
+            document.getElementById('modalTitle').textContent = '编辑回忆';
+            document.getElementById('submitBtn').innerHTML = '<i class="fas fa-save"></i> 更新回忆';
+            
+            // 填充表单
+            document.getElementById('memoryDate').value = memory.date;
+            document.getElementById('memoryTitle').value = memory.title;
+            document.getElementById('memoryImage').value = memory.image;
+            document.getElementById('memoryDesc').value = memory.description;
+            document.getElementById('memoryMood').value = memory.mood;
+            document.getElementById('memoryLocation').value = memory.location || '';
+            
+            // 显示图片预览
+            if (memory.image) {
+                const preview = document.getElementById('imagePreview');
+                preview.style.display = 'block';
+                preview.querySelector('img').src = memory.image;
+            }
+            
+            // 填充标签
+            currentTags = [...memory.tags];
+            renderTags();
+            
+            currentEditId = id;
+        }
+        
+        // 删除回忆
+        function deleteMemory(id) {
+            if (confirm('确定要删除这个回忆吗？此操作无法撤销。')) {
+                memories = memories.filter(m => m.id !== id);
+                localStorage.setItem('memories', JSON.stringify(memories));
+                renderMemories();
+            }
         }
         
         // 关闭模态框
         function closeModal() {
             document.getElementById('memoryModal').style.display = 'none';
-            document.getElementById('memoryForm').reset();
         }
         
-        // 处理表单提交
-        document.getElementById('memoryForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        // 渲染标签
+        function renderTags() {
+            const tagPreview = document.getElementById('tagPreview');
+            tagPreview.innerHTML = '';
             
-            const newMemory = {
-                date: document.getElementById('memoryDate').value,
-                title: document.getElementById('memoryTitle').value,
-                image: document.getElementById('memoryImage').value,
-                description: document.getElementById('memoryDesc').value
-            };
+            currentTags.forEach(tag => {
+                const tagEl = document.createElement('span');
+                tagEl.className = 'tag';
+                tagEl.innerHTML = `${tag} <span class="remove-tag" data-tag="${tag}">×</span>`;
+                tagPreview.appendChild(tagEl);
+            });
             
-            memories.push(newMemory);
-            localStorage.setItem('memories', JSON.stringify(memories));
-            
-            renderMemories();
-            closeModal();
-        });
+            // 添加标签删除事件
+            document.querySelectorAll('.remove-tag').forEach(el => {
+                el.addEventListener('click', function() {
+                    const tagToRemove = this.dataset.tag;
+                    currentTags = currentTags.filter(tag => tag !== tagToRemove);
+                    renderTags();
+                });
+            });
+        }
         
-        // 点击模态框外部关闭
-        window.addEventListener('click', function(e) {
-            if (e.target === document.getElementById('memoryModal')) {
-                closeModal();
+        // 搜索回忆
+        function searchMemories() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            if (!searchTerm) {
+                renderMemories();
+                return;
             }
-        });
+            
+            const filtered = memories.filter(memory => 
+                memory.title.toLowerCase().includes(searchTerm) ||
+                memory.description.toLowerCase().includes(searchTerm) ||
+                memory.tags.some(tag => tag.toLowerCase().includes(searchTerm)) ||
+                (memory.location && memory.location.toLowerCase().includes(searchTerm))
+            );
+            
+            renderMemories(filtered);
+        }
         
         // 页面加载时初始化
-        window.addEventListener('load', loadMemories);
+        document.addEventListener('DOMContentLoaded', function() {
+            createHearts();
+            loadMemories();
+            
+            // 添加事件监听器
+            document.getElementById('addMemoryBtn').addEventListener('click', openModal);
+            document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+            
+            // 点击模态框外部关闭
+            window.addEventListener('click', function(e) {
+                if (e.target === document.getElementById('memoryModal')) {
+                    closeModal();
+                }
+            });
+            
+            // 处理表单提交
+            document.getElementById('memoryForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const newMemory = {
+                    id: currentEditId || Date.now(),
+                    date: document.getElementById('memoryDate').value,
+                    title: document.getElementById('memoryTitle').value,
+                    image: document.getElementById('memoryImage').value,
+                    description: document.getElementById('memoryDesc').value,
+                    tags: [...currentTags],
+                    mood: document.getElementById('memoryMood').value,
+                    location: document.getElementById('memoryLocation').value || ''
+                };
+                
+                if (currentEditId) {
+                    // 更新现有回忆
+                    const index = memories.findIndex(m => m.id === currentEditId);
+                    if (index !== -1) {
+                        memories[index] = newMemory;
+                    }
+                } else {
+                    // 添加新回忆
+                    memories.push(newMemory);
+                }
+                
+                localStorage.setItem('memories', JSON.stringify(memories));
+                renderMemories();
+                closeModal();
+            });
+            
+            // 标签输入处理
+            document.getElementById('tagInput').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const tag = this.value.trim();
+                    if (tag && !currentTags.includes(tag)) {
+                        currentTags.push(tag);
+                        renderTags();
+                        this.value = '';
+                    }
+                }
+            });
+            
+            // 图片URL输入时预览
+            document.getElementById('memoryImage').addEventListener('input', function() {
+                const url = this.value.trim();
+                const preview = document.getElementById('imagePreview');
+                
+                if (url) {
+                    preview.style.display = 'block';
+                    preview.querySelector('img').src = url;
+                } else {
+                    preview.style.display = 'none';
+                }
+            });
+            
+            // 搜索功能
+            document.getElementById('searchInput').addEventListener('input', searchMemories);
+            
+            // 筛选功能
+            document.getElementById('filterBtn').addEventListener('click', function() {
+                alert('筛选功能将在后续版本中推出！');
+            });
+        });
     </script>
 </body>
 </html>

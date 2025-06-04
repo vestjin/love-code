@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>专属八音盒</title>
+    <title>梁佳琪专属八音盒</title>
     <style>
         body {
             margin: 0;
             padding: 0;
             font-family: 'Comic Sans MS', 'Marker Felt', 'Segoe Print', sans-serif;
-            background: #fef6e9;
+            background: linear-gradient(135deg, #fef6e9 0%, #ffebf3 100%);
             overflow: hidden;
             display: flex;
             justify-content: center;
@@ -96,6 +96,56 @@
             animation: floatHeart 8s linear infinite;
         }
         
+        /* 专属标记样式 */
+        .special-marker {
+            position: absolute;
+            z-index: 20;
+            top: 20px;
+            right: 20px;
+            width: 120px;
+            height: 120px;
+            animation: pulse 2s infinite;
+        }
+        
+        .special-marker .outer-heart {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="%23ff6b9d"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            animation: rotate 20s linear infinite;
+        }
+        
+        .special-marker .inner-heart {
+            position: absolute;
+            width: 60%;
+            height: 60%;
+            top: 20%;
+            left: 20%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="%23ffffff"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: #e75480;
+            text-align: center;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
         @keyframes floatCloud {
             0% { transform: translateX(-150px); }
             100% { transform: translateX(calc(100vw + 150px)); }
@@ -154,6 +204,12 @@
             font-size: 1em;
             width: 80%;
             max-width: 300px;
+            background-image: linear-gradient(45deg, transparent 50%, #e8c4c4 50%),
+                              linear-gradient(135deg, #e8c4c4 50%, transparent 50%);
+            background-position: calc(100% - 20px) calc(1em + 2px),
+                                 calc(100% - 15px) calc(1em + 2px);
+            background-size: 5px 5px, 5px 5px;
+            background-repeat: no-repeat;
         }
         
         .back-link {
@@ -162,10 +218,29 @@
             color: #e75480;
             text-decoration: none;
             font-weight: bold;
+            position: relative;
         }
         
         .back-link:hover {
             text-decoration: underline;
+        }
+        
+        .back-link::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #e75480;
+            transform: scaleX(0);
+            transform-origin: bottom right;
+            transition: transform 0.3s ease-out;
+        }
+        
+        .back-link:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
         }
         
         .music-box-top {
@@ -191,18 +266,73 @@
             background: #d8b0b0;
             border-radius: 0 0 5px 5px;
         }
+        
+        .volume-control {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .volume-control label {
+            color: #e75480;
+            font-weight: bold;
+        }
+        
+        input[type="range"] {
+            width: 70%;
+            max-width: 200px;
+            -webkit-appearance: none;
+            height: 8px;
+            border-radius: 4px;
+            background: #e8c4c4;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e75480;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .visualizer {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            height: 80px;
+            margin: 20px 0;
+            gap: 3px;
+        }
+        
+        .bar {
+            width: 8px;
+            background: linear-gradient(to top, #e75480, #ffa5c5);
+            border-radius: 4px 4px 0 0;
+        }
     </style>
 </head>
 <body>
+    <!-- 梁佳琪专属标记 -->
+    <div class="special-marker">
+        <div class="outer-heart"></div>
+        <div class="inner-heart">梁佳琪<br>专属</div>
+    </div>
+    
     <div class="scene" id="scene"></div>
     
     <div class="music-box">
         <div class="music-box-top"></div>
-        <h1>专属八音盒</h1>
-        <p>播放属于你们的旋律</p>
+        <h1>梁佳琪专属八音盒</h1>
+        <p>播放属于你的专属旋律</p>
         
         <div class="song-selector">
             <select id="songSelect">
+                <option value="twinkle">小星星</option>
                 <option value="furElise">致爱丽丝</option>
                 <option value="canon">卡农</option>
                 <option value="moonlight">月光奏鸣曲</option>
@@ -211,13 +341,20 @@
             </select>
         </div>
         
+        <div class="volume-control">
+            <label for="volume">音量:</label>
+            <input type="range" id="volume" min="0" max="1" step="0.1" value="0.5">
+        </div>
+        
+        <div class="visualizer" id="visualizer"></div>
+        
         <div class="controls">
             <button id="playBtn">播放</button>
             <button id="stopBtn">停止</button>
         </div>
         
         <div id="customMelody" style="display: none;">
-            <textarea id="melodyInput" placeholder="输入你的旋律代码，例如: C4 D4 E4 F4 G4" style="width: 80%; height: 60px; margin: 10px 0; padding: 10px; border-radius: 10px; border: 2px solid #e8c4c4;"></textarea>
+            <textarea id="melodyInput" placeholder="输入你的旋律代码，例如: C4 D4 E4 F4 G4" style="width: 80%; height: 60px; margin: 10px 0; padding: 10px; border-radius: 10px; border: 2px solid #e8c4c4; resize: none;"></textarea>
             <button id="saveMelodyBtn">保存旋律</button>
         </div>
         
@@ -272,6 +409,9 @@
         let audioContext;
         let currentOscillator;
         let currentNotes = [];
+        let gainNode;
+        let analyser;
+        let animationFrame;
         
         // 音符频率映射
         const noteFrequencies = {
@@ -285,6 +425,9 @@
         
         // 预设旋律
         const melodies = {
+            // 添加《小星星》旋律
+            twinkle: ['C4', 'C4', 'G4', 'G4', 'A4', 'A4', 'G4', 
+                     'F4', 'F4', 'E4', 'E4', 'D4', 'D4', 'C4'],
             furElise: ['E5', 'D#5', 'E5', 'D#5', 'E5', 'B4', 'D5', 'C5', 'A4', 
                       'C4', 'E4', 'A4', 'B4', 'E4', 'G#4', 'B4', 'C5'],
             canon: ['D4', 'A4', 'B4', 'F#4', 'G4', 'D4', 'G4', 'A4', 
@@ -298,22 +441,68 @@
         // 初始化音频上下文
         function initAudio() {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            gainNode = audioContext.createGain();
+            gainNode.gain.value = document.getElementById('volume').value;
+            
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 256;
+            gainNode.connect(analyser);
+            analyser.connect(audioContext.destination);
+        }
+        
+        // 更新音量
+        function updateVolume() {
+            if (gainNode) {
+                gainNode.gain.value = document.getElementById('volume').value;
+            }
+        }
+        
+        // 创建可视化效果
+        function createVisualizer() {
+            if (!analyser) return;
+            
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            
+            function draw() {
+                animationFrame = requestAnimationFrame(draw);
+                analyser.getByteFrequencyData(dataArray);
+                
+                const visualizer = document.getElementById('visualizer');
+                visualizer.innerHTML = '';
+                
+                // 创建16个条
+                for (let i = 0; i < 16; i++) {
+                    const value = dataArray[i * 2];
+                    const height = (value / 256) * 70 + 5;
+                    const bar = document.createElement('div');
+                    bar.className = 'bar';
+                    bar.style.height = `${height}px`;
+                    visualizer.appendChild(bar);
+                }
+            }
+            
+            draw();
         }
         
         // 播放音符
         function playNote(frequency, duration, time) {
+            if (!audioContext) {
+                initAudio();
+            }
+            
             const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
+            const noteGain = audioContext.createGain();
             
             oscillator.type = 'sine';
             oscillator.frequency.value = frequency;
             
-            gainNode.gain.setValueAtTime(0, time);
-            gainNode.gain.linearRampToValueAtTime(0.3, time + 0.01);
-            gainNode.gain.exponentialRampToValueAtTime(0.001, time + duration);
+            noteGain.gain.setValueAtTime(0, time);
+            noteGain.gain.linearRampToValueAtTime(0.3, time + 0.01);
+            noteGain.gain.exponentialRampToValueAtTime(0.001, time + duration);
             
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
+            oscillator.connect(noteGain);
+            noteGain.connect(gainNode);
             
             oscillator.start(time);
             oscillator.stop(time + duration);
@@ -333,6 +522,7 @@
             note.style.left = `${Math.random() * 100}%`;
             note.style.top = `${Math.random() * 30 + 60}%`;
             note.style.animationDuration = `${Math.random() * 2 + 2}s`;
+            note.style.fontSize = `${Math.random() * 20 + 20}px`;
             document.body.appendChild(note);
             
             // 动画结束后移除
@@ -352,6 +542,11 @@
             
             const now = audioContext.currentTime;
             let time = now;
+            
+            // 创建可视化效果
+            if (!animationFrame) {
+                createVisualizer();
+            }
             
             for (let i = 0; i < notes.length; i++) {
                 const note = notes[i];
@@ -375,11 +570,23 @@
                 clearTimeout(currentOscillator);
                 currentOscillator = null;
             }
+            
+            if (animationFrame) {
+                cancelAnimationFrame(animationFrame);
+                animationFrame = null;
+                
+                // 清除可视化
+                const visualizer = document.getElementById('visualizer');
+                visualizer.innerHTML = '';
+            }
         }
         
         // 初始化
         window.addEventListener('load', function() {
             createScene();
+            
+            // 音量控制事件
+            document.getElementById('volume').addEventListener('input', updateVolume);
             
             // 按钮事件
             document.getElementById('playBtn').addEventListener('click', function() {
