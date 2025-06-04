@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>二维优雅玫瑰 · 致梁佳琪</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>永不凋谢的玫瑰--致梁佳琪</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -13,659 +13,576 @@
         }
         
         body {
-            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #2c0b36 0%, #1a1a2e 50%, #16213e 100%);
-            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
+            background: linear-gradient(135deg, #ffafbd, #ffc3a0, #ffd8e4);
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            padding: 20px;
+            justify-content: center;
+            color: #7a2c4a;
+            overflow: hidden;
+            position: relative;
+            animation: gradientBG 15s ease infinite;
+            background-size: 300% 300%;
+        }
+        
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
         
         .container {
-            width: 100%;
-            max-width: 1200px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            z-index: 10;
-        }
-        
-        .header {
             text-align: center;
-            margin-bottom: 40px;
-            animation: fadeInDown 1.5s ease-out;
+            z-index: 10;
+            padding: 20px;
+            max-width: 800px;
+            backdrop-filter: blur(5px);
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
         
-        .title {
+        h1 {
             font-size: 3.5rem;
-            background: linear-gradient(45deg, #ff9a9e, #fad0c4, #fad0c4, #a18cd1);
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            color: #8a1c3d;
+            letter-spacing: 2px;
+            font-weight: 800;
+            position: relative;
+            background: linear-gradient(to right, #ff3366, #ff5e94, #ff3366);
             -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 15px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff5e94, 0 0 20px #ff5e94; }
+            to { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff5e94, 0 0 40px #ff5e94; }
         }
         
         .subtitle {
-            font-size: 1.3rem;
-            color: #e0c3fc;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.7;
-        }
-        
-        .heart {
-            color: #ff6b6b;
-            animation: pulse 1.5s infinite;
-            margin: 0 10px;
-        }
-        
-        .content {
-            display: flex;
-            width: 100%;
-            max-width: 1100px;
-            margin: 0 auto;
-            gap: 40px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        
-        .card {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(12px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.4s, box-shadow 0.4s;
-            flex: 1;
-            min-width: 300px;
-            max-width: 500px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-        }
-        
-        .card-title {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            color: #ffd3b6;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .card-content {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        #rose-container {
-            width: 100%;
-            height: 400px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-        
-        .rose-svg {
-            width: 280px;
-            height: 280px;
-            filter: drop-shadow(0 0 20px rgba(255, 105, 180, 0.4));
-            animation: float 6s infinite ease-in-out;
-        }
-        
-        .controls {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .btn {
-            flex: 1;
-            padding: 12px 20px;
-            border-radius: 50px;
-            background: rgba(255, 255, 255, 0.15);
-            border: none;
-            color: white;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            min-width: 140px;
-        }
-        
-        .btn:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: translateY(-3px);
-        }
-        
-        .btn:active {
-            transform: translateY(1px);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(45deg, #ff9a9e, #f6d365);
-            color: #5a1a3a;
-        }
-        
-        .poem {
+            font-size: 1.4rem;
+            margin-bottom: 40px;
             font-style: italic;
-            line-height: 1.8;
-            color: #e2d1f9;
-            font-size: 1.1rem;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
+            color: #8a1c3d;
+            font-weight: 500;
+        }
+        
+        .rose-container {
             position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 0 15px rgba(255, 94, 148, 0.6));
         }
         
-        .poem::before {
-            content: """;
-            font-size: 4rem;
-            position: absolute;
-            top: -20px;
-            left: -10px;
-            color: rgba(255, 255, 255, 0.1);
+        .rose-center {
+            width: 70px;
+            height: 70px;
+            background: radial-gradient(circle, #ff3366, #cc0044, #990033);
+            border-radius: 50%;
+            position: relative;
+            z-index: 20;
+            box-shadow: 
+                0 0 20px rgba(255, 51, 102, 0.7),
+                inset 0 0 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: transform 0.3s ease;
         }
         
-        .dedication {
-            text-align: center;
-            margin-top: 40px;
-            font-size: 1.2rem;
-            color: #ffd3b6;
-            max-width: 800px;
-            padding: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            animation: fadeIn 2s ease-out;
+        .rose-center:hover {
+            transform: scale(1.1);
         }
         
         .petal {
             position: absolute;
-            width: 20px;
-            height: 20px;
-            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-            border-radius: 50% 0 50% 50%;
-            transform: rotate(45deg);
-            opacity: 0.7;
-            pointer-events: none;
-            z-index: 5;
-        }
-        
-        .music-control {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 100;
-            width: 50px;
-            height: 50px;
+            opacity: 0;
+            transform-origin: center;
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: radial-gradient(ellipse at center, rgba(255,255,255,0.8) 0%, rgba(255,182,193,0.9) 100%);
+            box-shadow: 
+                inset 0 0 10px rgba(255,255,255,0.5), 
+                0 3px 5px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            z-index: 10;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(5px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            font-size: 1.5rem;
-            color: #ffd3b6;
-            box-shadow: 0 0 15px rgba(255, 0, 150, 0.3);
-            transition: all 0.3s;
         }
         
-        .music-control:hover {
-            transform: scale(1.1);
-            background: rgba(255, 255, 255, 0.25);
+        /* 内层花瓣形状 */
+        .petal.inner {
+            width: 50px;
+            height: 80px;
+            clip-path: path('M25,0 C35,20 40,35 45,45 C35,50 25,50 15,45 C20,35 25,20 25,0 Z');
         }
         
-        .floating-elements {
-            position: fixed;
+        /* 中层花瓣形状 */
+        .petal.middle {
+            width: 70px;
+            height: 100px;
+            clip-path: path('M35,0 C45,25 50,45 55,55 C40,65 25,65 15,55 C20,45 25,25 35,0 Z');
+        }
+        
+        /* 外层花瓣形状 */
+        .petal.outer {
+            width: 85px;
+            height: 120px;
+            clip-path: path('M42,0 C52,30 60,50 65,65 C45,75 25,75 10,65 C15,50 25,30 42,0 Z');
+        }
+        
+        /* 最外层花瓣形状 */
+        .petal.outermost {
+            width: 100px;
+            height: 140px;
+            clip-path: path('M50,0 C60,35 65,60 70,75 C45,90 20,90 5,75 C10,60 20,35 50,0 Z');
+        }
+        
+        .petal::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 5%;
+            width: 90%;
+            height: 80%;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: rotate(30deg);
+            clip-path: inherit;
+        }
+        
+        .rose-container:hover .petal {
+            opacity: 0.95;
+        }
+        
+        .falling-petals {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 0;
             pointer-events: none;
+            z-index: 5;
         }
         
-        .floating-element {
+        .falling-petal {
             position: absolute;
+            width: 30px;
+            height: 50px;
+            background: linear-gradient(to bottom, rgba(255, 182, 193, 0.8), rgba(255, 105, 180, 0.6));
+            border-radius: 50% 50% 40% 60%;
+            opacity: 0.8;
+            z-index: 1;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            clip-path: path('M15,0 C20,15 25,25 27,35 C18,40 10,40 3,35 C5,25 10,15 15,0 Z');
+        }
+        
+        .message {
+            background: linear-gradient(45deg, rgba(255,255,255,0.9), rgba(255,240,245,0.9));
+            padding: 25px 35px;
+            border-radius: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: #5a1a2e;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            z-index: 15;
+        }
+        
+        .message::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, #ffafbd, #ffc3a0, #ffafbd);
+            z-index: -1;
+            border-radius: 20px;
+            animation: gradient 6s ease infinite;
+            background-size: 400% 400%;
+            filter: blur(10px);
+            opacity: 0.4;
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .back-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            padding: 15px 30px;
+            background: linear-gradient(to right, #ff5e94, #ff3366);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 94, 148, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 100;
+            overflow: hidden;
+        }
+        
+        .back-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: all 0.5s;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 94, 148, 0.6);
+        }
+        
+        .back-btn:hover::before {
+            left: 100%;
+        }
+        
+        .back-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(255, 105, 180, 0.7);
+            transform: rotate(45deg);
+            opacity: 0;
+            animation: heartFloat 5s ease-in-out infinite;
+        }
+        
+        .heart::before,
+        .heart::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: inherit;
             border-radius: 50%;
-            opacity: 0.2;
-            animation: float 15s infinite ease-in-out;
         }
         
-        /* Animations */
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 1; }
+        .heart::before {
+            top: -10px;
+            left: 0;
         }
         
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
+        .heart::after {
+            top: 0;
+            left: -10px;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        @keyframes heartFloat {
+            0% { transform: translateY(100vh) rotate(45deg); opacity: 0; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% { transform: translateY(-20px) rotate(45deg); opacity: 0; }
         }
         
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .footer {
+            margin-top: 30px;
+            font-size: 1rem;
+            color: #7a2c4a;
+            opacity: 0.8;
+            font-weight: 500;
         }
         
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 0.8; }
+        .romantic-text {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.1rem;
+            color: #8a1c3d;
+            font-style: italic;
+            text-align: right;
+            max-width: 200px;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+            z-index: 5;
         }
         
-        @keyframes petal-fall {
-            0% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
-            100% { transform: translateY(800px) rotate(360deg); opacity: 0; }
+        .rose-stem {
+            position: absolute;
+            bottom: -100px;
+            width: 12px;
+            height: 180px;
+            background: linear-gradient(to right, #2a8c2a, #1e5e1e);
+            border-radius: 10px;
+            z-index: 0;
+            box-shadow: 
+                inset 0 0 10px rgba(0, 0, 0, 0.3),
+                0 0 15px rgba(0, 100, 0, 0.4);
         }
         
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        .rose-leaf {
+            position: absolute;
+            width: 40px;
+            height: 30px;
+            background: linear-gradient(to bottom, #3caa3c, #2a7a2a);
+            border-radius: 0 50% 50% 0;
+            clip-path: path('M0,15 C15,0 35,0 40,15 C35,30 15,30 0,15 Z');
+            z-index: 1;
+            transform-origin: left center;
         }
         
-        @keyframes breathe {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        .rose-leaf.left {
+            left: -10px;
+            bottom: 30px;
+            transform: rotate(-30deg);
         }
         
-        @media (max-width: 768px) {
-            .title {
-                font-size: 2.5rem;
-            }
-            
-            .subtitle {
-                font-size: 1.1rem;
-            }
-            
-            .content {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .card {
-                min-width: 100%;
-            }
-            
-            #rose-container {
-                height: 300px;
-            }
-            
-            .rose-svg {
-                width: 220px;
-                height: 220px;
-            }
-            
-            .controls {
-                flex-direction: column;
-            }
-            
-            .btn {
-                width: 100%;
-            }
+        .rose-leaf.right {
+            left: -20px;
+            bottom: 80px;
+            transform: rotate(30deg);
+        }
+        
+        @media (max-width: 600px) {
+            h1 { font-size: 2.5rem; }
+            .subtitle { font-size: 1.1rem; }
+            .rose-container { transform: scale(0.8); }
+            .message { padding: 15px; font-size: 1rem; }
         }
     </style>
 </head>
 <body>
-    <!-- 悬浮装饰元素 -->
-    <div class="floating-elements" id="floatingElements"></div>
+    <div class="hearts" id="hearts"></div>
+    <div class="falling-petals" id="fallingPetals"></div>
     
-    <!-- 音乐控制 -->
-    <div class="music-control" id="musicControl">
-        <i class="fas fa-music"></i>
+    <div class="romantic-text">
+        <p>在数字的土壤中</p>
+        <p>我种下这朵永不凋谢的玫瑰</p>
+        <p>献给最美的妳</p>
     </div>
     
     <div class="container">
-        <div class="header">
-            <h1 class="title">优雅玫瑰 <span class="heart">❤</span> 致梁佳琪</h1>
-            <p class="subtitle">这朵精致的二维玫瑰象征着我们永恒的爱情，如同艺术般优雅绽放</p>
+        <h1>永不凋谢的玫瑰</h1>
+        <div class="subtitle">致梁佳琪 · 永恒的爱</div>
+        
+        <div class="rose-container" id="roseContainer">
+            <div class="rose-stem"></div>
+            <div class="rose-leaf left"></div>
+            <div class="rose-leaf right"></div>
+            <div class="rose-center"></div>
+            <!-- Petals will be generated by JavaScript -->
         </div>
         
-        <div class="content">
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-rose"></i> 二维玫瑰展示</h2>
-                <div class="card-content">
-                    <div id="rose-container">
-                        <svg class="rose-svg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
-                            <!-- 外层花瓣 -->
-                            <path class="petal outer-1" d="M250,200 C200,150 150,200 200,280 C250,320 300,280 300,230 C300,180 250,180 250,200 Z" 
-                                  fill="url(#outer-petal-gradient)" />
-                            <path class="petal outer-2" d="M250,200 C300,150 350,200 300,280 C250,320 200,280 200,230 C200,180 250,180 250,200 Z" 
-                                  fill="url(#outer-petal-gradient)" transform="rotate(60,250,250)" />
-                            <path class="petal outer-3" d="M250,200 C300,150 350,200 300,280 C250,320 200,280 200,230 C200,180 250,180 250,200 Z" 
-                                  fill="url(#outer-petal-gradient)" transform="rotate(120,250,250)" />
-                            
-                            <!-- 中层花瓣 -->
-                            <path class="petal middle-1" d="M250,220 C220,200 180,220 210,260 C240,280 280,260 280,240 C280,210 250,210 250,220 Z" 
-                                  fill="url(#middle-petal-gradient)" />
-                            <path class="petal middle-2" d="M250,220 C280,200 320,220 290,260 C260,280 220,260 220,240 C220,210 250,210 250,220 Z" 
-                                  fill="url(#middle-petal-gradient)" transform="rotate(45,250,250)" />
-                            <path class="petal middle-3" d="M250,220 C280,200 320,220 290,260 C260,280 220,260 220,240 C220,210 250,210 250,220 Z" 
-                                  fill="url(#middle-petal-gradient)" transform="rotate(90,250,250)" />
-                            <path class="petal middle-4" d="M250,220 C280,200 320,220 290,260 C260,280 220,260 220,240 C220,210 250,210 250,220 Z" 
-                                  fill="url(#middle-petal-gradient)" transform="rotate(135,250,250)" />
-                            
-                            <!-- 内层花瓣 -->
-                            <path class="petal inner-1" d="M250,240 C235,230 220,235 230,250 C240,260 260,255 260,245 C260,235 250,235 250,240 Z" 
-                                  fill="url(#inner-petal-gradient)" />
-                            <path class="petal inner-2" d="M250,240 C265,230 280,235 270,250 C260,260 240,255 240,245 C240,235 250,235 250,240 Z" 
-                                  fill="url(#inner-petal-gradient)" transform="rotate(45,250,250)" />
-                            <path class="petal inner-3" d="M250,240 C265,230 280,235 270,250 C260,260 240,255 240,245 C240,235 250,235 250,240 Z" 
-                                  fill="url(#inner-petal-gradient)" transform="rotate(90,250,250)" />
-                            <path class="petal inner-4" d="M250,240 C265,230 280,235 270,250 C260,260 240,255 240,245 C240,235 250,235 250,240 Z" 
-                                  fill="url(#inner-petal-gradient)" transform="rotate(135,250,250)" />
-                            
-                            <!-- 花蕊 -->
-                            <circle cx="250" cy="250" r="25" fill="url(#center-gradient)" filter="url(#shadow)" />
-                            <circle cx="250" cy="250" r="15" fill="#FFDD00" />
-                            
-                            <!-- 花茎 -->
-                            <path d="M250,350 C250,450 250,450 250,350 L250,300 C250,300 250,300 250,300 Z" 
-                                  stroke="#2a5c2a" stroke-width="15" stroke-linecap="round" />
-                            
-                            <!-- 叶子 -->
-                            <path class="leaf" d="M250,320 C280,310 320,330 290,350 C260,370 230,350 250,320 Z" 
-                                  fill="#3a8c3a" transform="rotate(30,250,330)" />
-                            <path class="leaf" d="M250,320 C220,310 180,330 210,350 C240,370 270,350 250,320 Z" 
-                                  fill="#3a8c3a" transform="rotate(-30,250,330)" />
-                            
-                            <!-- 渐变定义 -->
-                            <defs>
-                                <linearGradient id="outer-petal-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#ff6b6b" />
-                                    <stop offset="100%" stop-color="#ff9a9e" />
-                                </linearGradient>
-                                
-                                <linearGradient id="middle-petal-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#ff9a9e" />
-                                    <stop offset="100%" stop-color="#fad0c4" />
-                                </linearGradient>
-                                
-                                <linearGradient id="inner-petal-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#fad0c4" />
-                                    <stop offset="100%" stop-color="#fff" />
-                                </linearGradient>
-                                
-                                <linearGradient id="center-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#ff6b6b" />
-                                    <stop offset="100%" stop-color="#ff9a9e" />
-                                </linearGradient>
-                                
-                                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-                                    <feGaussianBlur in="SourceAlpha" stdDeviation="4" />
-                                    <feOffset dx="5" dy="5" result="offsetblur" />
-                                    <feFlood flood-color="rgba(0,0,0,0.3)" />
-                                    <feComposite in2="offsetblur" operator="in" />
-                                    <feMerge>
-                                        <feMergeNode />
-                                        <feMergeNode in="SourceGraphic" />
-                                    </feMerge>
-                                </filter>
-                            </defs>
-                        </svg>
-                    </div>
-                    <div class="controls">
-                        <button class="btn" id="rotateBtn"><i class="fas fa-sync"></i> 旋转玫瑰</button>
-                        <button class="btn" id="breatheBtn"><i class="fas fa-wind"></i> 呼吸效果</button>
-                        <button class="btn btn-primary" id="petalsBtn"><i class="fas fa-wind"></i> 花瓣飘落</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-heart"></i> 爱的诗篇</h2>
-                <div class="card-content">
-                    <div class="poem">
-                        <p>你是我生命中最美的玫瑰，</p>
-                        <p>在时光中静静绽放。</p>
-                        <p>每一片花瓣都诉说爱意，</p>
-                        <p>每一次绽放都传递深情。</p>
-                        <br>
-                        <p>如同这永不凋谢的花朵，</p>
-                        <p>我对你的爱永不褪色。</p>
-                        <p>岁月流转，四季更迭，</p>
-                        <p>唯爱永恒，永驻心间。</p>
-                        <br>
-                        <p>愿这朵玫瑰代我诉说，</p>
-                        <p>那些言语难以表达的爱恋。</p>
-                        <p>你是我今生最美的遇见，</p>
-                        <p>我愿用一生守护你的笑颜。</p>
-                    </div>
-                </div>
-            </div>
+        <div class="message">
+            <p>当鼠标轻触花蕊，玫瑰为妳绽放</p>
+            <p>每一片花瓣都是我无声的告白</p>
+            <p>在代码的世界里，我创造了永恒</p>
+            <p>正如我对妳的爱，永不凋零</p>
+            <p>时光流转，此情不渝</p>
         </div>
         
-        <div class="dedication">
-            <p>献给我此生挚爱的梁佳琪，愿这朵玫瑰如同我对你的爱，永恒绽放，永不凋谢</p>
-            <p>—— 永远爱你的，[你的名字]</p>
+        <div class="footer">
+            <p>划过玫瑰，感受爱的绽放</p>
         </div>
     </div>
     
-    <audio id="bgMusic" loop>
-        <source src="https://cdn.pixabay.com/download/audio/2023/10/23/audio_ff5a3f1b38.mp3" type="audio/mpeg">
-    </audio>
-
+    <button class="back-btn" onclick="location.href='../index.html'">
+        <i class="fas fa-home"></i> 返回浪漫代码收藏馆
+    </button>
+    
     <script>
-        // 创建悬浮装饰元素
-        function createFloatingElements() {
-            const container = document.getElementById('floatingElements');
-            const elementCount = 15;
-            
-            for (let i = 0; i < elementCount; i++) {
-                const element = document.createElement('div');
-                element.classList.add('floating-element');
-                
-                // 随机位置
-                const x = Math.random() * 100;
-                const y = Math.random() * 100;
-                
-                // 随机大小
-                const size = Math.random() * 60 + 20;
-                
-                // 随机形状
-                const isCircle = Math.random() > 0.5;
-                if (!isCircle) {
-                    element.style.borderRadius = "0";
-                    element.style.transform = "rotate(45deg)";
-                }
-                
-                // 随机颜色
-                const colors = [
-                    'rgba(255, 154, 158, 0.1)',
-                    'rgba(250, 208, 196, 0.1)',
-                    'rgba(161, 140, 209, 0.1)',
-                    'rgba(146, 224, 208, 0.1)'
-                ];
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                
-                // 随机动画
-                const duration = Math.random() * 20 + 20;
-                const delay = Math.random() * 10;
-                
-                element.style.left = `${x}%`;
-                element.style.top = `${y}%`;
-                element.style.width = `${size}px`;
-                element.style.height = `${size}px`;
-                element.style.background = color;
-                element.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
-                
-                container.appendChild(element);
-            }
-        }
+        // 创建花瓣
+        const roseContainer = document.getElementById('roseContainer');
+        const petalColors = [
+            'rgba(255, 182, 193, 0.9)', // 浅粉红
+            'rgba(255, 105, 180, 0.9)', // 热粉红
+            'rgba(255, 182, 193, 0.9)', // 浅粉红
+            'rgba(219, 112, 147, 0.9)', // 苍紫罗兰
+            'rgba(255, 182, 193, 0.9)', // 浅粉红
+            'rgba(199, 21, 133, 0.9)', // 中紫罗兰
+            'rgba(255, 182, 193, 0.9)', // 浅粉红
+            'rgba(255, 20, 147, 0.9)'  // 深粉红
+        ];
         
-        // 创建花瓣飘落效果
-        function createFallingPetals() {
-            const container = document.querySelector('.container');
-            const petalCount = 40;
-            
-            for (let i = 0; i < petalCount; i++) {
+        // 创建不同层的花瓣
+        const layers = [
+            { type: 'inner', count: 5, distance: 20, size: 1.0 },
+            { type: 'inner', count: 8, distance: 35, size: 1.1 },
+            { type: 'middle', count: 12, distance: 55, size: 1.0 },
+            { type: 'middle', count: 16, distance: 75, size: 1.1 },
+            { type: 'outer', count: 20, distance: 95, size: 1.0 },
+            { type: 'outer', count: 24, distance: 115, size: 1.1 },
+            { type: 'outermost', count: 16, distance: 140, size: 1.0 }
+        ];
+        
+        layers.forEach((layer, layerIndex) => {
+            for (let i = 0; i < layer.count; i++) {
                 const petal = document.createElement('div');
-                petal.className = 'petal';
+                petal.className = `petal ${layer.type}`;
                 
-                // 随机位置
-                const startLeft = Math.random() * 100;
-                petal.style.left = `${startLeft}%`;
-                petal.style.top = `-30px`;
+                // 设置花瓣位置
+                const angle = (i / layer.count) * Math.PI * 2;
+                const angleOffset = layerIndex * Math.PI / 12;
+                const x = Math.cos(angle + angleOffset) * layer.distance;
+                const y = Math.sin(angle + angleOffset) * layer.distance;
                 
-                // 随机大小
-                const size = Math.random() * 15 + 10;
-                petal.style.width = `${size}px`;
-                petal.style.height = `${size}px`;
+                // 设置花瓣样式
+                petal.style.left = `calc(50% + ${x}px)`;
+                petal.style.top = `calc(50% + ${y}px)`;
+                petal.style.transform = `translate(-50%, -50%) rotate(${angle + angleOffset}rad) scale(${layer.size})`;
                 
-                // 随机旋转
-                const rotation = Math.random() * 360;
-                petal.style.transform = `rotate(${rotation}deg)`;
+                // 设置花瓣颜色
+                const colorIndex = layerIndex % petalColors.length;
+                petal.style.background = `radial-gradient(ellipse at center, rgba(255,255,255,0.8) 0%, ${petalColors[colorIndex]} 100%)`;
                 
-                // 随机透明度
-                petal.style.opacity = Math.random() * 0.5 + 0.3;
+                // 设置花瓣绽放效果
+                petal.style.transitionDelay = `${layerIndex * 0.1 + Math.random() * 0.3}s`;
                 
-                // 随机动画
-                const duration = Math.random() * 10 + 10;
-                const delay = Math.random() * 5;
+                // 设置花瓣层级
+                petal.style.zIndex = 15 - layerIndex;
                 
-                petal.style.animation = `petal-fall ${duration}s linear forwards`;
-                
-                container.appendChild(petal);
-                
-                // 动画结束后移除花瓣
-                setTimeout(() => {
-                    petal.remove();
-                }, (duration + delay) * 1000);
+                roseContainer.appendChild(petal);
+            }
+        });
+        
+        // 创建飘落的心形
+        const heartsContainer = document.getElementById('hearts');
+        
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            
+            // 随机大小
+            const size = Math.random() * 15 + 5;
+            heart.style.width = `${size}px`;
+            heart.style.height = `${size}px`;
+            
+            // 随机位置
+            heart.style.left = `${Math.random() * 100}%`;
+            
+            // 随机颜色
+            const colors = ['#ff5e94', '#ff3366', '#ff1493', '#ff69b4', '#ff6b6b'];
+            heart.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            // 随机动画延迟
+            heart.style.animationDelay = `${Math.random() * 5}s`;
+            
+            heartsContainer.appendChild(heart);
+            
+            // 5秒后移除元素
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+        }
+        
+        // 创建飘落的花瓣
+        const fallingPetalsContainer = document.getElementById('fallingPetals');
+        
+        function createFallingPetal() {
+            const petal = document.createElement('div');
+            petal.className = 'falling-petal';
+            
+            // 随机大小
+            const sizeFactor = Math.random() * 0.5 + 0.5;
+            petal.style.width = `${30 * sizeFactor}px`;
+            petal.style.height = `${50 * sizeFactor}px`;
+            
+            // 随机位置
+            petal.style.left = `${Math.random() * 100}%`;
+            
+            // 随机旋转
+            const rotation = Math.random() * 360;
+            petal.style.transform = `rotate(${rotation}deg)`;
+            
+            // 随机颜色
+            const colors = [
+                'rgba(255, 182, 193, 0.8)',
+                'rgba(255, 105, 180, 0.7)',
+                'rgba(255, 182, 193, 0.9)',
+                'rgba(219, 112, 147, 0.8)',
+                'rgba(255, 182, 193, 0.7)'
+            ];
+            petal.style.background = `linear-gradient(to bottom, ${colors[Math.floor(Math.random() * colors.length)]}, ${colors[Math.floor(Math.random() * colors.length)]})`;
+            
+            // 随机动画
+            const animationDuration = Math.random() * 8 + 5;
+            const animationDelay = Math.random() * 5;
+            petal.style.animation = `fallingAnimation ${animationDuration}s ${animationDelay}s linear`;
+            
+            // 创建关键帧
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fallingAnimation {
+                    0% { transform: translateY(-50px) rotate(${rotation}deg); opacity: 0; }
+                    10% { opacity: 0.8; }
+                    90% { opacity: 0.8; }
+                    100% { transform: translateY(100vh) rotate(${rotation + 360}deg); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            fallingPetalsContainer.appendChild(petal);
+            
+            // 动画结束后移除元素
+            setTimeout(() => {
+                petal.remove();
+                style.remove();
+            }, (animationDuration + animationDelay) * 1000);
+        }
+        
+        // 定期创建心形
+        setInterval(createHeart, 400);
+        setInterval(createFallingPetal, 300);
+        
+        // 初始创建一些心形和花瓣
+        for (let i = 0; i < 15; i++) {
+            setTimeout(createHeart, i * 300);
+            setTimeout(createFallingPetal, i * 200);
+        }
+        
+        // 玫瑰悬停时添加额外的心形和花瓣
+        roseContainer.addEventListener('mouseenter', () => {
+            for (let i = 0; i < 15; i++) {
+                setTimeout(createHeart, i * 100);
+                setTimeout(createFallingPetal, i * 80);
+            }
+        });
+        
+        // 添加花瓣飘落效果
+        function addFallingEffect() {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(createFallingPetal, i * 200);
             }
         }
         
-        // 初始化音乐控制
-        function initMusicControl() {
-            const bgMusic = document.getElementById('bgMusic');
-            const musicControl = document.getElementById('musicControl');
-            
-            // 尝试自动播放音乐
-            setTimeout(() => {
-                bgMusic.play().catch(e => {
-                    console.log('Autoplay prevented:', e);
-                    musicControl.innerHTML = '<i class="fas fa-play"></i>';
-                });
-            }, 1000);
-            
-            musicControl.addEventListener('click', () => {
-                if (bgMusic.paused) {
-                    bgMusic.play();
-                    musicControl.innerHTML = '<i class="fas fa-music"></i>';
-                } else {
-                    bgMusic.pause();
-                    musicControl.innerHTML = '<i class="fas fa-play"></i>';
-                }
-            });
-        }
-        
-        // 初始化玫瑰交互
-        function initRoseInteractions() {
-            const roseSvg = document.querySelector('.rose-svg');
-            let isRotating = false;
-            let isBreathing = false;
-            let rotateInterval;
-            
-            // 旋转玫瑰
-            document.getElementById('rotateBtn').addEventListener('click', () => {
-                if (isRotating) {
-                    clearInterval(rotateInterval);
-                    document.getElementById('rotateBtn').innerHTML = '<i class="fas fa-sync"></i> 旋转玫瑰';
-                } else {
-                    let rotation = 0;
-                    rotateInterval = setInterval(() => {
-                        rotation += 1;
-                        roseSvg.style.transform = `rotate(${rotation}deg)`;
-                    }, 50);
-                    document.getElementById('rotateBtn').innerHTML = '<i class="fas fa-pause"></i> 停止旋转';
-                }
-                isRotating = !isRotating;
-            });
-            
-            // 呼吸效果
-            document.getElementById('breatheBtn').addEventListener('click', () => {
-                if (isBreathing) {
-                    roseSvg.style.animation = 'float 6s infinite ease-in-out';
-                    document.getElementById('breatheBtn').innerHTML = '<i class="fas fa-wind"></i> 呼吸效果';
-                } else {
-                    roseSvg.style.animation = 'breathe 3s infinite ease-in-out';
-                    document.getElementById('breatheBtn').innerHTML = '<i class="fas fa-pause"></i> 停止呼吸';
-                }
-                isBreathing = !isBreathing;
-            });
-            
-            // 花瓣飘落
-            document.getElementById('petalsBtn').addEventListener('click', createFallingPetals);
-        }
-        
-        // 页面加载完成后初始化
-        window.addEventListener('DOMContentLoaded', () => {
-            createFloatingElements();
-            initMusicControl();
-            initRoseInteractions();
-            
-            // 初始花瓣飘落
-            setTimeout(createFallingPetals, 2000);
-            
-            // 添加文字动画
-            gsap.from('.title', {
-                opacity: 0,
-                y: -30,
-                duration: 1.5,
-                ease: "power2.out"
-            });
-            
-            gsap.from('.subtitle', {
-                opacity: 0,
-                y: 20,
-                duration: 1.5,
-                delay: 0.5,
-                ease: "power2.out"
-            });
-            
-            gsap.from('.card', {
-                opacity: 0,
-                y: 50,
-                duration: 1,
-                stagger: 0.2,
-                delay: 1,
-                ease: "power2.out"
-            });
-        });
+        // 初始添加一些花瓣飘落效果
+        addFallingEffect();
+        setInterval(addFallingEffect, 5000);
     </script>
 </body>
 </html>

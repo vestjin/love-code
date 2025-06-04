@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>爱情地图轨迹 - 致梁佳琪</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #ff4d94;
+            --secondary-color: #ff6ba9;
+            --accent-color: #ff9ec1;
+            --light-pink: #fff0f7;
+            --text-dark: #333;
+            --text-medium: #555;
+            --text-light: #777;
+            --border-radius: 18px;
+            --box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'ZCOOL QingKe HuangYou', cursive;
+            background: linear-gradient(135deg, #fff0f7, #fff8fb);
+            color: var(--text-dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 400px;
+            background: rgba(255, 255, 255, 0.96);
+            padding: 30px;
+            box-shadow: 5px 0 25px rgba(0,0,0,0.1);
+            z-index: 100;
+            overflow-y: auto;
+            position: relative;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+        
+        .map-container {
+            flex: 1;
+            position: relative;
+        }
+        
+        #map {
+            height: 100vh;
+            z-index: 1;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+            padding-bottom: 25px;
+            border-bottom: 3px solid var(--accent-color);
+            position: relative;
+        }
+        
+        .header h1 {
+            font-family: 'Ma Shan Zheng', cursive;
+            color: var(--primary-color);
+            font-size: 3rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.08);
+            letter-spacing: 1px;
+        }
+        
+        .header p {
+            font-size: 1.25rem;
+            color: var(--secondary-color);
+        }
+        
+        .heart-icon {
+            position: absolute;
+            top: -15px;
+            right: -5px;
+            font-size: 2.8rem;
+            color: var(--primary-color);
+            animation: heartbeat 1.2s infinite;
+        }
+        
+        .form-container {
+            background: rgba(255, 249, 252, 0.97);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+            border: 2px dashed var(--accent-color);
+        }
+        
+        .form-group {
+            margin-bottom: 22px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 12px;
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid var(--accent-color);
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.85);
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(255, 77, 148, 0.2);
+        }
+        
+        textarea.form-control {
+            min-height: 130px;
+            resize: vertical;
+        }
+        
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: white;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 10;
+            display: none;
+        }
+        
+        .search-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .search-item:hover {
+            background: #fff5f9;
+        }
+        
+        .btn {
+            background: linear-gradient(to right, var(--accent-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 16px 25px;
+            border-radius: 50px;
+            font-family: inherit;
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: 100%;
+            transition: var(--transition);
+            box-shadow: 0 5px 20px rgba(255, 107, 169, 0.4);
+            letter-spacing: 1px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(255, 107, 169, 0.6);
+            background: linear-gradient(to right, var(--secondary-color), var(--primary-color));
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .view-switcher {
+            display: flex;
+            background: rgba(255, 246, 249, 0.9);
+            border-radius: 50px;
+            padding: 5px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        
+        .view-btn {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .view-btn.active {
+            background: white;
+            color: var(--primary-color);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .memories-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .memories-list {
+            flex: 1;
+            display: none;
+        }
+        
+        .memories-list.active {
+            display: block;
+        }
+        
+        .timeline-view {
+            flex: 1;
+            display: none;
+        }
+        
+        .timeline-view.active {
+            display: block;
+        }
+        
+        .memories-header {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px dashed var(--accent-color);
+            font-size: 1.9rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .stats-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            flex: 1;
+            background: rgba(255, 249, 252, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid #ffd9e7;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            line-height: 1;
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            color: var(--secondary-color);
+            font-size: 1.05rem;
+        }
+        
+        .memory-item {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+            border-left: 5px solid var(--accent-color);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .memory-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 8px 25px rgba(255, 107, 169, 0.15);
+        }
+        
+        .memory-item::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--accent-color), var(--primary-color));
+        }
+        
+        .memory-title {
+            color: var(--primary-color);
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .memory-date {
+            font-size: 1rem;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .memory-description {
+            color: var(--text-medium);
+            line-height: 1.7;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+        
+        .memory-photos {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .photo-thumb {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 2px solid #ffd9e7;
+            transition: var(--transition);
+        }
+        
+        .photo-thumb:hover {
+            transform: scale(1.1);
+            border-color: var(--primary-color);
+        }
+        
+        .delete-btn {
+            background: none;
+            border: none;
+            color: var(--secondary-color);
+            cursor: pointer;
+            font-size: 1.3rem;
+            transition: var(--transition);
+            padding: 8px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .delete-btn:hover {
+            background: rgba(255, 107, 169, 0.1);
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px 30px;
+            color: var(--accent-color);
+            font-size: 1.3rem;
+            background: rgba(255, 249, 252, 0.8);
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-top: 20px;
+        }
+        
+        .empty-state p {
+            margin-top: 25px;
+            line-height: 1.6;
+        }
+        
+        .floating-heart {
+            position: absolute;
+            z-index: 0;
+            color: rgba(255, 107, 169, 0.18);
+            font-size: 4rem;
+            animation: float 8s infinite ease-in-out;
+            pointer-events: none;
+        }
+        
+        .photo-icon {
+            background: rgba(255, 107, 169, 0.15);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+        }
+        
+        .special-note {
+            background: linear-gradient(135deg, #fff0f7, #ffe8f3);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-top: 30px;
+            text-align: center;
+            border: 2px dashed var(--accent-color);
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .file-upload {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .upload-btn {
+            background: rgba(255, 246, 249, 0.9);
+            border: 2px dashed var(--accent-color);
+            border-radius: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: bold;
+            color: var(--text-medium);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .upload-btn:hover {
+            background: rgba(255, 107, 169, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding: 25px 30px 25px 50px;
+            border-left: 3px solid var(--accent-color);
+            margin-bottom: 30px;
+        }
+        
+        .timeline-item::before {
+            content: "";
+            position: absolute;
+            left: -10px;
+            top: 30px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px var(--accent-color);
+        }
+        
+        .timeline-date {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .timeline-content {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.15); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.15); }
+            70% { transform: scale(1); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-30px) rotate(5deg); }
+            50% { transform: translateY(-15px) rotate(-5deg); }
+            75% { transform: translateY(-25px) rotate(3deg); }
+        }
+        
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 350px;
+                padding: 25px;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: 50vh;
+            }
+            
+            .map-container {
+                height: 50vh;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .stats-container {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .sidebar {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .form-group label {
+                font-size: 1rem;
+            }
+            
+            .form-control {
+                padding: 12px;
+            }
+            
+            .btn {
+                padding: 14px;
+                font-size: 1.1rem;
+            }
+        }
+        
+        .map-controls {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            z-index: 1000;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .map-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid #ffd9e7;
+        }
+        
+        .map-btn:hover {
+            transform: translateY(-4px);
+            background: #fff5f9;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.18);
+            color: var(--secondary-color);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            padding: 20px 25px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border-left: 5px solid var(--primary-color);
+            transform: translateX(120%);
+            transition: transform 0.5s ease;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            max-width: 350px;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification-icon {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+        
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 5px;
+            background: var(--accent-color);
+            border-radius: 0 0 0 var(--border-radius);
+            width: 100%;
+            transform-origin: left;
+            animation: progress 3s linear;
+        }
+        
+        @keyframes progress {
+            0% { transform: scaleX(1); }
+            100% { transform: scaleX(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 左侧边栏 -->
+        <div class="sidebar">
+            <div class="header">
+                <h1>爱情地图轨迹 <span class="heart-icon">❤</span></h1>
+                <p>记录我们共同走过的美好时光</p>
+            </div>
+            
+            <div class="form-container">
+                <div class="form-group">
+                    <label for="placeName"><i class="fas fa-map-marker-alt"></i> 地点名称</label>
+                    <input type="text" id="placeName" class="form-control" placeholder="搜索或输入地点名称...">
+                    <div class="search-results" id="searchResults"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="memoryDate"><i class="far fa-calendar-alt"></i> 日期</label>
+                    <input type="date" id="memoryDate" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label for="memoryDescription"><i class="fas fa-book"></i> 美好回忆</label>
+                    <textarea id="memoryDescription" class="form-control" placeholder="在这里写下属于我们的故事..."></textarea>
+                </div>
+                
+                <div class="file-upload">
+                    <div class="upload-btn" id="uploadBtn">
+                        <i class="fas fa-camera"></i> 添加照片
+                    </div>
+                    <div id="fileName"></div>
+                </div>
+                
+                <button id="addMemoryBtn" class="btn">
+                    <i class="fas fa-heart"></i> 添加美好回忆
+                </button>
+            </div>
+            
+            <div class="view-switcher">
+                <div class="view-btn active" data-view="list">
+                    <i class="fas fa-list"></i> 列表视图
+                </div>
+                <div class="view-btn" data-view="timeline">
+                    <i class="fas fa-history"></i> 时间轴
+                </div>
+                <div class="view-btn" data-view="stats">
+                    <i class="fas fa-chart-pie"></i> 统计
+                </div>
+            </div>
+            
+            <div class="memories-container">
+                <div class="memories-list active" id="listView">
+                    <div class="memories-header">
+                        <i class="fas fa-book-open"></i> 我们的回忆录
+                    </div>
+                    <div id="memoriesContainer">
+                        <div class="empty-state">
+                            <div class="heart-icon" style="font-size: 4rem;">❤</div>
+                            <p>还没有任何回忆，点击上方按钮添加第一个地点吧！</p>
+                            <p style="margin-top: 15px; font-size: 1.1rem;">小提示：点击地图上的位置可以自动填写坐标</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-view" id="timelineView">
+                    <div class="memories-header">
+                        <i class="fas fa-history"></i> 爱情时间轴
+                    </div>
+                    <div id="timelineContainer">
+                        <div class="empty-state">
+                            <div class="heart-icon" style="font-size: 4rem;">❤</div>
+                            <p>还没有任何回忆，点击上方按钮添加第一个地点吧！</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-view" id="statsView">
+                    <div class="memories-header">
+                        <i class="fas fa-chart-pie"></i> 爱情足迹统计
+                    </div>
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <i class="fas fa-map-marker-alt" style="font-size: 2rem; color: var(--accent-color);"></i>
+                            <div class="stat-value" id="placesCount">0</div>
+                            <div class="stat-label">共去过的地方</div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-city" style="font-size: 2rem; color: var(--accent-color);"></i>
+                            <div class="stat-value" id="citiesCount">0</div>
+                            <div class="stat-label">访问过的城市</div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-heart" style="font-size: 2rem; color: var(--accent-color);"></i>
+                            <div class="stat-value" id="daysCount">0</div>
+                            <div class="stat-label">一起走过的日子</div>
+                        </div>
+                    </div>
+                    <div class="special-note">
+                        <p><i class="fas fa-heart"></i> 致梁佳琪：愿我们的足迹遍布世界每个角落！</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 地图容器 -->
+        <div class="map-container">
+            <div id="map"></div>
+            <div class="map-controls">
+                <div class="map-btn" id="locateBtn" title="定位到我的位置">
+                    <i class="fas fa-location-arrow"></i>
+                </div>
+                <div class="map-btn" id="resetBtn" title="重置视图">
+                    <i class="fas fa-globe-asia"></i>
+                </div>
+                <div class="map-btn" id="showAllBtn" title="显示所有地点">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 浮动的心形装饰 -->
+    <div class="floating-heart" style="top: 20%; left: 10%;">❤</div>
+    <div class="floating-heart" style="top: 70%; left: 15%;">❤</div>
+    <div class="floating-heart" style="top: 40%; left: 90%;">❤</div>
+    <div class="floating-heart" style="top: 85%; left: 85%;">❤</div>
+    <div class="floating-heart" style="top: 15%; left: 80%;">❤</div>
+    <div class="floating-heart" style="top: 65%; left: 92%;">❤</div>
+    
+    <!-- 通知组件 -->
+    <div class="notification" id="notification">
+        <div class="notification-icon">
+            <i class="fas fa-heart"></i>
+        </div>
+        <div class="notification-content">
+            <div class="notification-title" id="notificationTitle">成功</div>
+            <div class="notification-message" id="notificationMessage">回忆添加成功！</div>
+        </div>
+        <div class="progress-bar"></div>
+    </div>
+    
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // 初始化地图 - 使用在中国可访问的瓦片服务
+        const map = L.map('map').setView([31.2304, 121.4737], 13); // 初始定位在上海
+        
+        // 添加高德地图图层
+        L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}', {
+            subdomains: ['1', '2', '3', '4'],
+            attribution: '&copy; <a href="https://ditu.amap.com/">高德地图</a>'
+        }).addTo(map);
+        
+        // 添加自定义心形图标
+        const heartIcon = L.divIcon({
+            className: 'heart-marker',
+            html: '<div style="color: #ff4d94; font-size: 32px; text-shadow: 0 0 10px rgba(255,255,255,0.9);">❤</div>',
+            iconSize: [38, 38],
+            iconAnchor: [19, 19]
+        });
+        
+        // 照片图标
+        const photoIcon = L.divIcon({
+            className: 'photo-marker',
+            html: '<div style="background: rgba(255, 255, 255, 0.95); border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(0,0,0,0.25);"><i class="fas fa-camera" style="color: #ff4d94; font-size: 20px;"></i></div>',
+            iconSize: [38, 38],
+            iconAnchor: [19, 19]
+        });
+        
+        // 存储所有标记
+        const markers = [];
+        
+        // 存储所有回忆
+        let memories = JSON.parse(localStorage.getItem('loveMapMemories')) || [];
+        
+        // 示例照片（在实际应用中替换为真实上传）
+        const samplePhotos = [
+            "https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1493238792000-8113da705763?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+        ];
+        
+        // 初始添加一些示例回忆
+        if (memories.length === 0) {
+            memories = [
+                {
+                    id: 1,
+                    placeName: "上海外滩",
+                    date: "2022-05-20",
+                    description: "第一次牵手的地方，夜景太美了！我们一起在黄浦江边散步，聊着未来的梦想。",
+                    lat: 31.2397,
+                    lng: 121.4998,
+                    type: "heart",
+                    photos: [samplePhotos[0]]
+                },
+                {
+                    id: 2,
+                    placeName: "杭州西湖",
+                    date: "2022-08-15",
+                    description: "一起划船，你在船上笑得特别甜。我们在湖心亭品龙井茶，欣赏着三潭印月的美景。",
+                    lat: 30.2595,
+                    lng: 120.1316,
+                    type: "heart",
+                    photos: [samplePhotos[1]]
+                },
+                {
+                    id: 3,
+                    placeName: "北京故宫",
+                    date: "2023-01-01",
+                    description: "新年第一天，我们在故宫许下心愿。走在紫禁城的红墙黄瓦下，感受历史的厚重与我们的爱情。",
+                    lat: 39.9163,
+                    lng: 116.3972,
+                    type: "photo",
+                    photos: [samplePhotos[2]]
+                }
+            ];
+        }
+        
+        // 地点搜索数据
+        const places = [
+            "上海外滩", "北京故宫", "杭州西湖", "广州塔", "深圳世界之窗", 
+            "成都宽窄巷子", "重庆洪崖洞", "西安兵马俑", "南京夫子庙", "苏州园林",
+            "厦门鼓浪屿", "三亚天涯海角", "丽江古城", "大理洱海", "香港维多利亚港",
+            "澳门大三巴", "台北101", "哈尔滨冰雪大世界", "乌镇水乡", "黄山风景区"
+        ];
+        
+        // DOM元素
+        const placeNameInput = document.getElementById('placeName');
+        const memoryDateInput = document.getElementById('memoryDate');
+        const memoryDescriptionInput = document.getElementById('memoryDescription');
+        const addMemoryBtn = document.getElementById('addMemoryBtn');
+        const memoriesContainer = document.getElementById('memoriesContainer');
+        const timelineContainer = document.getElementById('timelineContainer');
+        const locateBtn = document.getElementById('locateBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const showAllBtn = document.getElementById('showAllBtn');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const fileName = document.getElementById('fileName');
+        const searchResults = document.getElementById('searchResults');
+        const notification = document.getElementById('notification');
+        const viewBtns = document.querySelectorAll('.view-btn');
+        const listView = document.getElementById('listView');
+        const timelineView = document.getElementById('timelineView');
+        const statsView = document.getElementById('statsView');
+        const placesCount = document.getElementById('placesCount');
+        const citiesCount = document.getElementById('citiesCount');
+        const daysCount = document.getElementById('daysCount');
+        
+        // 设置默认日期为今天
+        const today = new Date();
+        const formattedDate = today.toISOString().split('T')[0];
+        memoryDateInput.value = formattedDate;
+        
+        // 添加回忆按钮点击事件
+        addMemoryBtn.addEventListener('click', function() {
+            const placeName = placeNameInput.value.trim();
+            const memoryDate = memoryDateInput.value;
+            const memoryDescription = memoryDescriptionInput.value.trim();
+            
+            if (!placeName || !memoryDate) {
+                showNotification('请填写地点名称和日期', 'error');
+                return;
+            }
+            
+            // 获取地图中心点作为默认位置
+            const center = map.getCenter();
+            const lat = center.lat;
+            const lng = center.lng;
+            
+            // 创建回忆对象
+            const memory = {
+                id: Date.now(),
+                placeName,
+                date: memoryDate,
+                description: memoryDescription,
+                lat,
+                lng,
+                type: "heart",
+                photos: []
+            };
+            
+            // 添加到数组
+            memories.push(memory);
+            
+            // 保存到本地存储
+            saveMemories();
+            
+            // 在地图上添加标记
+            addMarkerToMap(memory);
+            
+            // 添加到回忆列表
+            addMemoryToList(memory);
+            
+            // 添加到时间轴
+            addToTimeline(memory);
+            
+            // 更新统计
+            updateStats();
+            
+            // 清空表单
+            placeNameInput.value = '';
+            memoryDateInput.value = formattedDate;
+            memoryDescriptionInput.value = '';
+            fileName.textContent = '';
+            
+            // 聚焦到地点输入框
+            placeNameInput.focus();
+            
+            // 显示通知
+            showNotification(`成功添加了: ${placeName}`, 'success');
+        });
+        
+        // 保存回忆到本地存储
+        function saveMemories() {
+            localStorage.setItem('loveMapMemories', JSON.stringify(memories));
+        }
+        
+        // 在地图上添加标记
+        function addMarkerToMap(memory) {
+            const icon = memory.type === "photo" ? photoIcon : heartIcon;
+            
+            const marker = L.marker([memory.lat, memory.lng], {
+                icon: icon
+            }).addTo(map);
+            
+            // 添加弹窗
+            const popupContent = `
+                <div style="min-width: 260px; font-family: 'ZCOOL QingKe HuangYou', cursive;">
+                    <h3 style="margin: 0 0 12px; color: #ff4d94; border-bottom: 2px solid #ffc2d9; padding-bottom: 8px;">
+                        ${memory.placeName}
+                    </h3>
+                    <p style="margin: 0 0 10px; display: flex; align-items: center; gap: 8px; color: #ff6ba9;">
+                        <i class="far fa-calendar-alt"></i> ${formatDate(memory.date)}
+                    </p>
+                <p style="margin: 0 0 15px; color: #555; line-height: 1.6;">
+                    ${memory.description || '我们共同的美好回忆...'}
+                </p>
+                ${memory.photos && memory.photos.length > 0 ? `
+                <div style="display: flex; gap: 8px; margin-top: 10px;">
+                    ${memory.photos.slice(0, 3).map(photo => `
+                        <img src="${photo}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 2px solid #ffd9e7;">
+                    `).join('')}
+                </div>
+                ` : ''}
+            </div>
+        `;
+        
+        marker.bindPopup(popupContent);
+        
+        // 存储对marker的引用
+        markers.push({
+            id: memory.id,
+            marker
+        });
+    }
+
+    // 添加回忆到列表
+    function addMemoryToList(memory) {
+        // 如果当前显示的是空状态，则移除
+        if (memoriesContainer.querySelector('.empty-state')) {
+            memoriesContainer.innerHTML = '';
+        }
+        
+        const memoryElement = document.createElement('div');
+        memoryElement.className = 'memory-item';
+        memoryElement.dataset.id = memory.id;
+        
+        memoryElement.innerHTML = `
+            <div class="memory-title">
+                <span>${memory.placeName}</span>
+                <button class="delete-btn" data-id="${memory.id}">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="memory-date">
+                <i class="far fa-calendar-alt"></i> ${formatDate(memory.date)}
+                ${memory.type === "photo" ? '<span class="photo-icon"><i class="fas fa-camera"></i></span>' : ''}
+            </div>
+            <div class="memory-description">${memory.description || '我们共同的美好回忆...'}</div>
+            ${memory.photos && memory.photos.length > 0 ? `
+            <div class="memory-photos">
+                ${memory.photos.slice(0, 3).map(photo => `
+                    <img src="${photo}" class="photo-thumb">
+                `).join('')}
+            </div>
+            ` : ''}
+        `;
+        
+        memoriesContainer.prepend(memoryElement);
+        
+        // 添加删除按钮事件
+        memoryElement.querySelector('.delete-btn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            const id = parseInt(this.dataset.id);
+            deleteMemory(id);
+        });
+        
+        // 点击回忆项时定位到地图位置
+        memoryElement.addEventListener('click', function() {
+            const id = parseInt(this.dataset.id);
+            const memory = memories.find(m => m.id === id);
+            if (memory) {
+                map.setView([memory.lat, memory.lng], 16);
+                const markerObj = markers.find(m => m.id === id);
+                if (markerObj) {
+                    setTimeout(() => {
+                        markerObj.marker.openPopup();
+                    }, 500);
+                }
+            }
+        });
+    }
+
+    // 添加到时间轴
+    function addToTimeline(memory) {
+        if (timelineContainer.querySelector('.empty-state')) {
+            timelineContainer.innerHTML = '';
+        }
+        
+        const timelineItem = document.createElement('div');
+        timelineItem.className = 'timeline-item';
+        timelineItem.dataset.id = memory.id;
+        
+        timelineItem.innerHTML = `
+            <div class="timeline-date">${formatDate(memory.date)}</div>
+            <div class="timeline-content">
+                <h3 style="color: var(--primary-color); margin-bottom: 10px;">${memory.placeName}</h3>
+                <p style="color: var(--text-medium); margin-bottom: 15px;">${memory.description || '我们共同的美好回忆...'}</p>
+                ${memory.photos && memory.photos.length > 0 ? `
+                <div style="display: flex; gap: 10px;">
+                    ${memory.photos.slice(0, 2).map(photo => `
+                        <img src="${photo}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid #ffd9e7;">
+                    `).join('')}
+                </div>
+                ` : ''}
+                <button class="delete-btn" data-id="${memory.id}" style="margin-top: 15px;">
+                    <i class="fas fa-times"></i> 删除
+                </button>
+            </div>
+        `;
+        
+        timelineContainer.prepend(timelineItem);
+        
+        // 添加删除按钮事件
+        timelineItem.querySelector('.delete-btn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            const id = parseInt(this.dataset.id);
+            deleteMemory(id);
+        });
+    }
+
+    // 删除回忆
+    function deleteMemory(id) {
+        // 从数组中删除
+        memories = memories.filter(memory => memory.id !== id);
+        
+        // 从地图上移除标记
+        const markerIndex = markers.findIndex(m => m.id === id);
+        if (markerIndex !== -1) {
+            map.removeLayer(markers[markerIndex].marker);
+            markers.splice(markerIndex, 1);
+        }
+        
+        // 从DOM中移除
+        document.querySelector(`.memory-item[data-id="${id}"]`)?.remove();
+        document.querySelector(`.timeline-item[data-id="${id}"]`)?.remove();
+        
+        // 如果所有回忆都删除了，显示空状态
+        if (memories.length === 0) {
+            memoriesContainer.innerHTML = `
+                <div class="empty-state">
+                    <div class="heart-icon" style="font-size: 4rem;">❤</div>
+                    <p>还没有任何回忆，点击上方按钮添加第一个地点吧！</p>
+                </div>
+            `;
+            
+            timelineContainer.innerHTML = `
+                <div class="empty-state">
+                    <div class="heart-icon" style="font-size: 4rem;">❤</div>
+                    <p>还没有任何回忆，点击上方按钮添加第一个地点吧！</p>
+                </div>
+            `;
+        }
+        
+        // 保存更改
+        saveMemories();
+        
+        // 更新统计
+        updateStats();
+        
+        // 显示通知
+        showNotification('已删除该回忆', 'info');
+    }
+
+    // 更新统计信息
+    function updateStats() {
+        // 计算去过的地方数量
+        placesCount.textContent = memories.length;
+        
+        // 计算去过的城市数量（简单示例，实际需要根据坐标判断）
+        const uniqueCities = new Set(memories.map(m => m.placeName.split(' ')[0]));
+        citiesCount.textContent = uniqueCities.size;
+        
+        // 计算一起走过的天数
+        if (memories.length > 0) {
+            const dates = memories.map(m => new Date(m.date).getTime());
+            const minDate = Math.min(...dates);
+            const maxDate = Math.max(...dates);
+            const days = Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24)) + 1;
+            daysCount.textContent = days;
+        } else {
+            daysCount.textContent = '0';
+        }
+    }
+
+    // 格式化日期
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+
+    // 初始化：加载已有回忆
+    function initMemories() {
+        if (memories.length > 0) {
+            memoriesContainer.innerHTML = '';
+            timelineContainer.innerHTML = '';
+            
+            // 按日期排序
+            const sortedMemories = [...memories].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            sortedMemories.forEach(memory => {
+                addMemoryToList(memory);
+                addToTimeline(memory);
+                addMarkerToMap(memory);
+            });
+            
+            updateStats();
+        }
+    }
+
+    // 地点搜索功能
+    placeNameInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        if (query.length < 1) {
+            searchResults.style.display = 'none';
+            return;
+        }
+        
+        const results = places.filter(place => 
+            place.toLowerCase().includes(query)
+        ).slice(0, 5);
+        
+        if (results.length > 0) {
+            searchResults.innerHTML = results.map(place => `
+                <div class="search-item">${place}</div>
+            `).join('');
+            searchResults.style.display = 'block';
+            
+            // 添加点击事件
+            document.querySelectorAll('.search-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    placeNameInput.value = this.textContent;
+                    searchResults.style.display = 'none';
+                });
+            });
+        } else {
+            searchResults.style.display = 'none';
+        }
+    });
+
+    // 点击其他地方关闭搜索结果
+    document.addEventListener('click', function(e) {
+        if (e.target !== placeNameInput) {
+            searchResults.style.display = 'none';
+        }
+    });
+
+    // 照片上传功能（模拟）
+    uploadBtn.addEventListener('click', function() {
+        // 在实际应用中这里应该是真实的文件上传逻辑
+        // 这里我们模拟上传并随机选择一张示例照片
+        const randomPhoto = samplePhotos[Math.floor(Math.random() * samplePhotos.length)];
+        
+        // 显示文件名
+        fileName.textContent = '已选择照片';
+        fileName.style.color = 'var(--primary-color)';
+        
+        // 在实际应用中，这里应该将照片上传到服务器并获取URL
+        // 这里我们直接将示例照片URL存储到临时变量
+        uploadBtn.dataset.tempPhoto = randomPhoto;
+        
+        showNotification('照片已选择（模拟）', 'info');
+    });
+
+    // 添加地图点击事件，允许用户添加标记
+    map.on('click', function(e) {
+        placeNameInput.focus();
+        
+        // 如果用户没有输入地点名称，我们可以建议使用坐标
+        if (!placeNameInput.value.trim()) {
+            placeNameInput.value = `坐标位置 (${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)})`;
+        }
+    });
+
+    // 定位按钮点击事件
+    locateBtn.addEventListener('click', function() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                map.setView([lat, lng], 15);
+                
+                // 添加临时标记
+                const marker = L.marker([lat, lng], {
+                    icon: heartIcon
+                }).addTo(map);
+                
+                marker.bindPopup("你当前的位置").openPopup();
+                
+                // 5秒后移除标记
+                setTimeout(() => {
+                    map.removeLayer(marker);
+                }, 5000);
+                
+            }, function() {
+                showNotification('无法获取您的位置，请确保已启用位置服务', 'error');
+            });
+        } else {
+            showNotification('您的浏览器不支持地理位置功能', 'error');
+        }
+    });
+
+    // 重置视图按钮
+    resetBtn.addEventListener('click', function() {
+        map.setView([31.2304, 121.4737], 5);
+        showNotification('已重置地图视图', 'info');
+    });
+
+    // 显示所有地点按钮
+    showAllBtn.addEventListener('click', function() {
+        if (markers.length === 0) {
+            showNotification('还没有添加任何地点', 'info');
+            return;
+        }
+        
+        const group = new L.featureGroup(markers.map(m => m.marker));
+        map.fitBounds(group.getBounds().pad(0.2));
+        showNotification('已显示所有地点', 'success');
+    });
+
+    // 视图切换
+    viewBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const view = this.dataset.view;
+            
+            // 更新按钮状态
+            viewBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            // 切换视图
+            listView.classList.remove('active');
+            timelineView.classList.remove('active');
+            statsView.classList.remove('active');
+            
+            if (view === 'list') {
+                listView.classList.add('active');
+            } else if (view === 'timeline') {
+                timelineView.classList.add('active');
+            } else if (view === 'stats') {
+                statsView.classList.add('active');
+            }
+        });
+    });
+
+    // 显示通知
+    function showNotification(message, type) {
+        const titleMap = {
+            'success': '成功',
+            'error': '错误',
+            'info': '提示'
+        };
+        
+        const iconMap = {
+            'success': 'fa-check-circle',
+            'error': 'fa-exclamation-circle',
+            'info': 'fa-info-circle'
+        };
+        
+        document.getElementById('notificationTitle').textContent = titleMap[type] || '通知';
+        document.getElementById('notificationMessage').textContent = message;
+        
+        const icon = notification.querySelector('.notification-icon i');
+        icon.className = `fas ${iconMap[type] || 'fa-bell'}`;
+        
+        notification.className = `notification show ${type}`;
+        
+        // 3秒后自动隐藏
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+
+    // 添加一个特殊的标记
+    setTimeout(() => {
+        const specialMarker = L.marker([31.2304, 121.4737], {
+            icon: heartIcon
+        }).addTo(map);
+        
+        specialMarker.bindPopup(`
+            <div style="min-width: 260px; text-align: center; font-family: 'ZCOOL QingKe HuangYou', cursive;">
+                <h3 style="color: #ff4d94; margin: 0 0 12px;">给最爱的梁佳琪</h3>
+                <p style="margin: 0 0 10px;">愿我们的爱情地图越来越丰富！</p>
+                <p style="margin: 0; display: flex; justify-content: center; gap: 8px;">
+                    <span style="color: #ff4d94; font-size: 1.5rem;">❤️</span>
+                    <span style="color: #ff4d94; font-weight: bold;">永远爱你</span>
+                    <span style="color: #ff4d94; font-size: 1.5rem;">❤️</span>
+                </p>
+            </div>
+        `).openPopup();
+    }, 1000);
+
+    // 页面加载时初始化
+    initMemories();
+</script>
